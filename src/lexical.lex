@@ -11,10 +11,10 @@ integer {digit}+
 alphanumeric ({letter}|{digit})
 identifier {letter}{alphanumeric}*
 datatype CHAR|char|INTEGER|integer|FLOAT|float
-keyword DECLARE|declare|ARRAY|array|OF|of
+keyword DECLARE|declare|ARRAY|array|OF|of|START|start|END|end
 
 %%
-\s+ ;
+\s {col++;}
 {datatype} {
 	printf("datatype %s (len %zu, line %u, col %u)\n", 
 		yytext, yyleng, line, col);
@@ -31,7 +31,7 @@ keyword DECLARE|declare|ARRAY|array|OF|of
 	col += yyleng;
 }
 . {col++;}
-\n {line++;}
+\n {line++;col=0;}
 
 %%
 
