@@ -1,6 +1,9 @@
-all:
+all: bin
 	cd src/ && lex lexical.lex && cd ..
-	gcc src/lex.yy.c -o bin/lexical -lfl
+	gcc src/lex.yy.c -o bin/lexical
+
+bin:
+	mkdir -p bin
 
 clean:
 	rm src/lex.yy.c 

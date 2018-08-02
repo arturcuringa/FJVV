@@ -1,16 +1,40 @@
+%option noyywrap
+
+%{
+    unsigned int line = 0;
+    unsigned int col = 0;
+%}
 
 letter [a-zA-Z\$@#]
 digit  [0-9]
 integer {digit}+
-alphanumeric {letter}|{digit}
-identifier {letter}({alphanumeric}){0,15}
-
-
-
-%%
-[\t] ;
-{identifier} {printf("%s, %d: Identifier\n", yytext, yyleng);}
-
-. | \n {ECHO;}
+alphanumeric ({letter}|{digit})
+identifier {letter}{alphanumeric}*
+datatype CHAR|char|INTEGER|integer|FLOAT|float
+keyword DECLARE|declare|ARRAY|array|OF|of
 
 %%
+\s+ ;
+{datatype} {
+	printf("datatype %s (len %zu, line %u, col %u)\n", 
+		yytext, yyleng, line, col);
+	col += yyleng;
+}
+{keyword} {
+	printf("keyword %s (len %zu, line %u, col %u)\n", 
+		yytext, yyleng, line, col);
+	col += yyleng;
+}
+{identifier} {
+	printf("identifier %s (len %zu, line %u, col %u)\n", 
+		yytext, yyleng, line, col);
+	col += yyleng;
+}
+. {col++;}
+\n {line++;}
+
+%%
+
+int main() {
+	yylex();
+}

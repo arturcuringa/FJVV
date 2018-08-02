@@ -1,0 +1,10 @@
+DECLARE (a1) ARRAY [10] OF INTEGER;
+DECLARE (i) INTEGER;
+
+fill: PROCEDURE (a, alen, value);
+	LOOP;
+END fill;
+
+START;
+	fill(a1, 10, 0);
+END;
