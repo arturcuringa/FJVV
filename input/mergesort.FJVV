@@ -1,0 +1,52 @@
+DECLARE (arr, aux) ARRAY [1000] OF INTEGER;
+DECLARE (mergeIt, leftIt, rightIt) INTEGER;
+
+mergesort: PROCEDURE (start, end);
+    IF start + 1 < end THEN
+        mergesort(start, (start + end)/2);
+        mergesort((start + end)/2 + 1, end);
+        merge(start, (start + end)/2, (start + end)/2 + 1, end);
+    ENDIF;
+END mergesort;
+
+merge: PROCEDURE (leftStart, leftEnd, rightStart, rightEnd);
+    ~ Copia tudo pra aux primeiro
+    leftIt = leftStart;
+    rightIt = rightEnd;
+    mergeIt = 0
+    LOOP;
+        EXITWHEN leftIt > leftEnd || rightIt > rightEnd;
+        IF arr[leftIt] < arr[rightIt] THEN
+            aux[mergeIt++] = arr[leftIt++];
+        ELSE
+            aux[mergeIt++] = arr[rightIt++];
+        ENDIF;
+    ENDLOOP;
+
+    LOOP;
+        EXITWHEN leftIt > leftEnd;
+        aux[mergeIt++] = arr[leftIt++];
+    ENDLOOP;
+
+    LOOP;
+        EXITWHEN rightIt > rightEnd;
+        aux[mergeIt++] = arr[rightIt++];
+    ENDLOOP;
+
+    ~ Copia de aux para arr
+    mergeIt = 0;
+    leftIt = leftStart;
+    LOOP;
+        EXITWHEN leftIt > rightEnd;
+        arr[leftIt++] = aux[mergeIt++];
+    ENDLOOP;
+END merge;
+
+START;
+    arr[0] = 4;
+    arr[1] = 3;
+    arr[2] = 1;
+    arr[3] = 2;
+
+    mergesort(0, 3);
+END;
