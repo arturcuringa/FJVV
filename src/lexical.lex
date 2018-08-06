@@ -117,6 +117,11 @@ keyword 		 DECLARE|declare|ARRAY|array|OF|of|START|start|END|end|PROCEDURE
 	col += yyleng;
 }
 
+{float} {
+	lexema_status("float", yytext, yyleng);
+	col += yyleng;
+}
+
 {separator} {
 	lexema_status("separator", yytext, yyleng);
 	col += yyleng;
