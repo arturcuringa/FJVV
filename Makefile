@@ -1,5 +1,5 @@
 all: bin
-	cd src/ && lex lexical.lex && cd ..
+	cd src/ && flex lexical.lex && cd ..
 	gcc -Wall src/lex.yy.c -o bin/lexical
 
 bin:
