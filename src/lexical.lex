@@ -11,6 +11,7 @@
 letter			 [a-zA-Z\$@#]
 digit 			 [0-9]
 integer			 {digit}+
+float 			{digit}*\.{digit}+|{digit}+\.{digit}*
 alphanumeric		 ({letter}|{digit})
 identifier		 {letter}{alphanumeric}*
 comment  		 ~.*
