@@ -1,6 +1,6 @@
 all: bin
 	cd src/ && lex lexical.lex && cd ..
-	gcc src/lex.yy.c -o bin/lexical
+	gcc -Wall src/lex.yy.c -o bin/lexical
 
 bin:
 	mkdir -p bin
