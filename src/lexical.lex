@@ -18,6 +18,7 @@ comment  		 ~.*
 plussign 		 "+"
 minussign 		 "-"
 divsign 		 "/"
+modsign			 "%"
 multsign 		 "*"
 lparen 			 "("
 rparen 			 ")"
@@ -25,6 +26,16 @@ colon 			 ":"
 terminator		 ";"
 lbracket		 "["
 rbracket		 "]"
+separator                ","
+equalsign                "="
+attrsign                 ":="
+lesssign		 "<"
+lesseqsign		 "<="
+greatersign		 ">"
+greatereqsign		 ">="
+diffsign		 "!="
+orsign			 "|"
+andsign			 "&"
 datatype 		 CHAR|char|INTEGER|integer|FLOAT|float
 keyword 		 DECLARE|declare|ARRAY|array|OF|of|START|start|END|end
 
@@ -41,6 +52,11 @@ keyword 		 DECLARE|declare|ARRAY|array|OF|of|START|start|END|end
 	col += yyleng;
 }
 
+{modsign} {
+	lexema_status("modsign", yytext, yyleng);
+	col += yyleng;
+}
+
 {divsign} {
 	lexema_status("divsign", yytext, yyleng);
 	col += yyleng;
@@ -48,6 +64,61 @@ keyword 		 DECLARE|declare|ARRAY|array|OF|of|START|start|END|end
 
 {multsign} {
 	lexema_status("multsign", yytext, yyleng);
+	col += yyleng;
+}
+
+{equalsign} {
+	lexema_status("equalsign", yytext, yyleng);
+	col += yyleng;
+}
+
+{attrsign} {
+	lexema_status("attrsign", yytext, yyleng);
+	col += yyleng;
+}
+
+{lesssign} {
+	lexema_status("lesssign", yytext, yyleng);
+	col += yyleng;
+}
+
+{lesseqsign} {
+	lexema_status("lesssign", yytext, yyleng);
+	col += yyleng;
+}
+
+{greatersign} {
+	lexema_status("greatersign", yytext, yyleng);
+	col += yyleng;
+}
+
+{greatereqsign} {
+	lexema_status("greatersign", yytext, yyleng);
+	col += yyleng;
+}
+
+{diffsign} {
+	lexema_status("diffsign", yytext, yyleng);
+	col += yyleng;
+}
+
+{orsign} {
+	lexema_status("orsign", yytext, yyleng);
+	col += yyleng;
+}
+
+{andsign} {
+	lexema_status("andsign", yytext, yyleng);
+	col += yyleng;
+}
+
+{integer} {
+	lexema_status("integer", yytext, yyleng);
+	col += yyleng;
+}
+
+{separator} {
+	lexema_status("separator", yytext, yyleng);
 	col += yyleng;
 }
 
