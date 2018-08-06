@@ -199,12 +199,6 @@ datatype 		 {char_type}|{int_type}|{float_type}
 	col += yyleng;
 }
 
-{datatype} {
-
-	lexema_status("datatype", yytext, yyleng);
-	col += yyleng;
-}
-
 {identifier} {
 	if((size_t)yyleng > 16)
 		printf("Warning: Identifier %s with more than 16 characters (len %lu, line %u, col %u) \n",yytext, (size_t)yyleng, line, col);
