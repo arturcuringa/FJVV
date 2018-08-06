@@ -6,12 +6,12 @@
     unsigned int line = 1;
     unsigned int col = 1;
     void lexema_status(const char * token_name, const  char * yytext, const  size_t yyleng);
-
 %}
 
 letter			 [a-zA-Z\$@#]
 digit 			 [0-9]
 integer			 {digit}+
+float 			{digit}*\.{digit}+|{digit}+\.{digit}*
 alphanumeric		 ({letter}|{digit})
 identifier		 {letter}{alphanumeric}*
 comment  		 ~.*
@@ -37,7 +37,7 @@ diffsign		 "!="
 orsign			 "|"
 andsign			 "&"
 datatype 		 CHAR|char|INTEGER|integer|FLOAT|float
-keyword 		 DECLARE|declare|ARRAY|array|OF|of|START|start|END|end
+keyword 		 DECLARE|declare|ARRAY|array|OF|of|START|start|END|end|PROCEDURE
 
 %%
 \s {col++;}
