@@ -15,11 +15,11 @@ float 			{digit}*\.{digit}+|{digit}+\.{digit}*
 alphanumeric		 ({letter}|{digit})
 identifier		 {letter}{alphanumeric}*
 comment  		 ~.*
-plussign 		 "+"
-minussign 		 "-"
-divsign 		 "/"
-modsign			 "%"
-multsign 		 "*"
+plus_sign 		 "+"
+minus_sign 		 "-"
+div_sign 		 "/"
+mod_sign			 "%"
+mult_sign 		 "*"
 lparen 			 "("
 rparen 			 ")"
 colon 			 ":"
@@ -27,88 +27,125 @@ terminator		 ";"
 lbracket		 "["
 rbracket		 "]"
 separator                ","
-equalsign                "="
-attrsign                 ":="
-lesssign		 "<"
-lesseqsign		 "<="
-greatersign		 ">"
-greatereqsign		 ">="
-diffsign		 "!="
-orsign			 "|"
-andsign			 "&"
-datatype 		 CHAR|char|INTEGER|integer|FLOAT|float
-keyword 		 DECLARE|declare|ARRAY|array|OF|of|START|start|END|end|PROCEDURE
+equal_sign                "="
+attr_sign                 ":="
+less_sign		 "<"
+less_eq_sign		 "<="
+greater_sign		 ">"
+greater_eq_sign		 ">="
+diff_sign		 "!="
+or_sign			 "|"
+and_sign			 "&"
+char_type		(?i:char)
+int_type		(?i:integer)
+float_type		(?i:float)
+datatype 		 {char_type}|{int_type}|{float_type}
 
 %%
 \s {col++;}
 
-{plussign} {
-	lexema_status("plussign", yytext, yyleng);
+(?i:array) {
+	lexema_status("array", yytext, yyleng);
 	col += yyleng;
 }
 
-{minussign} {
-	lexema_status("minussign", yytext, yyleng);
+(?i:of) {
+	lexema_status("of", yytext, yyleng);
 	col += yyleng;
 }
 
-{modsign} {
-	lexema_status("modsign", yytext, yyleng);
+(?i:start) {
+	lexema_status("start", yytext, yyleng);
 	col += yyleng;
 }
 
-{divsign} {
-	lexema_status("divsign", yytext, yyleng);
+(?i:end) {
+	lexema_status("end", yytext, yyleng);
 	col += yyleng;
 }
 
-{multsign} {
-	lexema_status("multsign", yytext, yyleng);
+(?i:procedure) {
+	lexema_status("procedure", yytext, yyleng);
 	col += yyleng;
 }
 
-{equalsign} {
-	lexema_status("equalsign", yytext, yyleng);
+(?i:declare) {
+	lexema_status("declare", yytext, yyleng);
 	col += yyleng;
 }
 
-{attrsign} {
-	lexema_status("attrsign", yytext, yyleng);
+{datatype} {
+	lexema_status("datatype", yytext, yyleng);
 	col += yyleng;
 }
 
-{lesssign} {
-	lexema_status("lesssign", yytext, yyleng);
+{plus_sign} {
+	lexema_status("plus_sign", yytext, yyleng);
 	col += yyleng;
 }
 
-{lesseqsign} {
-	lexema_status("lesssign", yytext, yyleng);
+{minus_sign} {
+	lexema_status("minus_sign", yytext, yyleng);
 	col += yyleng;
 }
 
-{greatersign} {
-	lexema_status("greatersign", yytext, yyleng);
+{mod_sign} {
+	lexema_status("mod_sign", yytext, yyleng);
 	col += yyleng;
 }
 
-{greatereqsign} {
-	lexema_status("greatersign", yytext, yyleng);
+{div_sign} {
+	lexema_status("div_sign", yytext, yyleng);
 	col += yyleng;
 }
 
-{diffsign} {
-	lexema_status("diffsign", yytext, yyleng);
+{mult_sign} {
+	lexema_status("mult_sign", yytext, yyleng);
 	col += yyleng;
 }
 
-{orsign} {
-	lexema_status("orsign", yytext, yyleng);
+{equal_sign} {
+	lexema_status("equal_sign", yytext, yyleng);
 	col += yyleng;
 }
 
-{andsign} {
-	lexema_status("andsign", yytext, yyleng);
+{attr_sign} {
+	lexema_status("attr_sign", yytext, yyleng);
+	col += yyleng;
+}
+
+{less_sign} {
+	lexema_status("less_sign", yytext, yyleng);
+	col += yyleng;
+}
+
+{less_eq_sign} {
+	lexema_status("less_sign", yytext, yyleng);
+	col += yyleng;
+}
+
+{greater_sign} {
+	lexema_status("greater_sign", yytext, yyleng);
+	col += yyleng;
+}
+
+{greater_eq_sign} {
+	lexema_status("greater_sign", yytext, yyleng);
+	col += yyleng;
+}
+
+{diff_sign} {
+	lexema_status("diff_sign", yytext, yyleng);
+	col += yyleng;
+}
+
+{or_sign} {
+	lexema_status("or_sign", yytext, yyleng);
+	col += yyleng;
+}
+
+{and_sign} {
+	lexema_status("and_sign", yytext, yyleng);
 	col += yyleng;
 }
 
@@ -168,11 +205,6 @@ keyword 		 DECLARE|declare|ARRAY|array|OF|of|START|start|END|end|PROCEDURE
 	col += yyleng;
 }
 
-{keyword} {
-
-	lexema_status("keyword",yytext, yyleng);
-	col += yyleng;
-}
 {identifier} {
 	if((size_t)yyleng > 16)
 		printf("Warning: Identifier %s with more than 16 characters (len %lu, line %u, col %u) \n",yytext, (size_t)yyleng, line, col);
