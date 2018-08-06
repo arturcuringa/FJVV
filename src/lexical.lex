@@ -22,6 +22,8 @@ lparen 			 "("
 rparen 			 ")"
 colon 			 ":"
 terminator		 ";"
+lbracket		 "["
+rbracket		 "]"
 datatype 		 CHAR|char|INTEGER|integer|FLOAT|float
 keyword 		 DECLARE|declare|ARRAY|array|OF|of|START|start|END|end|PROCEDURE
 
@@ -55,6 +57,16 @@ keyword 		 DECLARE|declare|ARRAY|array|OF|of|START|start|END|end|PROCEDURE
 
 {rparen} {
 	lexema_status("rparen", yytext, yyleng);
+	col += yyleng;
+}
+
+{lbracket} {
+	lexema_status("lbracket", yytext, yyleng);
+	col += yyleng;
+}
+
+{rbracket} {
+	lexema_status("rbracket", yytext, yyleng);
 	col += yyleng;
 }
 
