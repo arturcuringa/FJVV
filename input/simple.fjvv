@@ -1,5 +1,6 @@
 DECLARE (a1) ARRAY [10] OF INTEGER;
 DECLARE (i) INTEGER;
+DECLARE (c) cHaR;
 
 fill: PROCEDURE (a, alen, value);
 	LOOP;
