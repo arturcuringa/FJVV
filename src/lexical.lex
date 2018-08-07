@@ -48,7 +48,7 @@ procedure               (?i:procedure)
 declare 		(?i:declare)
 
 %%
-[ \t\r] {col++;}
+[ \t\r\f] {col++;}
 
 {array} {
 	lexema_status("array");
