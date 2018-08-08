@@ -37,6 +37,7 @@ diff_sign		 "!="
 or_sign			 "|"
 and_sign		 "&"
 neg_sign		 "!"
+plusplus_sign		 "++"
 char_type     		(?i:char)
 int_type		(?i:integer)
 float_type		(?i:float)
@@ -88,6 +89,11 @@ declare 		(?i:declare)
 
 {plus_sign} {
 	lexema_status("plus_sign");
+	col += yyleng;
+}
+
+{plusplus_sign} {
+	lexema_status("plusplus_sign");
 	col += yyleng;
 }
 
@@ -157,7 +163,7 @@ declare 		(?i:declare)
 }
 
 {neg_sign} {
-	lexema_status("and_sign");
+	lexema_status("neg_sign");
 	col += yyleng;
 }
 
