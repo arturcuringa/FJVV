@@ -12,6 +12,7 @@ letter			 [a-zA-Z\$@#]
 digit 			 [0-9]
 integer			 {digit}+
 float			 {digit}*\.{digit}+|{digit}+\.{digit}*
+char			 \'(.|"\n")\'
 alphanumeric		 ({letter}|{digit})
 identifier		 {letter}{alphanumeric}*
 comment  		 ~.*
@@ -51,6 +52,11 @@ declare 		(?i:declare)
 
 %%
 [ \t\r\f] {col++;}
+
+{char} {
+	lexema_status("char");
+	col += yyleng;
+}
 
 {array} {
 	lexema_status("array");
@@ -219,7 +225,7 @@ declare 		(?i:declare)
 
 {identifier} {
 	if((size_t)yyleng > 16)
-		printf("Warning: Identifier %s with more than 16 characters (len %lu, line %u, col %u) \n",yytext, (size_t)yyleng, line, col);
+		printf("Identifier %s with more than 16 characters (len %lu, line %u, col %u) \n",yytext, (size_t)yyleng, line, col);
 	lexema_status("identifier");
 	col += yyleng;
 }
