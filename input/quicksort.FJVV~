@@ -5,7 +5,7 @@ quicksort: PROCEDURE (first, last);
     IF first + 1 < last THEN
         pivot = first;
         LOOP;
-            EXITWHEN pivot == last | arr[pivot] < arr[pivot + 1];
+            EXITWHEN pivot == last || arr[pivot] < arr[pivot + 1];
             temp = arr[pivot];
             arr[pivot] = arr[pivot + 1];
             arr[pivot + 1] = temp;

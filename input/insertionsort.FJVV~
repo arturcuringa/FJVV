@@ -30,5 +30,5 @@ START;
     arr[2] = 1;
     arr[3] = 2;
 
-    insertionsort(4);
+    insertionsort(0, 3);
 END;

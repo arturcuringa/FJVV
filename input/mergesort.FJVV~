@@ -15,7 +15,7 @@ merge: PROCEDURE (leftFirst, leftLast, rightFirst, rightLast);
     rightIt = rightLast;
     mergeIt = 0
     LOOP;
-        EXITWHEN leftIt > leftLast | rightIt > rightLast;
+        EXITWHEN leftIt > leftLast || rightIt > rightLast;
         IF arr[leftIt] < arr[rightIt] THEN
             aux[mergeIt++] = arr[leftIt++];
         ELSE
