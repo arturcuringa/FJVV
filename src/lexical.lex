@@ -36,6 +36,7 @@ greater_eq_sign		 ">="
 diff_sign		 "!="
 or_sign			 "|"
 and_sign		 "&"
+neg_sign		 "!"
 char_type     		(?i:char)
 int_type		(?i:integer)
 float_type		(?i:float)
@@ -155,6 +156,11 @@ declare 		(?i:declare)
 	col += yyleng;
 }
 
+{neg_sign} {
+	lexema_status("and_sign");
+	col += yyleng;
+}
+
 {integer} {
 	lexema_status("integer");
 	col += yyleng;
@@ -218,7 +224,7 @@ declare 		(?i:declare)
 %%
 
 void lexema_status(const char * token_name){
-	printf("%15s %15s (len %lu, line %u, col %u)\n",token_name, yytext, yyleng, line, col);
+	printf("%25s %25s (len %lu, line %u, col %u)\n",token_name, yytext, yyleng, line, col);
 }
 int main() {
 	yylex();
