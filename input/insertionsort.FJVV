@@ -2,25 +2,24 @@ DECLARE (arr) ARRAY [1000] OF INTEGER;
 DECLARE (i, j, menor, temp) INTEGER;
 
 insertionsort: PROCEDURE (size);
-    i = 0;
-    size = size - 1;
+    i := 0;
+    size := size - 1;
     LOOP;
-        EXITWHEN i == size;
-
-        j = i + 1;
-        menor = i;
+        EXITWHEN i = size;
+        j := i + 1;
+        menor := i;
         LOOP;
             EXITWHEN j > size;
             IF arr[j] < arr[menor] THEN
-                menor = j;
+                menor := j;
             ENDIF;
-            j++;
+            j := j + 1;
         ENDLOOP;
 
-        temp = arr[i];
-        arr[i] = arr[menor];
-        arr[menor] = temp;
-        i++;
+        temp := arr[i];
+        arr[i] := arr[menor];
+        arr[menor] := temp;
+        i := i + 1;
     ENDLOOP;
 END insertionsort;
 

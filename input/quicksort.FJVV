@@ -3,13 +3,13 @@ DECLARE (pivot, temp) INTEGER;
 
 quicksort: PROCEDURE (first, last);
     IF first + 1 < last THEN
-        pivot = first;
+        pivot := first;
         LOOP;
-            EXITWHEN pivot == last | arr[pivot] < arr[pivot + 1];
-            temp = arr[pivot];
-            arr[pivot] = arr[pivot + 1];
-            arr[pivot + 1] = temp;
-            pivot++;
+            EXITWHEN pivot = last | arr[pivot] < arr[pivot + 1];
+            temp := arr[pivot];
+            arr[pivot] := arr[pivot + 1];
+            arr[pivot + 1] := temp;
+            pivot := pivot + 1;
         ENDLOOP;
 
         quicksort(first, pivot - 1);
