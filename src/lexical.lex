@@ -6,6 +6,7 @@
     unsigned int line = 1;
     unsigned int col = 1;
     void lexema_status(const char * token_name);
+    void status_and_update_cursor(const char * token_name);
 %}
 
 whitespace		 [ \t\r\f]
@@ -54,182 +55,79 @@ declare 		(?i:declare)
 %%
 {whitespace} {col++;}
 
-{char} {
-	lexema_status("char");
-	col += yyleng;
-}
+{char} {status_and_update_cursor("char");}
 
+{array} {status_and_update_cursor("array");}
 
-{array} {
-	lexema_status("array");
-	col += yyleng;
-}
+{of} {status_and_update_cursor("of");}
 
-{of} {
-	lexema_status("of");
-	col += yyleng;
-}
+{start} {status_and_update_cursor("start");}
 
-{start} {
-	lexema_status("start");
-	col += yyleng;
-}
+{end} {status_and_update_cursor("end");}
 
-{end} {
-	lexema_status("end");
-	col += yyleng;
-}
+{procedure} {status_and_update_cursor("procedure");}
 
-{procedure} {
-	lexema_status("procedure");
-	col += yyleng;
-}
+{declare} {status_and_update_cursor("declare");}
 
-{declare} {
-	lexema_status("declare");
-	col += yyleng;
-}
+{datatype} {status_and_update_cursor("datatype");}
 
-{datatype} {
-	lexema_status("datatype");
-	col += yyleng;
-}
+{plus_sign} {status_and_update_cursor("plus_sign");}
 
-{plus_sign} {
-	lexema_status("plus_sign");
-	col += yyleng;
-}
+{plusplus_sign} {status_and_update_cursor("plusplus_sign");}
 
-{plusplus_sign} {
-	lexema_status("plusplus_sign");
-	col += yyleng;
-}
+{minus_sign} {status_and_update_cursor("minus_sign");}
 
-{minus_sign} {
-	lexema_status("minus_sign");
-	col += yyleng;
-}
+{mod_sign} {status_and_update_cursor("mod_sign");}
 
-{mod_sign} {
-	lexema_status("mod_sign");
-	col += yyleng;
-}
+{div_sign} {status_and_update_cursor("div_sign");}
 
-{div_sign} {
-	lexema_status("div_sign");
-	col += yyleng;
-}
+{mult_sign} {status_and_update_cursor("mult_sign");}
 
-{mult_sign} {
-	lexema_status("mult_sign");
-	col += yyleng;
-}
+{equal_sign} {status_and_update_cursor("equal_sign");}
 
-{equal_sign} {
-	lexema_status("equal_sign");
-	col += yyleng;
-}
+{attr_sign} {status_and_update_cursor("attr_sign");}
 
-{attr_sign} {
-	lexema_status("attr_sign");
-	col += yyleng;
-}
+{less_sign} {status_and_update_cursor("less_sign");}
 
-{less_sign} {
-	lexema_status("less_sign");
-	col += yyleng;
-}
+{less_eq_sign} {status_and_update_cursor("less_sign");}
 
-{less_eq_sign} {
-	lexema_status("less_sign");
-	col += yyleng;
-}
+{greater_sign} {status_and_update_cursor("greater_sign");}
 
-{greater_sign} {
-	lexema_status("greater_sign");
-	col += yyleng;
-}
+{greater_eq_sign} {status_and_update_cursor("greater_sign");}
 
-{greater_eq_sign} {
-	lexema_status("greater_sign");
-	col += yyleng;
-}
+{diff_sign} {status_and_update_cursor("diff_sign");}
 
-{diff_sign} {
-	lexema_status("diff_sign");
-	col += yyleng;
-}
+{or_sign} {status_and_update_cursor("or_sign");}
 
-{or_sign} {
-	lexema_status("or_sign");
-	col += yyleng;
-}
+{and_sign} {status_and_update_cursor("and_sign");}
 
-{and_sign} {
-	lexema_status("and_sign");
-	col += yyleng;
-}
+{neg_sign} {status_and_update_cursor("neg_sign");}
 
-{neg_sign} {
-	lexema_status("neg_sign");
-	col += yyleng;
-}
+{integer} {status_and_update_cursor("integer");}
 
-{integer} {
-	lexema_status("integer");
-	col += yyleng;
-}
+{float} {status_and_update_cursor("float");}
 
-{float} {
-	lexema_status("float");
-	col += yyleng;
-}
+{separator} {status_and_update_cursor("separator");}
 
-{separator} {
-	lexema_status("separator");
-	col += yyleng;
-}
+{lparen} {status_and_update_cursor("lparen");}
 
-{lparen} {
-	lexema_status("lparen");
-	col += yyleng;
-}
+{rparen} {status_and_update_cursor("rparen");}
 
-{rparen} {
-	lexema_status("rparen");
-	col += yyleng;
-}
+{lbracket} {status_and_update_cursor("lbracket");}
 
-{lbracket} {
-	lexema_status("lbracket");
-	col += yyleng;
-}
+{rbracket} {status_and_update_cursor("rbracket");}
 
-{rbracket} {
-	lexema_status("rbracket");
-	col += yyleng;
-}
+{colon} {status_and_update_cursor("colon");}
 
-{colon} {
-	lexema_status("colon");
-	col += yyleng;
-}
+{terminator} {status_and_update_cursor("terminator");}
 
-{terminator} {
-	lexema_status("terminator");
-	col += yyleng;
-}
-
-{comment} {
-	lexema_status("comment");
-	col += yyleng;
-}
+{comment} {status_and_update_cursor("comment");}
 
 {identifier} {
 	if((size_t)yyleng > 16)
 		printf("Identifier %s with more than 16 characters (len %lu, line %u, col %u) \n",yytext, (size_t)yyleng, line, col);
-	lexema_status("identifier");
-	col += yyleng;
+	status_and_update_cursor("identifier");
+	 
 }
 . {printf("Error :%s \n", yytext);col++;}
 
@@ -238,7 +136,11 @@ declare 		(?i:declare)
 %%
 
 void lexema_status(const char * token_name){
-	printf("%25s %25s (len %lu, line %u, col %u)\n",token_name, yytext, yyleng, line, col);
+	printf("%25s %25s   (len %lu, line %u, col %u)\n",token_name, yytext, yyleng, line, col);
+}
+void status_and_update_cursor(const char * token_name){
+	lexema_status(token_name);
+	 
 }
 int main() {
 	yylex();
