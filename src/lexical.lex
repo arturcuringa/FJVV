@@ -8,6 +8,7 @@
     void lexema_status(const char * token_name);
 %}
 
+whitespace		 [ \t\r\f]
 letter			 [a-zA-Z\$@#]
 digit 			 [0-9]
 integer			 {digit}+
@@ -51,12 +52,13 @@ procedure               (?i:procedure)
 declare 		(?i:declare)
 
 %%
-[ \t\r\f] {col++;}
+{whitespace} {col++;}
 
 {char} {
 	lexema_status("char");
 	col += yyleng;
 }
+
 
 {array} {
 	lexema_status("array");
@@ -229,7 +231,7 @@ declare 		(?i:declare)
 	lexema_status("identifier");
 	col += yyleng;
 }
-. {printf("Error :%s", yytext);col++;}
+. {printf("Error :%s \n", yytext);col++;}
 
 \n {line++;col=1;}
 
