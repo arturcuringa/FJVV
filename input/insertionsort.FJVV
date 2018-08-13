@@ -24,10 +24,10 @@ insertionsort: PROCEDURE (size);
 END insertionsort;
 
 START;
-    arr[0] = 4;
-    arr[1] = 3;
-    arr[2] = 1;
-    arr[3] = 2;
+    arr[0] := 4;
+    arr[1] := 3;
+    arr[2] := 1;
+    arr[3] := 2;
 
     insertionsort(4);
 END;

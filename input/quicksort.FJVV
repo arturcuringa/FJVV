@@ -18,10 +18,10 @@ quicksort: PROCEDURE (first, last);
 END quicksort;
 
 START;
-    arr[0] = 4;
-    arr[1] = 3;
-    arr[2] = 1;
-    arr[3] = 2;
+    arr[0] := 4;
+    arr[1] := 3;
+    arr[2] := 1;
+    arr[3] := 2;
 
     quicksort(0, 3);
 END;
