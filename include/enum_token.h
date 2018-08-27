@@ -1,3 +1,5 @@
+#ifndef __ENUM_TOKEN_H__
+#define __ENUM_TOKEN_H__
 
 enum token {
 
@@ -44,3 +46,5 @@ PROCEDURE       ,
 DECLARE 	
 
 };
+
+#endif

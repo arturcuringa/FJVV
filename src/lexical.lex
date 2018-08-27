@@ -233,11 +233,9 @@ declare 		(?i:declare)
 void lexema_status(const char * token_name){
 	printf("%25s %25s   (len %lu, line %u, col %u)\n",token_name, yytext, yyleng, line, col);
 }
+
 void status_and_update_cursor(const char * token_name){
 	lexema_status(token_name);
 	 
 }
-int main() {
-	yylex();
-	return 0;
-}
+
