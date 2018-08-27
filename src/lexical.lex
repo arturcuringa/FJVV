@@ -262,12 +262,12 @@ stop 			(?i:stop)
 	return ENDLOOP;
 }
 
-{exitwhen}{
+{exitwhen} {
 	status_and_update_cursor("exitwhen");
 	return EXITWHEN;
 }
 
-{stop}{
+{stop} {
 	status_and_update_cursor("stop");
 	return STOP;
 }
