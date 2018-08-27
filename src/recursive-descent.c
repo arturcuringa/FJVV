@@ -3,33 +3,127 @@
 #include <stdio.h>
 
 enum token tok;
-void error() { printf("Erro no parsing!\n"); }
+void error() { printf("Parsing error on line %d and col %d!\n", line, col); }
 void advance() { tok = yylex(); }
 void eat(enum token t) { if (tok == t) advance(); else error(); }
 
-void SEMICOLON() {
+void STARTTOK() {
+	switch (tok) {
+		case START:
+			eat(START);
+			break;
+		default:
+			printf("Missing 'START'\n");
+	}
+}
+
+void TERMINATORTOK() {
 	switch(tok){
 		case TERMINATOR:
 			eat(TERMINATOR);
 			break;
 		default:
-			printf("faltou o ;\n");
+			printf("missing ;\n");
 	}
+}
+
+void LPARENTOK() {
+	eat(LPAREN);
+}
+
+void RPARENTOK() {
+	eat(RPAREN);
+}
+
+void DECLARETOK() {
+	eat(DECLARE);
 }
 
 void ENDTOK() {
 	eat(END);
 }
 
-void PROGRAM() {
+void IDENTIFIERTOK() {
+	eat(IDENTIFIER);
+}
+
+void COMMATOK() {
+	eat(SEPARATOR);
+}
+
+void DATATYPETOK() {
+	eat(DATATYPE);
+}
+
+void DATATYPENONT() {
+	switch (tok) {
+		case DATATYPE:
+			DATATYPETOK();
+			break;
+		// add array
+		default:
+			break;
+	}
+}
+
+void IDLIST2() {
 	switch(tok) {
-		case START:
-			eat(START);
-			SEMICOLON(); ENDTOK(); SEMICOLON();
+		case RPAREN:
+			break;
+		case SEPARATOR:
+			COMMATOK();
+			IDENTIFIERTOK();
+			IDLIST2();
 			break;
 		default:
-			error();
+			break;
 	}
+}
+
+void IDLIST() {
+	IDENTIFIERTOK();
+	IDLIST2();
+}
+
+void DECLSTMT() {
+	DECLARETOK();
+	LPARENTOK();
+	IDLIST();
+	RPARENTOK();
+	DATATYPENONT();
+}
+
+void DECLSTMTLIST() {
+	switch (tok) {
+		case START:
+		case IDENTIFIER:
+			break;
+		case DECLARE:
+			DECLSTMT();
+			TERMINATORTOK();
+			DECLSTMTLIST();
+			break;
+		default:
+			break;
+	}
+}
+
+void PROCDECLLIST() {
+
+}
+
+void STMTLIST() {
+
+}
+
+void PROGRAM() {
+	DECLSTMTLIST();
+	PROCDECLLIST();
+	STARTTOK();
+	TERMINATORTOK();
+	STMTLIST();
+	ENDTOK();
+	TERMINATORTOK();
 }
 
 int main(int argc, char const *argv[]) {

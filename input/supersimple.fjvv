@@ -1,0 +1,4 @@
+DECLARE (a,b,c) INTEGER;
+
+START;
+END;
