@@ -3,6 +3,7 @@
 %option noinput
 
 %{
+    #include "enum_token.h"
     unsigned int line = 1;
     unsigned int col = 1;
     void lexema_status(const char * token_name);

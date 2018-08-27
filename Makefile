@@ -1,6 +1,6 @@
 all: bin
 	cd src/ && flex lexical.lex && cd ..
-	gcc -Wall src/lex.yy.c -o bin/lexical
+	gcc -Wall -I include/ src/lex.yy.c -o bin/lexical
 
 bin:
 	mkdir -p bin
