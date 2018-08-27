@@ -123,8 +123,41 @@ void PROCDECLLIST() {
 
 }
 
-void STMTLIST() {
+void SUPERSTMT() {
+	switch (tok) {
+		case IDENTIFIER:
+			LABELSTMT();
+			break;
+		// case IOSTMT
+		// case IF
+		// case GOTO
+		// case LOOP
+		// case EXTIWHEN
+		// case STOP
+			IDLESSSTMT();
+			break;
+		default:
+			printf("Something happened\n");
+			break;
 
+	}
+}
+
+void STMTLIST() {
+	switch (tok) {
+		case IDENTIFIER:
+		// iostmt
+		// if
+		// loop
+		// goto
+		// exitwhen
+		// stop
+			SUPERSTMT();
+			STMTLIST();
+		default:
+		// lambda
+			break;
+	}
 }
 
 void PROGRAM() {
