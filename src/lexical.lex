@@ -236,6 +236,6 @@ void lexema_status(const char * token_name){
 
 void status_and_update_cursor(const char * token_name){
 	lexema_status(token_name);
-	 
+	col += yyleng;
 }
 
