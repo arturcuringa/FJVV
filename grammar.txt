@@ -38,32 +38,36 @@ LOOPSTMT -> LOOP ; STMTLIST ENDLOOP
 EXITSTMT -> EXITWHEN E
 STOPSTMT -> STOP
 ATTRSTMT -> := E
-PROCSTMT -> ( E )
+PROCSTMT -> ( EXPRLIST )
+EXPRLIST -> E , EXPRLIST
+EXPRLIST -> ''
 E   -> T E'
 E'  -> A E
 E'  -> ''
-A   -> +
-A   -> -
-T   -> !T
+A   -> &
+A   -> |
 T   -> T2
-T2  -> T3 T2'
-T2' -> B T2
-T2' -> ''
-T3  -> T4 T3'
-T3' -> C T3
-T3' -> ''
-C   -> >
-C   -> <
-C   -> =
-C   -> !=
-C   -> <=
-C   -> >=
-T4  -> F T4'
-T4' -> D T4
-T4' -> ''
-D   -> *
-D   -> /
-D   -> %
-F   -> - F
-F   -> ( E )
-F   -> id  
+T   -> T'
+T'	-> B T
+T'	-> ''
+B   -> >
+B   -> <
+B   -> =
+B   -> !=
+B   -> <=
+B   -> >=
+T2	-> T3 T2'
+T2'	-> C T2
+T2'	-> ''
+C 	-> +
+C 	-> -
+T3	-> F T3'
+T3'	-> D T3
+T3'	-> ''
+D 	-> *
+D 	-> /
+D 	-> %
+F 	-> ! F
+F 	-> - F
+F 	-> ( F )
+F 	-> id
