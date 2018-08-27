@@ -56,71 +56,165 @@ declare 		(?i:declare)
 %%
 {whitespace} {col++;}
 
-{char} {status_and_update_cursor("char");}
+{char} {
+	status_and_update_cursor("char");
+	return CHAR;
+}
 
-{array} {status_and_update_cursor("array");}
+{array} {
+	status_and_update_cursor("array");
+	return ARRAY;
+}
 
-{of} {status_and_update_cursor("of");}
+{of} {
+	status_and_update_cursor("of");
+	return OF;
+}
 
-{start} {status_and_update_cursor("start");}
+{start} {
+	status_and_update_cursor("start");
+	return START;
+}
 
-{end} {status_and_update_cursor("end");}
+{end} {
+	status_and_update_cursor("end");
+	return END;
+}
 
-{procedure} {status_and_update_cursor("procedure");}
+{procedure} {
+	status_and_update_cursor("procedure");
+	return PROCEDURE;
+}
 
-{declare} {status_and_update_cursor("declare");}
+{declare} {
+	status_and_update_cursor("declare");
+	return DECLARE;
+}
 
-{datatype} {status_and_update_cursor("datatype");}
+{datatype} {
+	status_and_update_cursor("datatype");
+	return DATATYPE;
+}
 
-{plus_sign} {status_and_update_cursor("plus_sign");}
+{plus_sign} {
+	status_and_update_cursor("plus_sign");
+	return PLUS_SIGN;
+}
 
-{plusplus_sign} {status_and_update_cursor("plusplus_sign");}
+{minus_sign} {
+	status_and_update_cursor("minus_sign");
+	return MINUS_SIGN;
+}
 
-{minus_sign} {status_and_update_cursor("minus_sign");}
+{mod_sign} {
+	status_and_update_cursor("mod_sign");
+	return MOD_SIGN;
+}
 
-{mod_sign} {status_and_update_cursor("mod_sign");}
+{div_sign} {
+	status_and_update_cursor("div_sign");
+	return DIV_SIGN;
+}
 
-{div_sign} {status_and_update_cursor("div_sign");}
+{mult_sign} {
+	status_and_update_cursor("mult_sign");
+	return MULT_SIGN;
+}
 
-{mult_sign} {status_and_update_cursor("mult_sign");}
+{equal_sign} {
+	status_and_update_cursor("equal_sign");
+	return EQUAL_SIGN;
+}
 
-{equal_sign} {status_and_update_cursor("equal_sign");}
+{attr_sign} {
+	status_and_update_cursor("attr_sign");
+	return ATTR_SIGN;
+}
 
-{attr_sign} {status_and_update_cursor("attr_sign");}
+{less_sign} {
+	status_and_update_cursor("less_sign");
+	return LESS_SIGN;
+}
 
-{less_sign} {status_and_update_cursor("less_sign");}
+{less_eq_sign} {
+	status_and_update_cursor("less_sign");
+	return LESS_EQ_SIGN;
+}
 
-{less_eq_sign} {status_and_update_cursor("less_sign");}
+{greater_sign} {
+	status_and_update_cursor("greater_sign");
+	return GREATER_SIGN;
+}
 
-{greater_sign} {status_and_update_cursor("greater_sign");}
+{greater_eq_sign} {
+	status_and_update_cursor("greater_sign");
+	return GREATER_EQ_SIGN;
+}
 
-{greater_eq_sign} {status_and_update_cursor("greater_sign");}
+{diff_sign} {
+	status_and_update_cursor("diff_sign");
+	return DIFF_SIGN;
+}
 
-{diff_sign} {status_and_update_cursor("diff_sign");}
+{or_sign} {
+	status_and_update_cursor("or_sign");
+	return OR_SIGN;
+}
 
-{or_sign} {status_and_update_cursor("or_sign");}
+{and_sign} {
+	status_and_update_cursor("and_sign");
+	return AND_SIGN;
+}
 
-{and_sign} {status_and_update_cursor("and_sign");}
+{neg_sign} {
+	status_and_update_cursor("neg_sign");
+	return NEG_SIGN;
+}
 
-{neg_sign} {status_and_update_cursor("neg_sign");}
+{integer} {
+	status_and_update_cursor("integer");
+	return INTEGER;
+}
 
-{integer} {status_and_update_cursor("integer");}
+{float} {
+	status_and_update_cursor("float");
+	return FLOAT;
+}
 
-{float} {status_and_update_cursor("float");}
+{separator} {
+	status_and_update_cursor("separator");
+	return SEPARATOR;
+}
 
-{separator} {status_and_update_cursor("separator");}
+{lparen} {
+	status_and_update_cursor("lparen");
+	return LPAREN;
+}
 
-{lparen} {status_and_update_cursor("lparen");}
+{rparen} {
+	status_and_update_cursor("rparen");
+	return RPAREN; 
+}
 
-{rparen} {status_and_update_cursor("rparen");}
+{lbracket} {
+	status_and_update_cursor("lbracket");
+	return LBRACKET;
+}
 
-{lbracket} {status_and_update_cursor("lbracket");}
+{rbracket} {
+	status_and_update_cursor("rbracket");
+	return RBRACKET;
+}
 
-{rbracket} {status_and_update_cursor("rbracket");}
+{colon} {
+	status_and_update_cursor("colon");
+	return COLON;
+}
 
-{colon} {status_and_update_cursor("colon");}
-
-{terminator} {status_and_update_cursor("terminator");}
+{terminator} {
+	status_and_update_cursor("terminator");
+	return TERMINATOR;
+}
 
 {comment} {status_and_update_cursor("comment");}
 
@@ -128,7 +222,7 @@ declare 		(?i:declare)
 	if((size_t)yyleng > 16)
 		printf("Identifier %s with more than 16 characters (len %lu, line %u, col %u) \n",yytext, (size_t)yyleng, line, col);
 	status_and_update_cursor("identifier");
-	 
+	return IDENTIFIER; 
 }
 . {printf("Error :%s \n", yytext);col++;}
 
