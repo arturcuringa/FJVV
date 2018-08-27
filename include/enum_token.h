@@ -43,8 +43,18 @@ OF		,
 START		,
 END		,
 PROCEDURE       ,
-DECLARE 	
-
+DECLARE 	,
+GET             , 	
+PUT 	        ,
+IF 	        ,
+ENDIF 	        ,
+ELSE 	        ,
+THEN 	        ,
+GOTO 	        ,
+LOOP 	        ,
+ENDLOOP         ,
+EXITWHEN        ,
+STOP 	
 };
 
 #endif

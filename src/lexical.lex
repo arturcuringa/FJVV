@@ -52,6 +52,17 @@ start			(?i:start)
 end			(?i:end)
 procedure               (?i:procedure)
 declare 		(?i:declare)
+get 			(?i:get)
+put 			(?i:put)
+if 			(?i:if)
+endif 			(?i:endif)
+else 			(?i:else)
+then 			(?i:then)
+goto 			(?i:goto)
+loop 			(?i:loop)
+endloop 		(?i:endloop)
+exitwhen 		(?i:exitwhen)
+stop 			(?i:stop)
 
 %%
 {whitespace} {col++;}
@@ -214,6 +225,51 @@ declare 		(?i:declare)
 {terminator} {
 	status_and_update_cursor("terminator");
 	return TERMINATOR;
+}
+
+{if} {
+	status_and_update_cursor("if");
+	return IF;
+}
+
+{endif} {
+	status_and_update_cursor("endif");
+	return ENDIF;
+}
+
+{else} {
+	status_and_update_cursor("else");
+	return ELSE;
+}
+
+{then} {
+	status_and_update_cursor("then");
+	return THEN;
+}
+
+{goto} {
+	status_and_update_cursor("goto");
+	return GOTO;
+}
+
+{loop} {
+	status_and_update_cursor("loop");
+	return LOOP;
+}
+
+{endloop} {
+	status_and_update_cursor("endloop");
+	return ENDLOOP;
+}
+
+{exitwhen}{
+	status_and_update_cursor("exitwhen");
+	return EXITWHEN;
+}
+
+{stop}{
+	status_and_update_cursor("stop");
+	return STOP;
 }
 
 {comment} {status_and_update_cursor("comment");}

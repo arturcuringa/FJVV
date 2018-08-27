@@ -55,12 +55,23 @@ void DATATYPETOK() {
 	eat(DATATYPE);
 }
 
+void ARRAYTOK(){
+	switch(tok){
+		case ARRAY:
+			eat(ARRAY);
+			break;
+		deafult:
+			printf("Missing ARRAY declaration!\n");
+	}
+}
+
 void DATATYPENONT() {
 	switch (tok) {
 		case DATATYPE:
 			DATATYPETOK();
 			break;
-		// add array
+		case ARRAY:
+			ARRAYTOK();
 		default:
 			break;
 	}
