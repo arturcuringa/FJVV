@@ -258,6 +258,66 @@ void STMTLIST() {
 	}
 }
 
+void IFOK() {
+	switch(tok) {
+		case IF:
+			eat(IF);
+			break;
+		default:
+			error();
+	}
+}
+
+void ELSEOK() {
+	switch(tok) {
+		case ELSE:
+			eat(ELSE);
+			break;
+		default:
+			error();
+	}
+}
+
+void GOTOOK() {
+	switch(tok) {
+		case GOTO:
+			eat(GOTO);
+			break;
+		default:
+			error();
+	}
+}
+
+void LOOPOK() {
+	switch(tok) {
+		case LOOP:
+			eat(LOOP);
+			break;
+		default:
+			error();
+	}
+}
+
+void EXITWHENOK() {
+	switch(tok) {
+		case EXITWHEN:
+			eat(EXITWHEN);
+			break;
+		default:
+			error();
+	}
+}
+
+void STOPOK() {
+	switch(tok) {
+		case STOP:
+			eat(STOP);
+			break;
+		default:
+			error();
+	}
+}
+
 void PROGRAM() {
 	DECLSTMTLIST();
 	PROCDECLLIST();
