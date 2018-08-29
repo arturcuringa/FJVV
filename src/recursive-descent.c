@@ -55,6 +55,10 @@ void DATATYPETOK() {
 	eat(DATATYPE);
 }
 
+void PROCEDURETOK() {
+	eat(PROCEDURE);
+}
+
 void ARRAYTOK(){
 	switch(tok){
 		case ARRAY:
@@ -120,7 +124,35 @@ void DECLSTMTLIST() {
 }
 
 void PROCDECLLIST() {
+	switch (tok) {
+		case START:
+			break;
+		case IDENTIFIER:
+			PROCDECL();
+			PROCDECLLIST();
+			break;
+		default:
+			break;
+	}
+}
 
+void PROCDECL() {
+	switch (tok) {
+		case IDENTIFIER:
+			IDENTIFIERTOK();
+			COLONTOK();
+			PROCEDURETOK();
+			LPARENTOK();
+			SUPERIDLIST();
+			RPARENTOK();
+			TERMINATORTOK();
+			STMTLIST();
+			ENDTOK();
+			IDENTIFIERTOK();
+			break;
+		default:
+			printf("Something went wrong\n");
+	}
 }
 
 void SUPERSTMT() {
