@@ -6,7 +6,43 @@ enum token tok;
 void error() { printf("Parsing error on line %d and col %d!\n", line, col); }
 void advance() { tok = yylex(); }
 void eat(enum token t) { if (tok == t) advance(); else error(); }
+void STMT();
+void IDLESSSTMT();
 
+
+void POSTLABELESSSTMT(){
+	switch (tok){
+		case ATTR_SIGN:
+			ATTRSTMT();
+			break;
+		case LPAREN:
+			PROCSTMT();
+			break;
+		default:
+			error();
+	
+	}
+}
+
+void IDLESSSTMT(){
+	switch (tok){
+		case STOP:
+			STOPSTMT();
+			break;
+		case PUT:
+		case GET:
+			IOSTMT();
+			break;
+		case GOTO:
+		case IF:
+		case LOOP:
+		case EXITWHEN:
+			CONTROLSTMT();
+		default:
+			erorr();
+	}
+
+}
 void STARTTOK() {
 	switch (tok) {
 		case START:
@@ -24,6 +60,53 @@ void TERMINATORTOK() {
 			break;
 		default:
 			printf("missing ;\n");
+	}
+}
+
+void POSTLABELSTMT (){
+	switch (tok){
+		case COLON:
+			eat(COLON);
+			STMT();
+			break;
+		case ATTR_SIGN: 
+			ATTRSTMT();
+			break;
+		case LPAREN:
+			PROCSTMT();
+			break;
+		default:
+			error();
+	}
+}
+
+void LABELLESSTMT() {
+	switch (tok){
+		case IDENTIFIER:
+			eat(IDENTIFIER);
+			POSTLABELESSSTMT();
+			break;
+		default:
+			error();
+	}
+}
+
+void STMT() {
+	switch (tok) {
+		case IDENTIFIER:
+			LABELLESSTMT();
+			break;
+		case STOP:
+		case IF:
+		case GOTO:
+		case LOOP:
+		case EXITWHEN:
+		case PUT:
+		case GET:
+			IDLESSSTMT();
+			break;
+		default:
+			error();
 	}
 }
 
@@ -216,7 +299,7 @@ void ARRAYTOK(){
 		case ARRAY:
 			eat(ARRAY);
 			break;
-		deafult:
+		default:
 			printf("Missing ARRAY declaration!\n");
 	}
 }
@@ -307,6 +390,20 @@ void PROCDECL() {
 	}
 }
 
+
+
+void LABELSTMT() {
+	switch (tok){
+		case IDENTIFIER:
+			eat(IDENTIFIER);
+			POSTLABELSTMT();
+			break;
+		default:
+			error();
+	}
+}
+
+
 void SUPERSTMT() {
 	switch (tok) {
 		case IDENTIFIER:
@@ -318,7 +415,7 @@ void SUPERSTMT() {
 		// case LOOP
 		// case EXTIWHEN
 		// case STOP
-			IDLESSSTMT();
+			//IDLESSSTMT();
 			break;
 		default:
 			printf("Something happened\n");
@@ -341,6 +438,66 @@ void STMTLIST() {
 		default:
 		// lambda
 			break;
+	}
+}
+
+void IFOK() {
+	switch(tok) {
+		case IF:
+			eat(IF);
+			break;
+		default:
+			error();
+	}
+}
+
+void ELSEOK() {
+	switch(tok) {
+		case ELSE:
+			eat(ELSE);
+			break;
+		default:
+			error();
+	}
+}
+
+void GOTOOK() {
+	switch(tok) {
+		case GOTO:
+			eat(GOTO);
+			break;
+		default:
+			error();
+	}
+}
+
+void LOOPOK() {
+	switch(tok) {
+		case LOOP:
+			eat(LOOP);
+			break;
+		default:
+			error();
+	}
+}
+
+void EXITWHENOK() {
+	switch(tok) {
+		case EXITWHEN:
+			eat(EXITWHEN);
+			break;
+		default:
+			error();
+	}
+}
+
+void STOPOK() {
+	switch(tok) {
+		case STOP:
+			eat(STOP);
+			break;
+		default:
+			error();
 	}
 }
 
