@@ -8,6 +8,29 @@ void error() { printf("Parsing error on line %d and col %d!\n", line, col); }
 void advance() { tok = yylex(); }
 void eat(enum token t) { if (tok == t) advance(); else error(); }
 
+void STOPSTMT(){
+	switch (tok) {
+		case STOP:
+			STOPTOK();
+			break;
+		default:
+			error();
+	}
+
+}
+
+void ATTRSTMT() {
+	switch(tok){
+		case ATTR_SIGN:
+			eat(ATTR_SIGN);
+			E();
+			break;
+		default:
+			error();
+	}
+
+}
+
 
 void POSTLABELESSSTMT(){
 	switch (tok){
@@ -498,7 +521,7 @@ void EXITWHENOK() {
 	}
 }
 
-void STOPOK() {
+void STOPTOK() {
 	switch(tok) {
 		case STOP:
 			eat(STOP);
