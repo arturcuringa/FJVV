@@ -1,0 +1,49 @@
+#ifndef __RECURSIVE_DESCENT__
+#define __RECURSIVE_DESCENT__
+
+void STMT();
+void IDLESSSTMT();
+void POSTLABELESSSTMT();
+void IDLESSSTMT();
+void STARTTOK();
+void TERMINATORTOK();
+void POSTLABELSTMT ();
+void LABELLESSTMT();
+void STMT();
+void LPARENTOK();
+void RPARENTOK();
+void DECLARETOK();
+void ENDTOK();
+void IDENTIFIERTOK();
+void COMMATOK();
+void DATATYPETOK();
+void PROCEDURETOK();
+void EXPRLIST();
+void EXPRLISTTAIL();
+void E();
+void E_();
+void A();
+void T();
+void T_();
+void B();
+void T2();
+void ARRAYTOK();
+void DATATYPENONT();
+void IDLIST2();
+void IDLIST();
+void DECLSTMT();
+void DECLSTMTLIST();
+void PROCDECLLIST();
+void PROCDECL();
+void LABELSTMT();
+void SUPERSTMT();
+void STMTLIST();
+void IFOK();
+void ELSEOK();
+void GOTOOK();
+void LOOPOK();
+void EXITWHENOK();
+void STOPOK();
+void PROGRAM();
+
+#endif

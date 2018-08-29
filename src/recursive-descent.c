@@ -1,13 +1,12 @@
 #include "enum_token.h"
 #include "lex.yy.c"
+#include "recursive-descent.h"
 #include <stdio.h>
 
 enum token tok;
 void error() { printf("Parsing error on line %d and col %d!\n", line, col); }
 void advance() { tok = yylex(); }
 void eat(enum token t) { if (tok == t) advance(); else error(); }
-void STMT();
-void IDLESSSTMT();
 
 
 void POSTLABELESSSTMT(){
@@ -150,6 +149,8 @@ void EXPRLIST() {
 		case IDENTIFIER:
 		case MINUS_SIGN:
 		case NEG_SIGN:
+		case INTEGER:
+		case FLOAT:
 			E();
 			EXPRLISTTAIL();
 			break;
@@ -178,6 +179,8 @@ void E() {
 		case IDENTIFIER:
 		case MINUS_SIGN:
 		case NEG_SIGN:
+		case INTEGER:
+		case FLOAT:
 			T();
 			E_();
 			break;
@@ -223,6 +226,8 @@ void T() {
 		case IDENTIFIER:
 		case MINUS_SIGN:
 		case NEG_SIGN:
+		case INTEGER:
+		case FLOAT:
 			T2();
 			T_();
 			break;
@@ -270,7 +275,7 @@ void B() {
 			DIFF_SIGNTOK();
 			break;
 		case LESS_EQ_SIGN:
-			LESS_EQ_SIGN();
+			LESS_EQ_SIGNTOK();
 			break;
 		case GREATER_EQ_SIGN:
 			GREATER_EQ_SIGNTOK();
@@ -286,6 +291,8 @@ void T2() {
 		case IDENTIFIER:
 		case MINUS_SIGN:
 		case NEG_SIGN:
+		case INTEGER:
+		case FLOAT:
 			T3();
 			T2_();
 			break;
