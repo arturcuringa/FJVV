@@ -2,6 +2,7 @@
 #define __RECURSIVE_DESCENT__
 
 void STMT();
+void CONTROLSTMT();
 void IDLESSSTMT();
 void POSTLABELESSSTMT();
 void IDLESSSTMT();
@@ -38,12 +39,18 @@ void PROCDECL();
 void LABELSTMT();
 void SUPERSTMT();
 void STMTLIST();
-void IFOK();
-void ELSEOK();
-void GOTOOK();
-void LOOPOK();
-void EXITWHENOK();
-void STOPOK();
+void IFTOK();
+void ELSETOK();
+void ELSESTMT();
+void GOTOTOK();
+void GOTOSTMT();
+void LOOPTOK();
+void EXITWHENTOK();
+void EXITSTMT();
+void SKIPTOK();
+void SKIPSTMT();
+void STOPTOK();
+void STOPSTMT();
 void PROGRAM();
 
 #endif
