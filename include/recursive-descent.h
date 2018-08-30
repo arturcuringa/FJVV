@@ -52,5 +52,8 @@ void SKIPSTMT();
 void STOPTOK();
 void STOPSTMT();
 void PROGRAM();
+void ENDIFTOK();
+void ENDLOOPTOK();
+void THENTOK();
 
 #endif
