@@ -54,7 +54,8 @@ GOTO 	        ,
 LOOP 	        ,
 ENDLOOP         ,
 EXITWHEN        ,
-STOP 	
+STOP            ,
+TOKENENUMSIZE
 };
 
 #endif
