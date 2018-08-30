@@ -33,6 +33,9 @@ void GOTOSTMT(){
 		case GOTO:
 			GOTOTOK();
 			break;
+		case IDENTIFIER:
+			IDENTIFIERTOK();
+			break;
 		default:
 			error();
 	}
@@ -52,6 +55,14 @@ void EXITSTMT() {
 	switch(tok) {
 		case EXITWHEN:
 			eat(EXITWHENTOK);
+			break;
+		case LPAREN:
+		case IDENTIFIER:
+		case MINUS_SIGN:
+		case NEG_SIGN:
+		case INTEGER:
+		case FLOAT:
+			E();
 			break;
 		default:
 			error();
@@ -81,6 +92,24 @@ void POSTLABELESSSTMT(){
 		default:
 			error();
 	}
+}
+
+void CONTROLSTSMT() {
+    switch(tok) {
+        case IF:
+            IFSTMT();
+            break;
+        case GOTO:
+            GOTOSTMT();
+            break;
+        case LOOP:
+            LOOPSTMT();
+            break;
+        case EXITWHEN:
+            EXITWSTMT();
+            break;
+        default:
+            error();
 }
 
 void IDLESSSTMT(){
@@ -568,6 +597,36 @@ void SKIPTOK() {
 	switch(tok) {
 		case SKIP:
 			eat(SKIP);
+			break;
+		default:
+			error();
+	}
+}
+
+void THENTOK() {
+	switch(tok) {
+		case THEN:
+			eat(THEN);
+			break;
+		default:
+			error();
+	}
+}
+
+void ENDIFTOK() {
+	switch(tok) {
+		case ENDIF:
+			eat(ENDIF);
+			break;
+		default:
+			error();
+	}
+}
+
+void ENDLOOPTOK() {
+	switch(tok) {
+		case ENDLOOP:
+			eat(ENDLOOP);
 			break;
 		default:
 			error();
