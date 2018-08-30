@@ -16,7 +16,46 @@ void STOPSTMT(){
 		default:
 			error();
 	}
+}
 
+void SKIPSTMT(){
+	switch (tok) {
+		case STOP:
+			SKIPTOK();
+			break;
+		default:
+			error();
+	}
+}
+
+void GOTOSTMT(){
+	switch (tok) {
+		case GOTO:
+			GOTOTOK();
+			break;
+		default:
+			error();
+	}
+}
+
+void ELSESTMT(){
+	switch (tok) {
+		case ELSE:
+			ELSETOK();
+			break;
+		default:
+			error();
+	}
+}
+
+void EXITSTMT() {
+	switch(tok) {
+		case EXITWHEN:
+			eat(EXITWHENTOK);
+			break;
+		default:
+			error();
+	}
 }
 
 void ATTRSTMT() {
@@ -31,7 +70,6 @@ void ATTRSTMT() {
 
 }
 
-
 void POSTLABELESSSTMT(){
 	switch (tok){
 		case ATTR_SIGN:
@@ -42,7 +80,6 @@ void POSTLABELESSSTMT(){
 			break;
 		default:
 			error();
-	
 	}
 }
 
@@ -63,8 +100,8 @@ void IDLESSSTMT(){
 		default:
 			erorr();
 	}
-
 }
+
 void STARTTOK() {
 	switch (tok) {
 		case START:
@@ -420,8 +457,6 @@ void PROCDECL() {
 	}
 }
 
-
-
 void LABELSTMT() {
 	switch (tok){
 		case IDENTIFIER:
@@ -432,7 +467,6 @@ void LABELSTMT() {
 			error();
 	}
 }
-
 
 void SUPERSTMT() {
 	switch (tok) {
@@ -450,7 +484,6 @@ void SUPERSTMT() {
 		default:
 			printf("Something happened\n");
 			break;
-
 	}
 }
 
@@ -471,7 +504,7 @@ void STMTLIST() {
 	}
 }
 
-void IFOK() {
+void IFTOK() {
 	switch(tok) {
 		case IF:
 			eat(IF);
@@ -481,7 +514,7 @@ void IFOK() {
 	}
 }
 
-void ELSEOK() {
+void ELSETOK() {
 	switch(tok) {
 		case ELSE:
 			eat(ELSE);
@@ -491,7 +524,7 @@ void ELSEOK() {
 	}
 }
 
-void GOTOOK() {
+void GOTOTOK() {
 	switch(tok) {
 		case GOTO:
 			eat(GOTO);
@@ -501,7 +534,7 @@ void GOTOOK() {
 	}
 }
 
-void LOOPOK() {
+void LOOPTOK() {
 	switch(tok) {
 		case LOOP:
 			eat(LOOP);
@@ -511,7 +544,7 @@ void LOOPOK() {
 	}
 }
 
-void EXITWHENOK() {
+void EXITWHENTOK() {
 	switch(tok) {
 		case EXITWHEN:
 			eat(EXITWHEN);
@@ -525,6 +558,16 @@ void STOPTOK() {
 	switch(tok) {
 		case STOP:
 			eat(STOP);
+			break;
+		default:
+			error();
+	}
+}
+
+void SKIPTOK() {
+	switch(tok) {
+		case SKIP:
+			eat(SKIP);
 			break;
 		default:
 			error();
