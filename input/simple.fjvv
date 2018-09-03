@@ -10,3 +10,4 @@ END fill;
 START;
 	fill(a1, 10, 0);
 	PUT(5.5, .1, 2.);
+END;
