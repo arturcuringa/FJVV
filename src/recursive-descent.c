@@ -777,7 +777,7 @@ void T3() {
 		case INTEGER:
 		case FLOAT:
 			F();
-			T3();
+			T3_();
 			break;
 		default:
 			printf(":o\n");
