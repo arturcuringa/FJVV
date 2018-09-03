@@ -144,7 +144,7 @@ void STARTTOK() {
 }
 
 void TERMINATORTOK() {
-	switch(tok){
+	switch (tok) {
 		case TERMINATOR:
 			eat(TERMINATOR);
 			break;
@@ -153,7 +153,97 @@ void TERMINATORTOK() {
 	}
 }
 
-void POSTLABELSTMT (){
+void SEPARATORTOK() {
+	switch (tok) {
+		case SEPARATOR:
+			eat(SEPARATOR);
+			break;
+		default:
+			printf("missing ,\n");
+	}
+}
+
+void AND_SIGNTOK() {
+	switch (tok) {
+		case AND_SIGN:
+			eat(AND_SIGN);
+			break;
+		default:
+			printf("missing &\n");
+	}
+}
+
+void OR_SIGNTOK() {
+	switch (tok) {
+		case OR_SIGN:
+			eat(OR_SIGN);
+			break;
+		default:
+			printf("missing |\n");
+	}
+}
+
+void GREATER_SIGNTOK() {
+	switch (tok) {
+		case GREATER_SIGN:
+			eat(GREATER_SIGN);
+			break;
+		default:
+			printf("missing >\n");
+	}
+}
+
+void LESS_SIGNTOK() {
+	switch (tok) {
+		case LESS_SIGN:
+			eat(LESS_SIGN);
+			break;
+		default:
+			printf("missing <\n");
+	}
+}
+
+void EQUAL_SIGNTOK() {
+	switch (tok) {
+		case EQUAL_SIGN:
+			eat(EQUAL_SIGN);
+			break;
+		default:
+			printf("missing =\n");
+	}
+}
+
+void DIFF_SIGNTOK() {
+	switch (tok) {
+		case DIFF_SIGN:
+			eat(DIFF_SIGN);
+			break;
+		default:
+			printf("missing !=\n");
+	}
+}
+
+void LESS_EQ_SIGNTOK() {
+	switch (tok) {
+		case LESS_EQ_SIGN:
+			eat(LESS_EQ_SIGN);
+			break;
+		default:
+			printf("missing <=\n");
+	}
+}
+
+void GREATER_EQ_SIGNTOK() {
+	switch (tok) {
+		case GREATER_EQ_SIGN:
+			eat(GREATER_EQ_SIGN);
+			break;
+		default:
+			printf("missing >=\n");
+	}
+}
+
+void POSTLABELSTMT() {
 	switch (tok){
 		case COLON:
 			eat(COLON);
@@ -218,10 +308,6 @@ void ENDTOK() {
 
 void IDENTIFIERTOK() {
 	eat(IDENTIFIER);
-}
-
-void COMMATOK() {
-	eat(SEPARATOR);
 }
 
 void DATATYPETOK() {
@@ -559,7 +645,7 @@ void IDLIST2() {
 		case RPAREN:
 			break;
 		case SEPARATOR:
-			COMMATOK();
+			SEPARATORTOK();
 			IDENTIFIERTOK();
 			IDLIST2();
 			break;
