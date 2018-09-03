@@ -18,6 +18,7 @@ void ENDTOK();
 void IDENTIFIERTOK();
 void COMMATOK();
 void DATATYPETOK();
+void DATATYPE();
 void PROCEDURETOK();
 void SEPARATORTOK();
 void AND_SIGNTOK();
