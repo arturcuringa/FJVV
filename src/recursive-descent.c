@@ -158,7 +158,7 @@ void EXITWHENSTMT() {
 		case EXITWHEN:
 			EXITWHENTOK();
 			E();
-			break;
+			break;		
 		default:
 			error();
 	}
@@ -239,7 +239,7 @@ void STARTTOK() {
 }
 
 void TERMINATORTOK() {
-	switch(tok){
+	switch (tok) {
 		case TERMINATOR:
 			eat(TERMINATOR);
 			break;
@@ -248,7 +248,97 @@ void TERMINATORTOK() {
 	}
 }
 
-void POSTLABELSTMT (){
+void SEPARATORTOK() {
+	switch (tok) {
+		case SEPARATOR:
+			eat(SEPARATOR);
+			break;
+		default:
+			printf("missing ,\n");
+	}
+}
+
+void AND_SIGNTOK() {
+	switch (tok) {
+		case AND_SIGN:
+			eat(AND_SIGN);
+			break;
+		default:
+			printf("missing &\n");
+	}
+}
+
+void OR_SIGNTOK() {
+	switch (tok) {
+		case OR_SIGN:
+			eat(OR_SIGN);
+			break;
+		default:
+			printf("missing |\n");
+	}
+}
+
+void GREATER_SIGNTOK() {
+	switch (tok) {
+		case GREATER_SIGN:
+			eat(GREATER_SIGN);
+			break;
+		default:
+			printf("missing >\n");
+	}
+}
+
+void LESS_SIGNTOK() {
+	switch (tok) {
+		case LESS_SIGN:
+			eat(LESS_SIGN);
+			break;
+		default:
+			printf("missing <\n");
+	}
+}
+
+void EQUAL_SIGNTOK() {
+	switch (tok) {
+		case EQUAL_SIGN:
+			eat(EQUAL_SIGN);
+			break;
+		default:
+			printf("missing =\n");
+	}
+}
+
+void DIFF_SIGNTOK() {
+	switch (tok) {
+		case DIFF_SIGN:
+			eat(DIFF_SIGN);
+			break;
+		default:
+			printf("missing !=\n");
+	}
+}
+
+void LESS_EQ_SIGNTOK() {
+	switch (tok) {
+		case LESS_EQ_SIGN:
+			eat(LESS_EQ_SIGN);
+			break;
+		default:
+			printf("missing <=\n");
+	}
+}
+
+void GREATER_EQ_SIGNTOK() {
+	switch (tok) {
+		case GREATER_EQ_SIGN:
+			eat(GREATER_EQ_SIGN);
+			break;
+		default:
+			printf("missing >=\n");
+	}
+}
+
+void POSTLABELSTMT() {
 	switch (tok){
 		case COLON:
 			eat(COLON);
@@ -296,31 +386,74 @@ void STMT() {
 }
 
 void LPARENTOK() {
-	eat(LPAREN);
+	switch(tok){
+		case LPAREN:	
+			eat(LPAREN);
+			break;
+		default:
+			error();
+	}
 }
 
 void RPARENTOK() {
-	eat(RPAREN);
+	switch(tok){
+		case RPAREN:
+			eat(RPAREN);
+			break;
+		default:
+			error();
+	}
 }
 
 void DECLARETOK() {
-	eat(DECLARE);
+	switch(tok){
+		case DECLARE:
+			eat(DECLARE);
+			break;
+		default:
+			error();
+	}
 }
 
 void ENDTOK() {
-	eat(END);
+	switch(tok){
+		case END:
+			eat(END);
+			break;
+		default:
+			error();
+	}
 }
 
 void IDENTIFIERTOK() {
-	eat(IDENTIFIER);
+	switch(tok){
+		case IDENTIFIER:
+			eat(IDENTIFIER);
+			break;
+		
+		default:
+			error();
+	}
 }
 
 void COMMATOK() {
-	eat(SEPARATOR);
+	switch(tok){
+		case SEPARATOR:
+			eat(SEPARATOR);
+			break;
+		default:
+			error();
+	}
 }
 
 void PROCEDURETOK() {
-	eat(PROCEDURE);
+	switch(tok){
+		case PROCEDURE:
+			eat(PROCEDURE);
+			break;
+		default:
+			error();
+	}
 }
 
 void EXPRLIST() {
@@ -618,6 +751,9 @@ void LITERAL() {
 		case FLOAT:
 			FLOATTOK();
 			break;
+		case CHAR:
+			CHARTOK();
+			break;
 		default:
 			printf("i, literally, expected a literal......\n");
 	}
@@ -657,7 +793,7 @@ void IDLIST2() {
 		case RPAREN:
 			break;
 		case SEPARATOR:
-			COMMATOK();
+			SEPARATORTOK();
 			IDENTIFIERTOK();
 			IDLIST2();
 			break;
@@ -676,7 +812,7 @@ void DECLSTMT() {
 	LPARENTOK();
 	IDLIST();
 	RPARENTOK();
-	DATATYPENONT();
+	DATATYPE();
 }
 
 void DECLSTMTLIST() {
