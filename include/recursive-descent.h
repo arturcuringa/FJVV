@@ -59,5 +59,9 @@ void ENDIFTOK();
 void ENDLOOPTOK();
 void THENTOK();
 void IOSTMT();
+void GETTOK();
+void PUTTOK();
+void EXITWHENTOK();
+
 
 #endif

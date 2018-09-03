@@ -8,6 +8,109 @@ void error() { printf("Parsing error on line %d and col %d!\n", line, col); }
 void advance() { tok = yylex(); }
 void eat(enum token t) { if (tok == t) advance(); else error(); }
 
+void CONTROLSTMT(){
+	switch(tok){
+		case IF:
+			IFSTMT();
+			break;
+		case GOTO:
+			GOTOSTMT();
+			break;
+		case LOOP:
+			LOOPSTMT();
+			break;
+		case EXITWHEN:
+			EXITWHENSTMT();
+			break;	
+		default:
+			error();
+	}
+
+}
+
+void LOOPSTMT(){
+	switch(tok){
+		case LOOP:
+			LOOPTOK();
+			TERMINATORTOK();
+			STMTLIST();
+			ENDLOOPTOK();
+			break;
+		default:
+			error();	
+	}
+}
+
+void IOSTMT(){
+	switch(tok){
+		case GET:
+			GETTOK();
+			LPARENTOK();
+			IDLIST();
+			RPARENTOK();
+			break;
+		case PUT:
+			PUTTOK();
+			SKIPSTMT();
+			LPARENTOK();
+			IDLIST();
+			RPARENTOK();
+			break;
+		default:
+			error();
+	}
+}
+
+void PUTTOK(){
+	switch(tok){
+		case PUT:
+			eat(PUT);
+			break;
+		default:
+			error();
+	}
+
+}
+
+void GETTOK(){
+	switch(tok){
+		case GET:
+			eat(GET);
+			break;
+		default:
+			error();	
+	}
+}
+
+void IFSTMT(){
+	switch(tok){
+		case IF:
+			IFTOK();
+			E();
+			THENTOK();
+			STMTLIST();
+			ELSESTMT();
+			ENDIFTOK();
+			break;
+		default:
+			error();
+	}
+
+}
+
+void PROCSTMT(){
+	switch(tok){
+		case LPAREN:
+			eat(LPAREN);
+			EXPRLIST();
+			eat(RPAREN);
+			break;
+		default:
+			error();
+			
+	}
+}
+
 void STOPSTMT(){
 	switch (tok) {
 		case STOP:
@@ -32,8 +135,6 @@ void GOTOSTMT(){
 	switch (tok) {
 		case GOTO:
 			GOTOTOK();
-			break;
-		case IDENTIFIER:
 			IDENTIFIERTOK();
 			break;
 		default:
@@ -45,6 +146,7 @@ void ELSESTMT(){
 	switch (tok) {
 		case ELSE:
 			ELSETOK();
+			STMTLIST();
 			break;
 		default:
 			error();
@@ -54,15 +156,7 @@ void ELSESTMT(){
 void EXITWHENSTMT() {
 	switch(tok) {
 		case EXITWHEN:
-			eat(EXITWHEN);
-			E();
-			break;
-		case LPAREN:
-		case IDENTIFIER:
-		case MINUS_SIGN:
-		case NEG_SIGN:
-		case INTEGER:
-		case FLOAT:
+			EXITWHENTOK();
 			E();
 			break;
 		default:
@@ -128,6 +222,7 @@ void IDLESSSTMT(){
 		case LOOP:
 		case EXITWHEN:
 			CONTROLSTMT();
+			break;
 		default:
 			error();
 	}
