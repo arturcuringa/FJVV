@@ -1,5 +1,4 @@
 bin/
-lex.yy.c
 *~
 .vscode/*
 .DS_Store
