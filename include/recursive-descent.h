@@ -88,6 +88,8 @@ void IOSTMT();
 void GETTOK();
 void PUTTOK();
 void EXITWHENTOK();
-
+void CHAR_TYPETOK();
+void INT_TYPETOK();
+void FLOAT_TYPETOK();
 
 #endif

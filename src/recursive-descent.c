@@ -319,10 +319,6 @@ void COMMATOK() {
 	eat(SEPARATOR);
 }
 
-void DATATYPETOK() {
-	eat(DATATYPE);
-}
-
 void PROCEDURETOK() {
 	eat(PROCEDURE);
 }
@@ -637,15 +633,22 @@ void ARRAYTOK(){
 	}
 }
 
-void DATATYPENONT() {
+void DATATYPE() {
 	switch (tok) {
-		case DATATYPE:
-			DATATYPETOK();
+		case INT_TYPE:
+			INT_TYPETOK();
+			break;
+		case CHAR_TYPE:
+			CHAR_TYPETOK();
+			break;
+		case FLOAT_TYPE:
+			FLOAT_TYPETOK();
 			break;
 		case ARRAY:
 			ARRAYTOK();
-		default:
 			break;
+		default:
+			error();
 	}
 }
 
@@ -868,6 +871,39 @@ void ENDLOOPTOK() {
 		default:
 			error();
 	}
+}
+
+void CHAR_TYPETOK(){
+	switch(tok){
+		case CHAR_TYPE:
+			eat(CHAR_TYPE);
+			break;
+		default:
+			error();
+	}
+
+}
+
+void INT_TYPETOK(){
+	switch(tok){
+		case INT_TYPE:
+			eat(INT_TYPE);
+			break;
+		default:
+			error();
+	}
+
+}
+
+void FLOAT_TYPETOK(){
+	switch(tok){
+		case FLOAT_TYPE:
+			eat(FLOAT_TYPE);
+			break;
+		default:
+			error();
+	}
+
 }
 
 void PROGRAM() {
