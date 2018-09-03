@@ -65,7 +65,7 @@ void populateM(std::vector<std::vector<std::shared_ptr<std::vector<Token>>>> &M)
 
     M[LABELSTMT][IDENTIFIER] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(IDENTIFIER), makeNonTerminal(POSTLABELSTMT)}));
 
-    M[POSTLABELSTMT][LBRACKET] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(PROCSTMT)}));
+    M[POSTLABELSTMT][LPAREN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(PROCSTMT)}));
     M[POSTLABELSTMT][COLON] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(COLON), makeNonTerminal(STMT)}));
     M[POSTLABELSTMT][ATTR_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(ATTRSTMT)}));
 
@@ -74,7 +74,7 @@ void populateM(std::vector<std::vector<std::shared_ptr<std::vector<Token>>>> &M)
 
     M[LABELLESSSTMT][IDENTIFIER] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(IDENTIFIER), makeNonTerminal(POSTLABELLESSSTMT)}));
 
-    M[POSTLABELLESSSTMT][LBRACKET] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(PROCSTMT)}));
+    M[POSTLABELLESSSTMT][LPAREN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(PROCSTMT)}));
     M[POSTLABELLESSSTMT][ATTR_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(ATTRSTMT)}));
 
     M[IDLESSSTMT][IF] = M[IDLESSSTMT][GOTO] = M[IDLESSSTMT][LOOP] = M[IDLESSSTMT][EXITWHEN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(CONTROLSTMT)}));
@@ -102,12 +102,12 @@ void populateM(std::vector<std::vector<std::shared_ptr<std::vector<Token>>>> &M)
     M[IOSTMT][GET] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(GET), makeToken(LPAREN), makeNonTerminal(IDLIST), makeToken(RPAREN)}));
     M[IOSTMT][PUT] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(PUT), makeNonTerminal(SKIPNONT), makeToken(LPAREN), makeNonTerminal(IDLIST), makeToken(RPAREN)}));
 
-    M[SKIPNONT][LBRACKET] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>());
+    M[SKIPNONT][LPAREN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>());
     M[SKIPNONT][SKIP] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(SKIP)}));
 
     M[ATTRSTMT][ATTR_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(ATTR_SIGN), makeNonTerminal(E)}));
 
-    M[PROCSTMT][LBRACKET] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(LPAREN), makeNonTerminal(EXPRLIST), makeToken(RPAREN)}));
+    M[PROCSTMT][LPAREN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(LPAREN), makeNonTerminal(EXPRLIST), makeToken(RPAREN)}));
 
     M[SUPERIDLIST][RPAREN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>());
     M[SUPERIDLIST][IDENTIFIER] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(IDLIST)}));
@@ -160,7 +160,7 @@ void populateM(std::vector<std::vector<std::shared_ptr<std::vector<Token>>>> &M)
     M[D][DIV_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(DIV_SIGN)}));
     M[D][MOD_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(MOD_SIGN)}));
 
-    M[F][LBRACKET] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(LPAREN), makeNonTerminal(F), makeToken(RPAREN)}));
+    M[F][LPAREN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(LPAREN), makeNonTerminal(F), makeToken(RPAREN)}));
     M[F][IDENTIFIER] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(IDENTIFIER)}));
     M[F][MINUS_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(MINUS_SIGN), makeNonTerminal(F)}));
     M[F][NEG_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(NEG_SIGN), makeNonTerminal(F)}));
@@ -187,13 +187,12 @@ int main(int argc, char const *argv[]) {
                 int yylexres = yylex();
                 proximoDaFita = (enum token) yylexres;
             } else {
-                std::cout << "Terminal: " << X.terminal << "; proximoDaFita: " << proximoDaFita << std::endl;
-                std::cout << "Terminal sobrando, saindo\n";
+                std::cout << "Esperava encontrar terminal " << tokenNames[X.terminal] << ", encontrou " << tokenNames[proximoDaFita] << std::endl;
                 return 0; // erro
             }
         } else {
             if (M[X.nont][proximoDaFita] == nullptr) {
-                std::cout << "Token: " << X.nont << "; proximoDaFita: " << proximoDaFita << std::endl;
+                std::cout << "Token inesperado: \"" << tokenNames[proximoDaFita] << "\" para produção " << nontNames[X.nont] << std::endl;
                 std::cout << "Regra da gramatica inexistente, saindo" << std::endl;
                return 0; // erro
             } else {
