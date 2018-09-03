@@ -6,12 +6,12 @@
 enum token tok;
 void error() { printf("Parsing error on line %d and col %d!\n", line, col); }
 void advance() { tok = yylex(); }
-void eat(enum token t) { if (tok == t) advance(); else error(); }
+void eat(enum token t) { if (tok == t) advance(); else printf("this token is too big to eat!\n"); }
 
 void SUPERIDLIST(){
 	switch (tok) {
 		case IDENTIFIER:
-			IDENTIFIERTOK();
+			IDLIST();
 			break;
 		default:
 			break;
@@ -67,6 +67,36 @@ void IOSTMT(){
 			LPARENTOK();
 			IDLIST();
 			RPARENTOK();
+			break;
+		default:
+			error();
+	}
+
+}
+void LBRACKETTOK(){
+	switch(tok){
+		case LBRACKET:
+			eat(LBRACKET);
+			break;
+		default:
+			error();
+	}
+}
+
+void RBRACKETTOK(){
+	switch(tok){
+		case RBRACKET:
+			eat(RBRACKET);
+			break;
+		default:
+			error();
+	}
+}
+
+void OFTOK(){
+	switch(tok){
+		case OF:
+			eat(OF);
 			break;
 		default:
 			error();
@@ -246,7 +276,7 @@ void STARTTOK() {
 			eat(START);
 			break;
 		default:
-			printf("Missing 'START'\n");
+			printf("Missing 'START' \n" );
 	}
 }
 
@@ -833,7 +863,7 @@ void F() {
 	switch (tok) {
 		case LPAREN:
 			LPARENTOK();
-			F();
+			E();
 			RPARENTOK();
 			break;
 		case IDENTIFIER:
@@ -882,6 +912,22 @@ void ARRAYTOK(){
 	}
 }
 
+void ARRAYTYPE(){
+	switch(tok) {
+		case ARRAY:
+			ARRAYTOK();
+			LBRACKETTOK();
+			E();
+			RBRACKETTOK();
+			OFTOK();
+			DATATYPE();
+			break;
+		default:
+		error();
+	}
+
+}
+
 void DATATYPE() {
 	switch (tok) {
 		case INT_TYPE:
@@ -894,7 +940,7 @@ void DATATYPE() {
 			FLOAT_TYPETOK();
 			break;
 		case ARRAY:
-			ARRAYTOK();
+			ARRAYTYPE();
 			break;
 		default:
 			error();
@@ -969,6 +1015,7 @@ void PROCDECL() {
 			STMTLIST();
 			ENDTOK();
 			IDENTIFIERTOK();
+			TERMINATORTOK();
 			break;
 		default:
 			printf("Something went wrong\n");
@@ -991,13 +1038,14 @@ void SUPERSTMT() {
 		case IDENTIFIER:
 			LABELSTMT();
 			break;
-		// case IOSTMT
-		// case IF
-		// case GOTO
-		// case LOOP
-		// case EXTIWHEN
-		// case STOP
-			//IDLESSSTMT();
+		 case GET:
+		 case PUT:
+		 case IF:
+		 case GOTO:
+		 case LOOP:
+		 case EXITWHEN:
+		 case STOP:
+			IDLESSSTMT();
 			break;
 		default:
 			printf("Something happened\n");
@@ -1008,16 +1056,17 @@ void SUPERSTMT() {
 void STMTLIST() {
 	switch (tok) {
 		case IDENTIFIER:
-		// iostmt
-		// if
-		// loop
-		// goto
-		// exitwhen
-		// stop
+		case GET:
+		case PUT:
+		case IF:
+		case GOTO:
+		case LOOP:
+		case EXITWHEN:
+		case STOP:
 			SUPERSTMT();
+			TERMINATORTOK();
 			STMTLIST();
 		default:
-		// lambda
 			break;
 	}
 }
