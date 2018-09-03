@@ -456,6 +456,107 @@ void PROCEDURETOK() {
 	}
 }
 
+void CHARTOK() {
+	switch (tok) {
+		case CHAR:
+			eat(CHAR);
+			break;
+		default:
+			error();
+	}
+}
+
+void COLONTOK() {
+	switch (tok) {
+		case COLON:
+			eat(COLON);
+			break;
+		default:
+			error();
+	}
+}
+
+
+void DIV_SIGNTOK() {
+	switch (tok) {
+		case DIV_SIGN:
+			eat(DIV_SIGN);
+			break;
+		default:
+			error();
+	}
+}
+
+void FLOATTOK() {
+	switch (tok) {
+		case FLOAT:
+			eat(FLOAT);
+			break;
+		default:
+			error();
+	}
+}
+
+void INTEGERTOK() {
+	switch (tok) {
+		case INTEGER:
+			eat(INTEGER);
+			break;
+		default:
+			error();
+	}
+}
+
+void MINUS_SIGNTOK() {
+	switch (tok) {
+		case MINUS_SIGN:
+			eat(MINUS_SIGN);
+			break;
+		default:
+			error();
+	}
+}
+
+void MOD_SIGNTOK() {
+	switch (tok) {
+		case MOD_SIGN:
+			eat(MOD_SIGN);
+			break;
+		default:
+			error();
+	}
+}
+
+void MULT_SIGNTOK() {
+	switch (tok) {
+		case MULT_SIGN:
+			eat(MULT_SIGN);
+			break;
+		default:
+			error();
+	}
+}
+
+void NEG_SIGNTOK() {
+	switch (tok) {
+		case NEG_SIGN:
+			eat(NEG_SIGN);
+			break;
+		default:
+			error();
+	}
+}
+
+void PLUS_SIGNTOK() {
+	switch (tok) {
+		case PLUS_SIGN:
+			eat(PLUS_SIGN);
+			break;
+		default:
+			error();
+	}
+}
+
 void EXPRLIST() {
 	switch (tok) {
 		case RPAREN:
