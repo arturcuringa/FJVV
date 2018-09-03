@@ -47,6 +47,7 @@ enum nonT {
     D 	,
     F 	,
     LITERAL,
+    ARRAYACCESS,
     NONTENUMSIZE
 };
 
@@ -95,7 +96,8 @@ const char* nontNames[] = {
     "T3_" ,
     "D"   ,
     "F"   ,
-    "LITERAL"
+    "LITERAL",
+    "ARRAYACCESS"
 };
 
 #endif
