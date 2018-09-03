@@ -80,3 +80,7 @@ F 	-> id
 F 	-> LITERAL
 LITERAL -> integer
 LITERAL -> float
+SKIPSTMT -> ''
+SKIPSTMT -> SKIP
+IOSTMT -> GET ( IDLIST )
+IOSTMT -> PUT SKIPSTMT ( IDLIST )
