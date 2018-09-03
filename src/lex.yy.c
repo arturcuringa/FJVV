@@ -2171,7 +2171,7 @@ void yyfree (void * ptr )
 
 
 void lexema_status(const char * token_name){
-	printf("%25s %25s   (len %lu, line %u, col %u)\n",token_name, yytext, yyleng, line, col);
+	printf("%25s %25s   (len %zu, line %d, col %u)\n",token_name, yytext, yyleng, line, col);
 }
 
 void status_and_update_cursor(const char * token_name){

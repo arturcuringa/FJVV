@@ -8,6 +8,121 @@ void error() { printf("Parsing error on line %d and col %d!\n", line, col); }
 void advance() { tok = yylex(); }
 void eat(enum token t) { if (tok == t) advance(); else error(); }
 
+void SUPERIDLIST(){
+	switch (tok) {
+		case IDENTIFIER:
+			IDENTIFIERTOK();
+			break;
+		default:
+			break;
+	}
+
+
+}
+
+void CONTROLSTMT(){
+	switch (tok) {
+		case IF:
+			IFSTMT();
+			break;
+		case GOTO:
+			GOTOSTMT();
+			break;
+		case LOOP:
+			LOOPSTMT();
+			break;
+		case EXITWHEN:
+			EXITWHENSTMT();
+			break;	
+		default:
+			error();
+	}
+
+}
+
+void LOOPSTMT(){
+	switch (tok) {
+		case LOOP:
+			LOOPTOK();
+			TERMINATORTOK();
+			STMTLIST();
+			ENDLOOPTOK();
+			break;
+		default:
+			error();	
+	}
+}
+
+void IOSTMT(){
+	switch (tok) {
+		case GET:
+			GETTOK();
+			LPARENTOK();
+			IDLIST();
+			RPARENTOK();
+			break;
+		case PUT:
+			PUTTOK();
+			SKIPSTMT();
+			LPARENTOK();
+			IDLIST();
+			RPARENTOK();
+			break;
+		default:
+			error();
+	}
+}
+
+void PUTTOK(){
+	switch (tok) {
+		case PUT:
+			eat(PUT);
+			break;
+		default:
+			error();
+	}
+
+}
+
+void GETTOK(){
+	switch (tok) {
+		case GET:
+			eat(GET);
+			break;
+		default:
+			error();	
+	}
+}
+
+void IFSTMT(){
+	switch (tok) {
+		case IF:
+			IFTOK();
+			E();
+			THENTOK();
+			STMTLIST();
+			ELSESTMT();
+			ENDIFTOK();
+			break;
+		default:
+			error();
+	}
+
+}
+
+void PROCSTMT(){
+	switch (tok) {
+		case LPAREN:
+			eat(LPAREN);
+			EXPRLIST();
+			eat(RPAREN);
+			break;
+		default:
+			error();
+			
+	}
+}
+
 void STOPSTMT(){
 	switch (tok) {
 		case STOP:
@@ -51,7 +166,7 @@ void ELSESTMT(){
 }
 
 void EXITWHENSTMT() {
-	switch(tok) {
+	switch (tok) {
 		case EXITWHEN:
 			EXITWHENTOK();
 			E();
@@ -62,7 +177,7 @@ void EXITWHENSTMT() {
 }
 
 void ATTRSTMT() {
-	switch(tok){
+	switch (tok) {
 		case ATTR_SIGN:
 			eat(ATTR_SIGN);
 			E();
@@ -74,7 +189,7 @@ void ATTRSTMT() {
 }
 
 void POSTLABELESSSTMT(){
-	switch (tok){
+	switch (tok) {
 		case ATTR_SIGN:
 			ATTRSTMT();
 			break;
@@ -87,7 +202,7 @@ void POSTLABELESSSTMT(){
 }
 
 void CONTROLSTSMT() {
-    switch(tok) {
+    switch (tok) {
         case IF:
             IFSTMT();
             break;
@@ -106,7 +221,7 @@ void CONTROLSTSMT() {
 }
 
 void IDLESSSTMT(){
-	switch (tok){
+	switch (tok) {
 		case STOP:
 			STOPSTMT();
 			break;
@@ -236,7 +351,7 @@ void GREATER_EQ_SIGNTOK() {
 }
 
 void POSTLABELSTMT() {
-	switch (tok){
+	switch (tok) {
 		case COLON:
 			eat(COLON);
 			STMT();
@@ -253,7 +368,7 @@ void POSTLABELSTMT() {
 }
 
 void LABELLESSTMT() {
-	switch (tok){
+	switch (tok) {
 		case IDENTIFIER:
 			eat(IDENTIFIER);
 			POSTLABELESSSTMT();
@@ -283,31 +398,175 @@ void STMT() {
 }
 
 void LPARENTOK() {
-	eat(LPAREN);
+	switch (tok) {
+		case LPAREN:	
+			eat(LPAREN);
+			break;
+		default:
+			error();
+	}
 }
 
 void RPARENTOK() {
-	eat(RPAREN);
+	switch (tok) {
+		case RPAREN:
+			eat(RPAREN);
+			break;
+		default:
+			error();
+	}
 }
 
 void DECLARETOK() {
-	eat(DECLARE);
+	switch (tok) {
+		case DECLARE:
+			eat(DECLARE);
+			break;
+		default:
+			error();
+	}
 }
 
 void ENDTOK() {
-	eat(END);
+	switch (tok) {
+		case END:
+			eat(END);
+			break;
+		default:
+			error();
+	}
 }
 
 void IDENTIFIERTOK() {
-	eat(IDENTIFIER);
+	switch (tok) {
+		case IDENTIFIER:
+			eat(IDENTIFIER);
+			break;
+		
+		default:
+			error();
+	}
 }
 
-void DATATYPETOK() {
-	eat(DATATYPE);
+void COMMATOK() {
+	switch (tok) {
+		case SEPARATOR:
+			eat(SEPARATOR);
+			break;
+		default:
+			error();
+	}
 }
 
 void PROCEDURETOK() {
-	eat(PROCEDURE);
+	switch (tok) {
+		case PROCEDURE:
+			eat(PROCEDURE);
+			break;
+		default:
+			error();
+	}
+}
+
+void CHARTOK() {
+	switch (tok) {
+		case CHAR:
+			eat(CHAR);
+			break;
+		default:
+			error();
+	}
+}
+
+void COLONTOK() {
+	switch (tok) {
+		case COLON:
+			eat(COLON);
+			break;
+		default:
+			error();
+	}
+}
+
+
+void DIV_SIGNTOK() {
+	switch (tok) {
+		case DIV_SIGN:
+			eat(DIV_SIGN);
+			break;
+		default:
+			error();
+	}
+}
+
+void FLOATTOK() {
+	switch (tok) {
+		case FLOAT:
+			eat(FLOAT);
+			break;
+		default:
+			error();
+	}
+}
+
+void INTEGERTOK() {
+	switch (tok) {
+		case INTEGER:
+			eat(INTEGER);
+			break;
+		default:
+			error();
+	}
+}
+
+void MINUS_SIGNTOK() {
+	switch (tok) {
+		case MINUS_SIGN:
+			eat(MINUS_SIGN);
+			break;
+		default:
+			error();
+	}
+}
+
+void MOD_SIGNTOK() {
+	switch (tok) {
+		case MOD_SIGN:
+			eat(MOD_SIGN);
+			break;
+		default:
+			error();
+	}
+}
+
+void MULT_SIGNTOK() {
+	switch (tok) {
+		case MULT_SIGN:
+			eat(MULT_SIGN);
+			break;
+		default:
+			error();
+	}
+}
+
+void NEG_SIGNTOK() {
+	switch (tok) {
+		case NEG_SIGN:
+			eat(NEG_SIGN);
+			break;
+		default:
+			error();
+	}
+}
+
+void PLUS_SIGNTOK() {
+	switch (tok) {
+		case PLUS_SIGN:
+			eat(PLUS_SIGN);
+			break;
+		default:
+			error();
+	}
 }
 
 void EXPRLIST() {
@@ -605,13 +864,16 @@ void LITERAL() {
 		case FLOAT:
 			FLOATTOK();
 			break;
+		case CHAR:
+			CHARTOK();
+			break;
 		default:
 			printf("i, literally, expected a literal......\n");
 	}
 }
 
 void ARRAYTOK(){
-	switch(tok){
+	switch (tok) {
 		case ARRAY:
 			eat(ARRAY);
 			break;
@@ -620,20 +882,27 @@ void ARRAYTOK(){
 	}
 }
 
-void DATATYPENONT() {
+void DATATYPE() {
 	switch (tok) {
-		case DATATYPE:
-			DATATYPETOK();
+		case INT_TYPE:
+			INT_TYPETOK();
+			break;
+		case CHAR_TYPE:
+			CHAR_TYPETOK();
+			break;
+		case FLOAT_TYPE:
+			FLOAT_TYPETOK();
 			break;
 		case ARRAY:
 			ARRAYTOK();
-		default:
 			break;
+		default:
+			error();
 	}
 }
 
 void IDLIST2() {
-	switch(tok) {
+	switch (tok) {
 		case RPAREN:
 			break;
 		case SEPARATOR:
@@ -656,7 +925,7 @@ void DECLSTMT() {
 	LPARENTOK();
 	IDLIST();
 	RPARENTOK();
-	DATATYPENONT();
+	DATATYPE();
 }
 
 void DECLSTMTLIST() {
@@ -707,7 +976,7 @@ void PROCDECL() {
 }
 
 void LABELSTMT() {
-	switch (tok){
+	switch (tok) {
 		case IDENTIFIER:
 			eat(IDENTIFIER);
 			POSTLABELSTMT();
@@ -754,7 +1023,7 @@ void STMTLIST() {
 }
 
 void IFTOK() {
-	switch(tok) {
+	switch (tok) {
 		case IF:
 			eat(IF);
 			break;
@@ -764,7 +1033,7 @@ void IFTOK() {
 }
 
 void ELSETOK() {
-	switch(tok) {
+	switch (tok) {
 		case ELSE:
 			eat(ELSE);
 			break;
@@ -774,7 +1043,7 @@ void ELSETOK() {
 }
 
 void GOTOTOK() {
-	switch(tok) {
+	switch (tok) {
 		case GOTO:
 			eat(GOTO);
 			break;
@@ -784,7 +1053,7 @@ void GOTOTOK() {
 }
 
 void LOOPTOK() {
-	switch(tok) {
+	switch (tok) {
 		case LOOP:
 			eat(LOOP);
 			break;
@@ -794,7 +1063,7 @@ void LOOPTOK() {
 }
 
 void EXITWHENTOK() {
-	switch(tok) {
+	switch (tok) {
 		case EXITWHEN:
 			eat(EXITWHEN);
 			break;
@@ -804,7 +1073,7 @@ void EXITWHENTOK() {
 }
 
 void STOPTOK() {
-	switch(tok) {
+	switch (tok) {
 		case STOP:
 			eat(STOP);
 			break;
@@ -814,7 +1083,7 @@ void STOPTOK() {
 }
 
 void SKIPTOK() {
-	switch(tok) {
+	switch (tok) {
 		case SKIP:
 			eat(SKIP);
 			break;
@@ -824,7 +1093,7 @@ void SKIPTOK() {
 }
 
 void THENTOK() {
-	switch(tok) {
+	switch (tok) {
 		case THEN:
 			eat(THEN);
 			break;
@@ -834,7 +1103,7 @@ void THENTOK() {
 }
 
 void ENDIFTOK() {
-	switch(tok) {
+	switch (tok) {
 		case ENDIF:
 			eat(ENDIF);
 			break;
@@ -844,13 +1113,46 @@ void ENDIFTOK() {
 }
 
 void ENDLOOPTOK() {
-	switch(tok) {
+	switch (tok) {
 		case ENDLOOP:
 			eat(ENDLOOP);
 			break;
 		default:
 			error();
 	}
+}
+
+void CHAR_TYPETOK(){
+	switch (tok) {
+		case CHAR_TYPE:
+			eat(CHAR_TYPE);
+			break;
+		default:
+			error();
+	}
+
+}
+
+void INT_TYPETOK(){
+	switch (tok) {
+		case INT_TYPE:
+			eat(INT_TYPE);
+			break;
+		default:
+			error();
+	}
+
+}
+
+void FLOAT_TYPETOK(){
+	switch (tok) {
+		case FLOAT_TYPE:
+			eat(FLOAT_TYPE);
+			break;
+		default:
+			error();
+	}
+
 }
 
 void PROGRAM() {
