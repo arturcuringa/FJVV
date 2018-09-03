@@ -7,8 +7,8 @@ enum nonT {
     DECLSTMT ,
     PROCDECLLIST ,
     PROCDECL ,
-    DATATYPENONT ,
-    ARRAYTYPE ,
+    DATATYPE ,
+    ARRAYNONT ,
     STMTLIST ,
     SUPERSTMT ,
     LABELSTMT ,
@@ -46,6 +46,7 @@ enum nonT {
     T3_	,
     D 	,
     F 	,
+    LITERAL,
     NONTENUMSIZE
 };
 
