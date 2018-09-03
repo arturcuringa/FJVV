@@ -46,6 +46,7 @@ typedef int16_t flex_int16_t;
 typedef uint16_t flex_uint16_t;
 typedef int32_t flex_int32_t;
 typedef uint32_t flex_uint32_t;
+typedef uint64_t flex_uint64_t;
 #else
 typedef signed char flex_int8_t;
 typedef short int flex_int16_t;
@@ -53,6 +54,7 @@ typedef int flex_int32_t;
 typedef unsigned char flex_uint8_t; 
 typedef unsigned short int flex_uint16_t;
 typedef unsigned int flex_uint32_t;
+#endif /* ! C99 */
 
 /* Limits of integral types. */
 #ifndef INT8_MIN
@@ -82,8 +84,6 @@ typedef unsigned int flex_uint32_t;
 #ifndef UINT32_MAX
 #define UINT32_MAX             (4294967295U)
 #endif
-
-#endif /* ! C99 */
 
 #endif /* ! FLEXINT_H */
 
@@ -141,15 +141,7 @@ typedef unsigned int flex_uint32_t;
 
 /* Size of default input buffer. */
 #ifndef YY_BUF_SIZE
-#ifdef __ia64__
-/* On IA-64, the buffer size is 16k, not 8k.
- * Moreover, YY_BUF_SIZE is 2*YY_READ_BUF_SIZE in the general case.
- * Ditto for the __ia64__ case accordingly.
- */
-#define YY_BUF_SIZE 32768
-#else
 #define YY_BUF_SIZE 16384
-#endif /* __ia64__ */
 #endif
 
 /* The state buf must be large enough to hold one state per character in the main buffer.
@@ -161,7 +153,12 @@ typedef unsigned int flex_uint32_t;
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 #endif
 
-extern int yyleng;
+#ifndef YY_TYPEDEF_YY_SIZE_T
+#define YY_TYPEDEF_YY_SIZE_T
+typedef size_t yy_size_t;
+#endif
+
+extern yy_size_t yyleng;
 
 extern FILE *yyin, *yyout;
 
@@ -187,11 +184,6 @@ extern FILE *yyin, *yyout;
 
 #define unput(c) yyunput( c, (yytext_ptr)  )
 
-#ifndef YY_TYPEDEF_YY_SIZE_T
-#define YY_TYPEDEF_YY_SIZE_T
-typedef size_t yy_size_t;
-#endif
-
 #ifndef YY_STRUCT_YY_BUFFER_STATE
 #define YY_STRUCT_YY_BUFFER_STATE
 struct yy_buffer_state
@@ -209,7 +201,7 @@ struct yy_buffer_state
 	/* Number of characters read into yy_ch_buf, not including EOB
 	 * characters.
 	 */
-	int yy_n_chars;
+	yy_size_t yy_n_chars;
 
 	/* Whether we "own" the buffer - i.e., we know we created it,
 	 * and can realloc() it to grow it, and should free() it to
@@ -279,8 +271,8 @@ static YY_BUFFER_STATE * yy_buffer_stack = 0; /**< Stack as an array. */
 
 /* yy_hold_char holds the character lost when yytext is formed. */
 static char yy_hold_char;
-static int yy_n_chars;		/* number of characters read into yy_ch_buf */
-int yyleng;
+static yy_size_t yy_n_chars;		/* number of characters read into yy_ch_buf */
+yy_size_t yyleng;
 
 /* Points to current character in buffer. */
 static char *yy_c_buf_p = (char *) 0;
@@ -308,7 +300,7 @@ static void yy_init_buffer (YY_BUFFER_STATE b,FILE *file  );
 
 YY_BUFFER_STATE yy_scan_buffer (char *base,yy_size_t size  );
 YY_BUFFER_STATE yy_scan_string (yyconst char *yy_str  );
-YY_BUFFER_STATE yy_scan_bytes (yyconst char *bytes,int len  );
+YY_BUFFER_STATE yy_scan_bytes (yyconst char *bytes,yy_size_t len  );
 
 void *yyalloc (yy_size_t  );
 void *yyrealloc (void *,yy_size_t  );
@@ -366,13 +358,13 @@ static void yy_fatal_error (yyconst char msg[]  );
  */
 #define YY_DO_BEFORE_ACTION \
 	(yytext_ptr) = yy_bp; \
-	yyleng = (size_t) (yy_cp - yy_bp); \
+	yyleng = (yy_size_t) (yy_cp - yy_bp); \
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
 
-#define YY_NUM_RULES 47
-#define YY_END_OF_BUFFER 48
+#define YY_NUM_RULES 49
+#define YY_END_OF_BUFFER 50
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -382,19 +374,19 @@ struct yy_trans_info
 	};
 static yyconst flex_int16_t yy_accept[121] =
     {   0,
-        0,    0,   48,   45,    1,   46,   24,   44,   12,   23,
-       45,   28,   29,   14,   10,   27,   11,   45,   13,   25,
-       32,   33,   17,   15,   19,   44,   44,   44,   44,   44,
-       44,   44,   44,   44,   44,   44,   44,   30,   31,   22,
-       43,   21,   44,    0,   26,   26,   25,   16,   18,   20,
-       44,   44,   44,   44,   44,   44,   44,   44,   34,   44,
-       44,    4,   44,   44,   44,   43,    2,   26,   44,   44,
-       44,   44,    6,   44,   44,   44,   44,   44,   44,   44,
-       44,   44,   44,    9,   44,   36,   44,   44,   44,   44,
-       38,   44,   39,   44,   44,   42,   37,    3,   44,   35,
+        0,    0,   50,   47,    1,   48,   26,   46,   14,   25,
+       47,   30,   31,   16,   12,   29,   13,   47,   15,   27,
+       34,   35,   19,   17,   21,   46,   46,   46,   46,   46,
+       46,   46,   46,   46,   46,   46,   46,   32,   33,   24,
+       45,   23,   46,    0,   28,   28,   27,   18,   20,   22,
+       46,   46,   46,   46,   46,   46,   46,   46,   36,   46,
+       46,    4,   46,   46,   46,   45,    2,   28,   46,   46,
+       46,   46,    6,   46,   46,   46,   46,   46,   46,   46,
+       46,   46,   46,   11,   46,   38,   46,   46,   46,   46,
+       40,   46,   41,   46,   46,   44,   39,    3,   46,   37,
 
-       44,   44,    9,   44,   44,    5,   44,   44,   44,   44,
-       44,    8,   40,   44,    9,   44,   41,   44,    7,    0
+       46,   46,   10,   46,   46,    5,   46,   46,   46,   46,
+       46,    8,   42,   46,    9,   46,   43,   46,    7,    0
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
@@ -568,7 +560,7 @@ char *yytext;
     unsigned int col = 1;
     void lexema_status(const char * token_name);
     void status_and_update_cursor(const char * token_name);
-#line 572 "lex.yy.c"
+#line 564 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -607,7 +599,7 @@ FILE *yyget_out (void );
 
 void yyset_out  (FILE * out_str  );
 
-int yyget_leng (void );
+yy_size_t yyget_leng (void );
 
 char *yyget_text (void );
 
@@ -647,12 +639,7 @@ static int input (void );
 
 /* Amount of stuff to slurp up with each read. */
 #ifndef YY_READ_BUF_SIZE
-#ifdef __ia64__
-/* On IA-64, the buffer size is 16k, not 8k */
-#define YY_READ_BUF_SIZE 16384
-#else
 #define YY_READ_BUF_SIZE 8192
-#endif /* __ia64__ */
 #endif
 
 /* Copy whatever the last rule matched to the standard output. */
@@ -660,7 +647,7 @@ static int input (void );
 /* This used to be an fputs(), but since the string might contain NUL's,
  * we now use fwrite().
  */
-#define ECHO do { if (fwrite( yytext, yyleng, 1, yyout )) {} } while (0)
+#define ECHO fwrite( yytext, yyleng, 1, yyout )
 #endif
 
 /* Gets input and stuffs it into "buf".  number of characters read, or YY_NULL,
@@ -671,7 +658,7 @@ static int input (void );
 	if ( YY_CURRENT_BUFFER_LVALUE->yy_is_interactive ) \
 		{ \
 		int c = '*'; \
-		size_t n; \
+		yy_size_t n; \
 		for ( n = 0; n < max_size && \
 			     (c = getc( yyin )) != EOF && c != '\n'; ++n ) \
 			buf[n] = (char) c; \
@@ -753,9 +740,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 68 "lexical.lex"
+#line 67 "lexical.lex"
 
-#line 759 "lex.yy.c"
+#line 746 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -840,13 +827,13 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 69 "lexical.lex"
+#line 68 "lexical.lex"
 {col++;}
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 71 "lexical.lex"
+#line 70 "lexical.lex"
 {
 	status_and_update_cursor("char");
 	return CHAR;
@@ -854,7 +841,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 76 "lexical.lex"
+#line 75 "lexical.lex"
 {
 	status_and_update_cursor("array");
 	return ARRAY;
@@ -862,7 +849,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 81 "lexical.lex"
+#line 80 "lexical.lex"
 {
 	status_and_update_cursor("of");
 	return OF;
@@ -870,7 +857,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 86 "lexical.lex"
+#line 85 "lexical.lex"
 {
 	status_and_update_cursor("start");
 	return START;
@@ -878,7 +865,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 91 "lexical.lex"
+#line 90 "lexical.lex"
 {
 	status_and_update_cursor("end");
 	return END;
@@ -886,7 +873,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 96 "lexical.lex"
+#line 95 "lexical.lex"
 {
 	status_and_update_cursor("procedure");
 	return PROCEDURE;
@@ -894,7 +881,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 101 "lexical.lex"
+#line 100 "lexical.lex"
 {
 	status_and_update_cursor("declare");
 	return DECLARE;
@@ -902,284 +889,300 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 106 "lexical.lex"
+#line 105 "lexical.lex"
 {
-	status_and_update_cursor("datatype");
-	return DATATYPE;
+	status_and_update_cursor("int_type");
+	return INT_TYPE;
 }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 111 "lexical.lex"
+#line 110 "lexical.lex"
+{
+	status_and_update_cursor("float_type");
+	return FLOAT_TYPE;
+}
+	YY_BREAK
+case 11:
+YY_RULE_SETUP
+#line 115 "lexical.lex"
+{
+	status_and_update_cursor("char_type");
+	return CHAR_TYPE;
+}
+	YY_BREAK
+case 12:
+YY_RULE_SETUP
+#line 120 "lexical.lex"
 {
 	status_and_update_cursor("plus_sign");
 	return PLUS_SIGN;
 }
 	YY_BREAK
-case 11:
+case 13:
 YY_RULE_SETUP
-#line 116 "lexical.lex"
+#line 125 "lexical.lex"
 {
 	status_and_update_cursor("minus_sign");
 	return MINUS_SIGN;
 }
 	YY_BREAK
-case 12:
+case 14:
 YY_RULE_SETUP
-#line 121 "lexical.lex"
+#line 130 "lexical.lex"
 {
 	status_and_update_cursor("mod_sign");
 	return MOD_SIGN;
 }
 	YY_BREAK
-case 13:
+case 15:
 YY_RULE_SETUP
-#line 126 "lexical.lex"
+#line 135 "lexical.lex"
 {
 	status_and_update_cursor("div_sign");
 	return DIV_SIGN;
 }
 	YY_BREAK
-case 14:
+case 16:
 YY_RULE_SETUP
-#line 131 "lexical.lex"
+#line 140 "lexical.lex"
 {
 	status_and_update_cursor("mult_sign");
 	return MULT_SIGN;
 }
 	YY_BREAK
-case 15:
+case 17:
 YY_RULE_SETUP
-#line 136 "lexical.lex"
+#line 145 "lexical.lex"
 {
 	status_and_update_cursor("equal_sign");
 	return EQUAL_SIGN;
 }
 	YY_BREAK
-case 16:
+case 18:
 YY_RULE_SETUP
-#line 141 "lexical.lex"
+#line 150 "lexical.lex"
 {
 	status_and_update_cursor("attr_sign");
 	return ATTR_SIGN;
 }
 	YY_BREAK
-case 17:
+case 19:
 YY_RULE_SETUP
-#line 146 "lexical.lex"
+#line 155 "lexical.lex"
 {
 	status_and_update_cursor("less_sign");
 	return LESS_SIGN;
 }
 	YY_BREAK
-case 18:
+case 20:
 YY_RULE_SETUP
-#line 151 "lexical.lex"
+#line 160 "lexical.lex"
 {
 	status_and_update_cursor("less_sign");
 	return LESS_EQ_SIGN;
 }
 	YY_BREAK
-case 19:
+case 21:
 YY_RULE_SETUP
-#line 156 "lexical.lex"
+#line 165 "lexical.lex"
 {
 	status_and_update_cursor("greater_sign");
 	return GREATER_SIGN;
 }
 	YY_BREAK
-case 20:
+case 22:
 YY_RULE_SETUP
-#line 161 "lexical.lex"
+#line 170 "lexical.lex"
 {
 	status_and_update_cursor("greater_sign");
 	return GREATER_EQ_SIGN;
 }
 	YY_BREAK
-case 21:
+case 23:
 YY_RULE_SETUP
-#line 166 "lexical.lex"
+#line 175 "lexical.lex"
 {
 	status_and_update_cursor("diff_sign");
 	return DIFF_SIGN;
 }
 	YY_BREAK
-case 22:
+case 24:
 YY_RULE_SETUP
-#line 171 "lexical.lex"
+#line 180 "lexical.lex"
 {
 	status_and_update_cursor("or_sign");
 	return OR_SIGN;
 }
 	YY_BREAK
-case 23:
+case 25:
 YY_RULE_SETUP
-#line 176 "lexical.lex"
+#line 185 "lexical.lex"
 {
 	status_and_update_cursor("and_sign");
 	return AND_SIGN;
 }
 	YY_BREAK
-case 24:
+case 26:
 YY_RULE_SETUP
-#line 181 "lexical.lex"
+#line 190 "lexical.lex"
 {
 	status_and_update_cursor("neg_sign");
 	return NEG_SIGN;
 }
 	YY_BREAK
-case 25:
+case 27:
 YY_RULE_SETUP
-#line 186 "lexical.lex"
+#line 195 "lexical.lex"
 {
 	status_and_update_cursor("integer");
 	return INTEGER;
 }
 	YY_BREAK
-case 26:
+case 28:
 YY_RULE_SETUP
-#line 191 "lexical.lex"
+#line 200 "lexical.lex"
 {
 	status_and_update_cursor("float");
 	return FLOAT;
 }
 	YY_BREAK
-case 27:
+case 29:
 YY_RULE_SETUP
-#line 196 "lexical.lex"
+#line 205 "lexical.lex"
 {
 	status_and_update_cursor("separator");
 	return SEPARATOR;
 }
 	YY_BREAK
-case 28:
+case 30:
 YY_RULE_SETUP
-#line 201 "lexical.lex"
+#line 210 "lexical.lex"
 {
 	status_and_update_cursor("lparen");
 	return LPAREN;
 }
 	YY_BREAK
-case 29:
+case 31:
 YY_RULE_SETUP
-#line 206 "lexical.lex"
+#line 215 "lexical.lex"
 {
 	status_and_update_cursor("rparen");
 	return RPAREN; 
 }
 	YY_BREAK
-case 30:
+case 32:
 YY_RULE_SETUP
-#line 211 "lexical.lex"
+#line 220 "lexical.lex"
 {
 	status_and_update_cursor("lbracket");
 	return LBRACKET;
 }
 	YY_BREAK
-case 31:
+case 33:
 YY_RULE_SETUP
-#line 216 "lexical.lex"
+#line 225 "lexical.lex"
 {
 	status_and_update_cursor("rbracket");
 	return RBRACKET;
 }
 	YY_BREAK
-case 32:
+case 34:
 YY_RULE_SETUP
-#line 221 "lexical.lex"
+#line 230 "lexical.lex"
 {
 	status_and_update_cursor("colon");
 	return COLON;
 }
 	YY_BREAK
-case 33:
+case 35:
 YY_RULE_SETUP
-#line 226 "lexical.lex"
+#line 235 "lexical.lex"
 {
 	status_and_update_cursor("terminator");
 	return TERMINATOR;
 }
 	YY_BREAK
-case 34:
+case 36:
 YY_RULE_SETUP
-#line 231 "lexical.lex"
+#line 240 "lexical.lex"
 {
 	status_and_update_cursor("if");
 	return IF;
 }
 	YY_BREAK
-case 35:
+case 37:
 YY_RULE_SETUP
-#line 236 "lexical.lex"
+#line 245 "lexical.lex"
 {
 	status_and_update_cursor("endif");
 	return ENDIF;
 }
 	YY_BREAK
-case 36:
+case 38:
 YY_RULE_SETUP
-#line 241 "lexical.lex"
+#line 250 "lexical.lex"
 {
 	status_and_update_cursor("else");
 	return ELSE;
 }
 	YY_BREAK
-case 37:
+case 39:
 YY_RULE_SETUP
-#line 246 "lexical.lex"
+#line 255 "lexical.lex"
 {
 	status_and_update_cursor("then");
 	return THEN;
 }
 	YY_BREAK
-case 38:
+case 40:
 YY_RULE_SETUP
-#line 251 "lexical.lex"
+#line 260 "lexical.lex"
 {
 	status_and_update_cursor("goto");
 	return GOTO;
 }
 	YY_BREAK
-case 39:
+case 41:
 YY_RULE_SETUP
-#line 256 "lexical.lex"
+#line 265 "lexical.lex"
 {
 	status_and_update_cursor("loop");
 	return LOOP;
 }
 	YY_BREAK
-case 40:
+case 42:
 YY_RULE_SETUP
-#line 261 "lexical.lex"
+#line 270 "lexical.lex"
 {
 	status_and_update_cursor("endloop");
 	return ENDLOOP;
 }
 	YY_BREAK
-case 41:
+case 43:
 YY_RULE_SETUP
-#line 266 "lexical.lex"
+#line 275 "lexical.lex"
 {
 	status_and_update_cursor("exitwhen");
 	return EXITWHEN;
 }
 	YY_BREAK
-case 42:
+case 44:
 YY_RULE_SETUP
-#line 271 "lexical.lex"
+#line 280 "lexical.lex"
 {
 	status_and_update_cursor("stop");
 	return STOP;
 }
 	YY_BREAK
-case 43:
+case 45:
 YY_RULE_SETUP
-#line 276 "lexical.lex"
+#line 285 "lexical.lex"
 {status_and_update_cursor("comment");}
 	YY_BREAK
-case 44:
+case 46:
 YY_RULE_SETUP
-#line 278 "lexical.lex"
+#line 287 "lexical.lex"
 {
 	if((size_t)yyleng > 16)
 		printf("Identifier %s with more than 16 characters (len %lu, line %u, col %u) \n",yytext, (size_t)yyleng, line, col);
@@ -1187,23 +1190,23 @@ YY_RULE_SETUP
 	return IDENTIFIER; 
 }
 	YY_BREAK
-case 45:
-YY_RULE_SETUP
-#line 284 "lexical.lex"
-{printf("Error :%s \n", yytext);col++;}
-	YY_BREAK
-case 46:
-/* rule 46 can match eol */
-YY_RULE_SETUP
-#line 286 "lexical.lex"
-{line++;col=1;}
-	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 288 "lexical.lex"
+#line 293 "lexical.lex"
+{printf("Error :%s \n", yytext);col++;}
+	YY_BREAK
+case 48:
+/* rule 48 can match eol */
+YY_RULE_SETUP
+#line 295 "lexical.lex"
+{line++;col=1;}
+	YY_BREAK
+case 49:
+YY_RULE_SETUP
+#line 297 "lexical.lex"
 ECHO;
 	YY_BREAK
-#line 1207 "lex.yy.c"
+#line 1210 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1389,7 +1392,7 @@ static int yy_get_next_buffer (void)
 
 	else
 		{
-			int num_to_read =
+			yy_size_t num_to_read =
 			YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1;
 
 		while ( num_to_read <= 0 )
@@ -1403,7 +1406,7 @@ static int yy_get_next_buffer (void)
 
 			if ( b->yy_is_our_buffer )
 				{
-				int new_size = b->yy_buf_size * 2;
+				yy_size_t new_size = b->yy_buf_size * 2;
 
 				if ( new_size <= 0 )
 					b->yy_buf_size += b->yy_buf_size / 8;
@@ -1434,7 +1437,7 @@ static int yy_get_next_buffer (void)
 
 		/* Read in more data. */
 		YY_INPUT( (&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move]),
-			(yy_n_chars), (size_t) num_to_read );
+			(yy_n_chars), num_to_read );
 
 		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
 		}
@@ -1556,7 +1559,7 @@ static int yy_get_next_buffer (void)
 
 		else
 			{ /* need more input */
-			int offset = (yy_c_buf_p) - (yytext_ptr);
+			yy_size_t offset = (yy_c_buf_p) - (yytext_ptr);
 			++(yy_c_buf_p);
 
 			switch ( yy_get_next_buffer(  ) )
@@ -1580,7 +1583,7 @@ static int yy_get_next_buffer (void)
 				case EOB_ACT_END_OF_FILE:
 					{
 					if ( yywrap( ) )
-						return EOF;
+						return 0;
 
 					if ( ! (yy_did_buffer_switch_on_eof) )
 						YY_NEW_FILE;
@@ -1832,7 +1835,7 @@ void yypop_buffer_state (void)
  */
 static void yyensure_buffer_stack (void)
 {
-	int num_to_alloc;
+	yy_size_t num_to_alloc;
     
 	if (!(yy_buffer_stack)) {
 
@@ -1924,17 +1927,16 @@ YY_BUFFER_STATE yy_scan_string (yyconst char * yystr )
 
 /** Setup the input buffer state to scan the given bytes. The next call to yylex() will
  * scan from a @e copy of @a bytes.
- * @param yybytes the byte buffer to scan
- * @param _yybytes_len the number of bytes in the buffer pointed to by @a bytes.
+ * @param bytes the byte buffer to scan
+ * @param len the number of bytes in the buffer pointed to by @a bytes.
  * 
  * @return the newly allocated buffer state object.
  */
-YY_BUFFER_STATE yy_scan_bytes  (yyconst char * yybytes, int  _yybytes_len )
+YY_BUFFER_STATE yy_scan_bytes  (yyconst char * yybytes, yy_size_t  _yybytes_len )
 {
 	YY_BUFFER_STATE b;
 	char *buf;
-	yy_size_t n;
-	int i;
+	yy_size_t n, i;
     
 	/* Get memory for full buffer, including space for trailing EOB's. */
 	n = _yybytes_len + 2;
@@ -2016,7 +2018,7 @@ FILE *yyget_out  (void)
 /** Get the length of the current token.
  * 
  */
-int yyget_leng  (void)
+yy_size_t yyget_leng  (void)
 {
         return yyleng;
 }
@@ -2164,7 +2166,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 288 "lexical.lex"
+#line 297 "lexical.lex"
 
 
 
