@@ -32,8 +32,6 @@ void GOTOSTMT(){
 	switch (tok) {
 		case GOTO:
 			GOTOTOK();
-			break;
-		case IDENTIFIER:
 			IDENTIFIERTOK();
 			break;
 		default:
@@ -45,6 +43,7 @@ void ELSESTMT(){
 	switch (tok) {
 		case ELSE:
 			ELSETOK();
+			STMTLIST();
 			break;
 		default:
 			error();
@@ -54,17 +53,9 @@ void ELSESTMT(){
 void EXITWHENSTMT() {
 	switch(tok) {
 		case EXITWHEN:
-			eat(EXITWHEN);
+			EXITWHENTOK();
 			E();
-			break;
-		case LPAREN:
-		case IDENTIFIER:
-		case MINUS_SIGN:
-		case NEG_SIGN:
-		case INTEGER:
-		case FLOAT:
-			E();
-			break;
+			break;		
 		default:
 			error();
 	}
@@ -128,6 +119,7 @@ void IDLESSSTMT(){
 		case LOOP:
 		case EXITWHEN:
 			CONTROLSTMT();
+			break;
 		default:
 			error();
 	}
