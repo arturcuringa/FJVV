@@ -390,6 +390,147 @@ void T2() {
 	}
 }
 
+void T2_() {
+	switch (tok) {
+		case TERMINATOR:
+		case RPAREN:
+		case RBRACKET:
+		case THEN:
+		case SEPARATOR:
+		case AND_SIGN:
+		case OR_SIGN:
+		case GREATER_SIGN:
+		case LESS_SIGN:
+		case EQUAL_SIGN:
+		case DIFF_SIGN:
+		case LESS_EQ_SIGN:
+		case GREATER_EQ_SIGN:
+			break;
+		case PLUS_SIGN:
+		case MINUS_SIGN:
+			C();
+			T2();
+			break;
+		default:
+			break;
+	}
+}
+
+void C() {
+	switch (tok) {
+		case PLUS_SIGN:
+			PLUS_SIGNTOK();
+			break;
+		case MINUS_SIGN:
+			MINUS_SIGNTOK();
+			break;
+		default:
+			printf("nöööööö\n");
+	}
+}
+
+void T3() {
+	switch (tok) {
+		case LPAREN:
+		case IDENTIFIER:
+		case MINUS_SIGN:
+		case NEG_SIGN:
+		case INTEGER:
+		case FLOAT:
+			F();
+			T3();
+			break;
+		default:
+			printf(":o\n");
+	}
+}
+
+void T3_() {
+	switch (tok) {
+		switch (tok) {
+		case TERMINATOR:
+		case RPAREN:
+		case RBRACKET:
+		case THEN:
+		case SEPARATOR:
+		case AND_SIGN:
+		case OR_SIGN:
+		case GREATER_SIGN:
+		case LESS_SIGN:
+		case EQUAL_SIGN:
+		case DIFF_SIGN:
+		case LESS_EQ_SIGN:
+		case GREATER_EQ_SIGN:
+		case PLUS_SIGN:
+		case MINUS_SIGN:
+			break;
+		case MULT_SIGN:
+		case DIV_SIGN:
+		case MOD_SIGN:
+			D();
+			T3();
+			break;
+		default:
+			break;
+	}
+}
+
+void D() {
+	switch (tok) {
+		case MULT_SIGN:
+			MULT_SIGNTOK();
+			break;
+		case DIV_SIGN:
+			DIV_SIGNTOK();
+			break;
+		case MOD_SIGN:
+			MOD_SIGNTOK();
+			break;
+		default:
+			printf("*, /, or \% pwleeeease\n", );
+	}
+}
+
+void F() {
+	switch (tok) {
+		case LPAREN:
+			LPARENTOK();
+			F();
+			RPARENTOK();
+			break;
+		case IDENTIFIER:
+			IDENTIFIERTOK();
+			break;
+		case MINUS_SIGN:
+			MINUS_SIGNTOK();
+			F();
+			break;
+		case NEG_SIGN:
+			NEG_SIGNTOK();
+			F();
+			break;
+		case INTEGER:
+		case FLOAT:
+			LITERAL();
+			break;
+		default:
+			break;
+	}
+}
+
+void LITERAL() {
+	switch (tok) {
+		case INTEGER:
+			INTEGERTOK();
+			break;
+		case FLOAT:
+			FLOATTOK();
+			break;
+		default:
+			printf("i, literally, expected a literal......\n");
+	}
+}
+
 void ARRAYTOK(){
 	switch(tok){
 		case ARRAY:
