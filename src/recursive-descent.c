@@ -9,7 +9,7 @@ void advance() { tok = yylex(); }
 void eat(enum token t) { if (tok == t) advance(); else error(); }
 
 void SUPERIDLIST(){
-	switch(tok){
+	switch (tok) {
 		case IDENTIFIER:
 			IDENTIFIERTOK();
 			break;
@@ -21,7 +21,7 @@ void SUPERIDLIST(){
 }
 
 void CONTROLSTMT(){
-	switch(tok){
+	switch (tok) {
 		case IF:
 			IFSTMT();
 			break;
@@ -41,7 +41,7 @@ void CONTROLSTMT(){
 }
 
 void LOOPSTMT(){
-	switch(tok){
+	switch (tok) {
 		case LOOP:
 			LOOPTOK();
 			TERMINATORTOK();
@@ -54,7 +54,7 @@ void LOOPSTMT(){
 }
 
 void IOSTMT(){
-	switch(tok){
+	switch (tok) {
 		case GET:
 			GETTOK();
 			LPARENTOK();
@@ -74,7 +74,7 @@ void IOSTMT(){
 }
 
 void PUTTOK(){
-	switch(tok){
+	switch (tok) {
 		case PUT:
 			eat(PUT);
 			break;
@@ -85,7 +85,7 @@ void PUTTOK(){
 }
 
 void GETTOK(){
-	switch(tok){
+	switch (tok) {
 		case GET:
 			eat(GET);
 			break;
@@ -95,7 +95,7 @@ void GETTOK(){
 }
 
 void IFSTMT(){
-	switch(tok){
+	switch (tok) {
 		case IF:
 			IFTOK();
 			E();
@@ -111,7 +111,7 @@ void IFSTMT(){
 }
 
 void PROCSTMT(){
-	switch(tok){
+	switch (tok) {
 		case LPAREN:
 			eat(LPAREN);
 			EXPRLIST();
@@ -166,7 +166,7 @@ void ELSESTMT(){
 }
 
 void EXITWHENSTMT() {
-	switch(tok) {
+	switch (tok) {
 		case EXITWHEN:
 			EXITWHENTOK();
 			E();
@@ -177,7 +177,7 @@ void EXITWHENSTMT() {
 }
 
 void ATTRSTMT() {
-	switch(tok){
+	switch (tok) {
 		case ATTR_SIGN:
 			eat(ATTR_SIGN);
 			E();
@@ -189,7 +189,7 @@ void ATTRSTMT() {
 }
 
 void POSTLABELESSSTMT(){
-	switch (tok){
+	switch (tok) {
 		case ATTR_SIGN:
 			ATTRSTMT();
 			break;
@@ -202,7 +202,7 @@ void POSTLABELESSSTMT(){
 }
 
 void CONTROLSTSMT() {
-    switch(tok) {
+    switch (tok) {
         case IF:
             IFSTMT();
             break;
@@ -221,7 +221,7 @@ void CONTROLSTSMT() {
 }
 
 void IDLESSSTMT(){
-	switch (tok){
+	switch (tok) {
 		case STOP:
 			STOPSTMT();
 			break;
@@ -351,7 +351,7 @@ void GREATER_EQ_SIGNTOK() {
 }
 
 void POSTLABELSTMT() {
-	switch (tok){
+	switch (tok) {
 		case COLON:
 			eat(COLON);
 			STMT();
@@ -368,7 +368,7 @@ void POSTLABELSTMT() {
 }
 
 void LABELLESSTMT() {
-	switch (tok){
+	switch (tok) {
 		case IDENTIFIER:
 			eat(IDENTIFIER);
 			POSTLABELESSSTMT();
@@ -398,7 +398,7 @@ void STMT() {
 }
 
 void LPARENTOK() {
-	switch(tok){
+	switch (tok) {
 		case LPAREN:	
 			eat(LPAREN);
 			break;
@@ -408,7 +408,7 @@ void LPARENTOK() {
 }
 
 void RPARENTOK() {
-	switch(tok){
+	switch (tok) {
 		case RPAREN:
 			eat(RPAREN);
 			break;
@@ -418,7 +418,7 @@ void RPARENTOK() {
 }
 
 void DECLARETOK() {
-	switch(tok){
+	switch (tok) {
 		case DECLARE:
 			eat(DECLARE);
 			break;
@@ -428,7 +428,7 @@ void DECLARETOK() {
 }
 
 void ENDTOK() {
-	switch(tok){
+	switch (tok) {
 		case END:
 			eat(END);
 			break;
@@ -438,7 +438,7 @@ void ENDTOK() {
 }
 
 void IDENTIFIERTOK() {
-	switch(tok){
+	switch (tok) {
 		case IDENTIFIER:
 			eat(IDENTIFIER);
 			break;
@@ -449,7 +449,7 @@ void IDENTIFIERTOK() {
 }
 
 void COMMATOK() {
-	switch(tok){
+	switch (tok) {
 		case SEPARATOR:
 			eat(SEPARATOR);
 			break;
@@ -459,7 +459,7 @@ void COMMATOK() {
 }
 
 void PROCEDURETOK() {
-	switch(tok){
+	switch (tok) {
 		case PROCEDURE:
 			eat(PROCEDURE);
 			break;
@@ -873,7 +873,7 @@ void LITERAL() {
 }
 
 void ARRAYTOK(){
-	switch(tok){
+	switch (tok) {
 		case ARRAY:
 			eat(ARRAY);
 			break;
@@ -902,7 +902,7 @@ void DATATYPE() {
 }
 
 void IDLIST2() {
-	switch(tok) {
+	switch (tok) {
 		case RPAREN:
 			break;
 		case SEPARATOR:
@@ -976,7 +976,7 @@ void PROCDECL() {
 }
 
 void LABELSTMT() {
-	switch (tok){
+	switch (tok) {
 		case IDENTIFIER:
 			eat(IDENTIFIER);
 			POSTLABELSTMT();
@@ -1023,7 +1023,7 @@ void STMTLIST() {
 }
 
 void IFTOK() {
-	switch(tok) {
+	switch (tok) {
 		case IF:
 			eat(IF);
 			break;
@@ -1033,7 +1033,7 @@ void IFTOK() {
 }
 
 void ELSETOK() {
-	switch(tok) {
+	switch (tok) {
 		case ELSE:
 			eat(ELSE);
 			break;
@@ -1043,7 +1043,7 @@ void ELSETOK() {
 }
 
 void GOTOTOK() {
-	switch(tok) {
+	switch (tok) {
 		case GOTO:
 			eat(GOTO);
 			break;
@@ -1053,7 +1053,7 @@ void GOTOTOK() {
 }
 
 void LOOPTOK() {
-	switch(tok) {
+	switch (tok) {
 		case LOOP:
 			eat(LOOP);
 			break;
@@ -1063,7 +1063,7 @@ void LOOPTOK() {
 }
 
 void EXITWHENTOK() {
-	switch(tok) {
+	switch (tok) {
 		case EXITWHEN:
 			eat(EXITWHEN);
 			break;
@@ -1073,7 +1073,7 @@ void EXITWHENTOK() {
 }
 
 void STOPTOK() {
-	switch(tok) {
+	switch (tok) {
 		case STOP:
 			eat(STOP);
 			break;
@@ -1083,7 +1083,7 @@ void STOPTOK() {
 }
 
 void SKIPTOK() {
-	switch(tok) {
+	switch (tok) {
 		case SKIP:
 			eat(SKIP);
 			break;
@@ -1093,7 +1093,7 @@ void SKIPTOK() {
 }
 
 void THENTOK() {
-	switch(tok) {
+	switch (tok) {
 		case THEN:
 			eat(THEN);
 			break;
@@ -1103,7 +1103,7 @@ void THENTOK() {
 }
 
 void ENDIFTOK() {
-	switch(tok) {
+	switch (tok) {
 		case ENDIF:
 			eat(ENDIF);
 			break;
@@ -1113,7 +1113,7 @@ void ENDIFTOK() {
 }
 
 void ENDLOOPTOK() {
-	switch(tok) {
+	switch (tok) {
 		case ENDLOOP:
 			eat(ENDLOOP);
 			break;
@@ -1123,7 +1123,7 @@ void ENDLOOPTOK() {
 }
 
 void CHAR_TYPETOK(){
-	switch(tok){
+	switch (tok) {
 		case CHAR_TYPE:
 			eat(CHAR_TYPE);
 			break;
@@ -1134,7 +1134,7 @@ void CHAR_TYPETOK(){
 }
 
 void INT_TYPETOK(){
-	switch(tok){
+	switch (tok) {
 		case INT_TYPE:
 			eat(INT_TYPE);
 			break;
@@ -1145,7 +1145,7 @@ void INT_TYPETOK(){
 }
 
 void FLOAT_TYPETOK(){
-	switch(tok){
+	switch (tok) {
 		case FLOAT_TYPE:
 			eat(FLOAT_TYPE);
 			break;
