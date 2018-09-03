@@ -45,7 +45,6 @@ plusplus_sign		 "++"
 char_type     		(?i:char)
 int_type		(?i:integer)
 float_type		(?i:float)
-datatype 		{char_type}|{int_type}|{float_type}
 array			(?i:array)
 of			(?i:of)				
 start			(?i:start)
@@ -103,9 +102,19 @@ skip  			(?i:skip)
 	return DECLARE;
 }
 
-{datatype} {
-	status_and_update_cursor("datatype");
-	return DATATYPE;
+{int_type} {
+	status_and_update_cursor("int_type");
+	return INT_TYPE;
+}
+
+{float_type} {
+	status_and_update_cursor("float_type");
+	return FLOAT_TYPE;
+}
+
+{char_type} {
+	status_and_update_cursor("char_type");
+	return CHAR_TYPE;
 }
 
 {plus_sign} {
