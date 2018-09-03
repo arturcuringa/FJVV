@@ -21,6 +21,10 @@ void DATATYPETOK();
 void PROCEDURETOK();
 void EXPRLIST();
 void EXPRLISTTAIL();
+void PROCSTMT();
+void IFSTMT();
+void LOOPSTMT();
+void EXITSTMT();
 void E();
 void E_();
 void A();
@@ -45,8 +49,7 @@ void ELSESTMT();
 void GOTOTOK();
 void GOTOSTMT();
 void LOOPTOK();
-void EXITWHENTOK();
-void EXITSTMT();
+void EXITWHENSTMT();
 void SKIPTOK();
 void SKIPSTMT();
 void STOPTOK();
@@ -55,5 +58,6 @@ void PROGRAM();
 void ENDIFTOK();
 void ENDLOOPTOK();
 void THENTOK();
+void IOSTMT();
 
 #endif

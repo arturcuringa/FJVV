@@ -20,7 +20,7 @@ void STOPSTMT(){
 
 void SKIPSTMT(){
 	switch (tok) {
-		case STOP:
+		case SKIP:
 			SKIPTOK();
 			break;
 		default:
@@ -51,10 +51,11 @@ void ELSESTMT(){
 	}
 }
 
-void EXITSTMT() {
+void EXITWHENSTMT() {
 	switch(tok) {
 		case EXITWHEN:
-			eat(EXITWHENTOK);
+			eat(EXITWHEN);
+			E();
 			break;
 		case LPAREN:
 		case IDENTIFIER:
@@ -106,10 +107,11 @@ void CONTROLSTSMT() {
             LOOPSTMT();
             break;
         case EXITWHEN:
-            EXITWSTMT();
+            EXITWHENSTMT();
             break;
         default:
             error();
+    }
 }
 
 void IDLESSSTMT(){
@@ -127,7 +129,7 @@ void IDLESSSTMT(){
 		case EXITWHEN:
 			CONTROLSTMT();
 		default:
-			erorr();
+			error();
 	}
 }
 
