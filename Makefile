@@ -5,6 +5,9 @@ all: bin
 recursive: bin
 	gcc -Wall -I include/ src/recursive-descent.c -o bin/recursive
 
+table: bin
+	g++ -Wall -I include/ src/table.cpp -std=c++11 -o bin/table
+
 bin:
 	mkdir -p bin
 

@@ -2,6 +2,8 @@
 #include <vector>
 #include "enum_token.h"
 #include "nont.h"
+#include "lex.yy.c"
+#include <memory>
 
 struct Token {
     union {
@@ -15,171 +17,180 @@ Token makeToken(enum token _terminal) {
     Token t;
     t.terminal = _terminal;
     t.isTerminal = true;
+
+    return t;
 }
 
 Token makeNonTerminal(int _nont) {
     Token t;
     t.nont = _nont;
     t.isTerminal = false;
+
+    return t;
 }
 
-void populateM(std::vector<std::vector<std::vector<Token>*>> &M) {
+void populateM(std::vector<std::vector<std::shared_ptr<std::vector<Token>>>> &M) {
     M.resize(NONTENUMSIZE);
     for (auto &v : M) v.resize(TOKENENUMSIZE);
 
-    M[PROG][START] = M[PROG][DECLARE] = M[PROG][IDENTIFIER] = new std::vector({makeNonTerminal(DECLLIST), makeNonTerminal(PROCDECLLIST), makeToken(START), makeToken(TERMINATOR), makeNonTerminal(STMTLIST), makeToken(END), makeToken(TERMINATOR)});
-    //M[PROG][$] = new std::vector({makeNonTerminal(DECLLIST), makeNonTerminal(PROCDECLLIST), makeToken(START), makeToken(TERMINATOR), makeNonTerminal(STMTLIST), makeToken(END), makeToken(TERMINATOR)});
+    M[PROG][START] = M[PROG][DECLARE] = M[PROG][IDENTIFIER] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(DECLLIST), makeNonTerminal(PROCDECLLIST), makeToken(START), makeToken(TERMINATOR), makeNonTerminal(STMTLIST), makeToken(END), makeToken(TERMINATOR)}));
+    //M[PROG][$] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(DECLLIST), makeNonTerminal(PROCDECLLIST), makeToken(START), makeToken(TERMINATOR), makeNonTerminal(STMTLIST), makeToken(END), makeToken(TERMINATOR)}));
 
-    M[DECLLIST][START] = M[DECLLIST][IDENTIFIER] = new std::vector();
-    M[DECLLIST][DECLARE] = new std::vector({makeNonTerminal(DECLSTMT), makeToken(TERMINATOR), makeNonTerminal(DECLLIST)});
-    //M[DECLLIST][$] = new std::vector();
+    M[DECLLIST][START] = M[DECLLIST][IDENTIFIER] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>());
+    M[DECLLIST][DECLARE] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(DECLSTMT), makeToken(TERMINATOR), makeNonTerminal(DECLLIST)}));
+    //M[DECLLIST][$] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>());
 
-    M[DECLSTMT][DECLARE] = new std::vector({makeToken(DECLARE), makeToken(LPAREN), makeNonTerminal(IDLIST), makeToken(RPAREN), makeNonTerminal(DATATYPE)});
+    M[DECLSTMT][DECLARE] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(DECLARE), makeToken(LPAREN), makeNonTerminal(IDLIST), makeToken(RPAREN), makeNonTerminal(DATATYPENONT)}));
 
-    M[PROCDECLLIST][START] = new std::vector();
-    M[PROCDECLLIST][IDENTIFIER] = new std::vector({makeNonTerminal(PROCDECL), makeNonTerminal(PROCDECLLIST)});
+    M[PROCDECLLIST][START] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>());
+    M[PROCDECLLIST][IDENTIFIER] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(PROCDECL), makeNonTerminal(PROCDECLLIST)}));
 
-    M[PROCDECL][IDENTIFIER] = new std::vector({makeToken(IDENTIFIER), makeToken(COLON), makeToken(PROCEDURE), makeToken(LPAREN), makeNonTerminal(SUPERIDLIST), makeToken(RPAREN), makeToken(TERMINATOR), makeNonTerminal(STMTLIST), makeToken(END), makeToken(IDENTIFIER), makeToken(TERMINATOR)});
+    M[PROCDECL][IDENTIFIER] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(IDENTIFIER), makeToken(COLON), makeToken(PROCEDURE), makeToken(LPAREN), makeNonTerminal(SUPERIDLIST), makeToken(RPAREN), makeToken(TERMINATOR), makeNonTerminal(STMTLIST), makeToken(END), makeToken(IDENTIFIER), makeToken(TERMINATOR)}));
 
-    M[DATATYPE][INTEGER] = new std::vector({makeToken(INTEGER)});
-    M[DATATYPE][FLOAT] = new std::vector({makeToken(FLOAT)});
-    M[DATATYPE][CHAR] = new std::vector({makeToken(CHAR)});
-    M[DATATYPE][ARRAY] = new std::vector({makeNonTerminal(ARRAYTYPE)});
+    M[DATATYPE][INTEGER] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(INTEGER)}));
+    M[DATATYPE][FLOAT] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(FLOAT)}));
+    M[DATATYPE][CHAR] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(CHAR)}));
+    M[DATATYPE][ARRAY] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(ARRAYTYPE)}));
 
-    M[ARRAYTYPE][ARRAY] = new std::vector({makeToken(ARRAY), makeToken(LBRACKET), makeNonTerminal(E), makeToken(RBRACKET), makeToken(OF), makeNonTerminal(DATATYPE)});
+    M[ARRAYTYPE][ARRAY] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(ARRAY), makeToken(LBRACKET), makeNonTerminal(E), makeToken(RBRACKET), makeToken(OF), makeNonTerminal(DATATYPE)}));
 
-    M[STMTLIST][TERMINATOR] = M[STMTLIST][END] = M[STMTLIST][ENDIF] = M[STMTLIST][ELSE] = M[STMTLIST][ENDLOOP] = new std::vector();
-    M[STMTLIST][IDENTIFIER] = new std::vector({makeNonTerminal(SUPERSTMT), makeToken(TERMINATOR), makeNonTerminal(STMTLIST)});
-    M[STMTLIST][IF] = M[STMTLIST][GOTO] = M[STMTLIST][LOOP] = M[STMTLIST][EXITWHEN] = M[STMTLIST][STOP] = M[STMTLIST][GET] = M[STMTLIST][PUT] = new std::vector({makeNonTerminal(SUPERSTMT), makeToken(TERMINATOR), makeNonTerminal(STMTLIST)});
+    M[STMTLIST][TERMINATOR] = M[STMTLIST][END] = M[STMTLIST][ENDIF] = M[STMTLIST][ELSE] = M[STMTLIST][ENDLOOP] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>());
+    M[STMTLIST][IDENTIFIER] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(SUPERSTMT), makeToken(TERMINATOR), makeNonTerminal(STMTLIST)}));
+    M[STMTLIST][IF] = M[STMTLIST][GOTO] = M[STMTLIST][LOOP] = M[STMTLIST][EXITWHEN] = M[STMTLIST][STOP] = M[STMTLIST][GET] = M[STMTLIST][PUT] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(SUPERSTMT), makeToken(TERMINATOR), makeNonTerminal(STMTLIST)}));
 
-    M[SUPERSTMT][IDENTIFIER] = new std::vector({makeNonTerminal(LABELSTMT)});
-    M[SUPERSTMT][IF] = M[SUPERSTMT][GOTO] = M[SUPERSTMT][LOOP] = M[SUPERSTMT][EXITWHEN] = M[SUPERSTMT][STOP] = M[SUPERSTMT][GET] = M[SUPERSTMT][PUT] = new std::vector({makeNonTerminal(IDLESSSTMT)});
+    M[SUPERSTMT][IDENTIFIER] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(LABELSTMT)}));
+    M[SUPERSTMT][IF] = M[SUPERSTMT][GOTO] = M[SUPERSTMT][LOOP] = M[SUPERSTMT][EXITWHEN] = M[SUPERSTMT][STOP] = M[SUPERSTMT][GET] = M[SUPERSTMT][PUT] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(IDLESSSTMT)}));
 
-    M[LABELSTMT][IDENTIFIER] = new std::vector({makeToken(IDENTIFIER), makeNonTerminal(POSTLABELSTMT)});
+    M[LABELSTMT][IDENTIFIER] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(IDENTIFIER), makeNonTerminal(POSTLABELSTMT)}));
 
-    M[POSTLABELSTMT][LBRACKET] = new std::vector({makeNonTerminal(PROCSTMT)});
-    M[POSTLABELSTMT][COLON] = new std::vector({makeToken(COLON), makeNonTerminal(STMT)});
-    M[POSTLABELSTMT][ATTR_SIGN] = new std::vector({makeNonTerminal(ATTRSTMT)});
+    M[POSTLABELSTMT][LBRACKET] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(PROCSTMT)}));
+    M[POSTLABELSTMT][COLON] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(COLON), makeNonTerminal(STMT)}));
+    M[POSTLABELSTMT][ATTR_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(ATTRSTMT)}));
 
-    M[STMT][IDENTIFIER] = new std::vector({makeNonTerminal(LABELLESSSTMT)});
-    M[STMT][IF] = M[STMT][GOTO] = M[STMT][LOOP] = M[STMT][EXITWHEN] = M[STMT][STOP] = M[STMT][GET] = M[STMT][PUT] = new std::vector({makeNonTerminal(IDLESSSTMT)});
+    M[STMT][IDENTIFIER] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(LABELLESSSTMT)}));
+    M[STMT][IF] = M[STMT][GOTO] = M[STMT][LOOP] = M[STMT][EXITWHEN] = M[STMT][STOP] = M[STMT][GET] = M[STMT][PUT] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(IDLESSSTMT)}));
 
-    M[LABELLESSSTMT][IDENTIFIER] = new std::vector({makeToken(IDENTIFIER), makeNonTerminal(POSTLABELLESSSTMT)});
+    M[LABELLESSSTMT][IDENTIFIER] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(IDENTIFIER), makeNonTerminal(POSTLABELLESSSTMT)}));
 
-    M[POSTLABELLESSSTMT][LBRACKET] = new std::vector({makeNonTerminal(PROCSTMT)});
-    M[POSTLABELLESSSTMT][ATTR_SIGN] = new std::vector({makeNonTerminal(ATTRSTMT)});
+    M[POSTLABELLESSSTMT][LBRACKET] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(PROCSTMT)}));
+    M[POSTLABELLESSSTMT][ATTR_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(ATTRSTMT)}));
 
-    M[IDLESSSTMT][IF] = M[IDLESSSTMT][GOTO] = M[IDLESSSTMT][LOOP] = M[IDLESSSTMT][EXITWHEN] = new std::vector({makeNonTerminal(CONTROLSTMT)});
-    M[IDLESSSTMT][STOP] = new std::vector({makeNonTerminal(STOPSTMT)});
-    M[IDLESSSTMT][GET] = M[IDLESSSTMT][PUT] = new std::vector({makeNonTerminal(IOSTMT)});
+    M[IDLESSSTMT][IF] = M[IDLESSSTMT][GOTO] = M[IDLESSSTMT][LOOP] = M[IDLESSSTMT][EXITWHEN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(CONTROLSTMT)}));
+    M[IDLESSSTMT][STOP] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(STOPSTMT)}));
+    M[IDLESSSTMT][GET] = M[IDLESSSTMT][PUT] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(IOSTMT)}));
 
-    M[CONTROLSTMT][IF] = new std::vector({makeNonTerminal(IFSTMT)});
-    M[CONTROLSTMT][GOTO] = new std::vector({makeNonTerminal(GOTOSTMT)});
-    M[CONTROLSTMT][LOOP] = new std::vector({makeNonTerminal(LOOPSTMT)});
-    M[CONTROLSTMT][EXITWHEN] = new std::vector({makeNonTerminal(EXITSTMT)});
+    M[CONTROLSTMT][IF] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(IFSTMT)}));
+    M[CONTROLSTMT][GOTO] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(GOTOSTMT)}));
+    M[CONTROLSTMT][LOOP] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(LOOPSTMT)}));
+    M[CONTROLSTMT][EXITWHEN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(EXITSTMT)}));
 
-    M[IFSTMT][IF] = new std::vector({makeToken(IF), makeNonTerminal(E), makeToken(THEN), makeNonTerminal(STMTLIST), makeNonTerminal(ELSE1), makeToken(ENDIF)});
+    M[IFSTMT][IF] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(IF), makeNonTerminal(E), makeToken(THEN), makeNonTerminal(STMTLIST), makeNonTerminal(ELSE1), makeToken(ENDIF)}));
 
-    M[ELSE1][ENDIF] = new std::vector();
-    M[ELSE1][ELSE] = new std::vector({makeToken(ELSE), makeNonTerminal(STMTLIST)});
+    M[ELSE1][ENDIF] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>());
+    M[ELSE1][ELSE] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(ELSE), makeNonTerminal(STMTLIST)}));
 
-    M[GOTOSTMT][GOTO] = new std::vector({makeToken(GOTO), makeToken(IDENTIFIER)});
+    M[GOTOSTMT][GOTO] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(GOTO), makeToken(IDENTIFIER)}));
 
-    M[LOOPSTMT][LOOP] = new std::vector({makeToken(LOOP), makeToken(TERMINATOR), makeNonTerminal(STMTLIST), makeToken(ENDLOOP)});
+    M[LOOPSTMT][LOOP] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(LOOP), makeToken(TERMINATOR), makeNonTerminal(STMTLIST), makeToken(ENDLOOP)}));
 
-    M[EXITSTMT][EXITWHEN] = new std::vector({makeToken(EXITWHEN), makeNonTerminal(E)});
+    M[EXITSTMT][EXITWHEN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(EXITWHEN), makeNonTerminal(E)}));
 
-    M[STOPSTMT][STOP] = new std::vector({makeToken(STOP)});
+    M[STOPSTMT][STOP] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(STOP)}));
 
-    M[IOSTMT][GET] = new std::vector({makeToken(GET), makeToken(LPAREN), makeNonTerminal(IDLIST), makeToken(RPAREN)});
-    M[IOSTMT][PUT] = new std::vector({makeToken(PUT), makeNonTerminal(SKIP), makeToken(LPAREN), makeNonTerminal(IDLIST), makeToken(RPAREN)});
+    M[IOSTMT][GET] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(GET), makeToken(LPAREN), makeNonTerminal(IDLIST), makeToken(RPAREN)}));
+    M[IOSTMT][PUT] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(PUT), makeNonTerminal(SKIPNONT), makeToken(LPAREN), makeNonTerminal(IDLIST), makeToken(RPAREN)}));
 
-    M[SKIP][LBRACKET] = new std::vector();
-    M[SKIP][SKIPTOK] = new std::vector({makeToken(SKIPTOK)});
+    M[SKIPNONT][LBRACKET] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>());
+    M[SKIPNONT][SKIP] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(SKIP)}));
 
-    M[ATTRSTMT][ATTR_SIGN] = new std::vector({makeToken(ATTR_SIGN), makeNonTerminal(E)});
+    M[ATTRSTMT][ATTR_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(ATTR_SIGN), makeNonTerminal(E)}));
 
-    M[PROCSTMT][LBRACKET] = new std::vector({makeToken(LPAREN), makeNonTerminal(EXPRLIST), makeToken(RPAREN)});
+    M[PROCSTMT][LBRACKET] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(LPAREN), makeNonTerminal(EXPRLIST), makeToken(RPAREN)}));
 
-    M[SUPERIDLIST][RPAREN] = new std::vector();
-    M[SUPERIDLIST][IDENTIFIER] = new std::vector({makeNonTerminal(IDLIST)});
+    M[SUPERIDLIST][RPAREN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>());
+    M[SUPERIDLIST][IDENTIFIER] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(IDLIST)}));
 
-    M[IDLIST][IDENTIFIER] = new std::vector({makeToken(IDENTIFIER), makeNonTerminal(IDLIST2)});
+    M[IDLIST][IDENTIFIER] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(IDENTIFIER), makeNonTerminal(IDLIST2)}));
 
-    M[IDLIST2][RPAREN] = new std::vector();
-    M[IDLIST2][SEPARATOR] = new std::vector({makeToken(SEPARATOR), makeToken(IDENTIFIER), makeNonTerminal(IDLIST2)});
+    M[IDLIST2][RPAREN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>());
+    M[IDLIST2][SEPARATOR] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(SEPARATOR), makeToken(IDENTIFIER), makeNonTerminal(IDLIST2)}));
 
-    M[EXPRLIST][RPAREN] = new std::vector();
-    M[EXPRLIST][LBRACKET] = M[EXPRLIST][IDENTIFIER] = M[EXPRLIST][MINUS_SIGN] = M[EXPRLIST][NEG_SIGN] = new std::vector({makeNonTerminal(E), makeNonTerminal(EXPRLISTTAIL)});
+    M[EXPRLIST][RPAREN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>());
+    M[EXPRLIST][LBRACKET] = M[EXPRLIST][IDENTIFIER] = M[EXPRLIST][MINUS_SIGN] = M[EXPRLIST][NEG_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(E), makeNonTerminal(EXPRLISTTAIL)}));
 
-    M[EXPRLISTTAIL][RPAREN] = new std::vector();
-    M[EXPRLISTTAIL][SEPARATOR] = new std::vector({makeToken(SEPARATOR), makeNonTerminal(E), makeNonTerminal(EXPRLISTTAIL)});
+    M[EXPRLISTTAIL][RPAREN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>());
+    M[EXPRLISTTAIL][SEPARATOR] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(SEPARATOR), makeNonTerminal(E), makeNonTerminal(EXPRLISTTAIL)}));
 
-    M[E][LBRACKET] = M[E][IDENTIFIER] = M[E][MINUS_SIGN] = M[E][NEG_SIGN] = new std::vector({makeNonTerminal(T), makeNonTerminal(E_)});
+    M[E][LBRACKET] = M[E][IDENTIFIER] = M[E][MINUS_SIGN] = M[E][NEG_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(T), makeNonTerminal(E_)}));
 
-    M[E_][TERMINATOR] = M[E_][RPAREN] = M[E_][RBRACKET] = M[E_][THEN] = M[E_][SEPARATOR] = new std::vector();
-    M[E_][AND_SIGN] = M[E_][OR_SIGN] = new std::vector({makeNonTerminal(A), makeNonTerminal(E)});
+    M[E_][TERMINATOR] = M[E_][RPAREN] = M[E_][RBRACKET] = M[E_][THEN] = M[E_][SEPARATOR] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>());
+    M[E_][AND_SIGN] = M[E_][OR_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(A), makeNonTerminal(E)}));
 
-    M[A][AND_SIGN] = new std::vector({makeToken(AND_SIGN)});
-    M[A][OR_SIGN] = new std::vector({makeToken(OR_SIGN)});
+    M[A][AND_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(AND_SIGN)}));
+    M[A][OR_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(OR_SIGN)}));
 
-    M[T][LBRACKET] = M[T][IDENTIFIER] = M[T][MINUS_SIGN] = M[T][NEG_SIGN] = new std::vector({makeNonTerminal(T2), makeNonTerminal(T_)});
+    M[T][LBRACKET] = M[T][IDENTIFIER] = M[T][MINUS_SIGN] = M[T][NEG_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(T2), makeNonTerminal(T_)}));
 
-    M[T_][TERMINATOR] = M[T_][RPAREN] = M[T_][RBRACKET] = M[T_][THEN] = M[T_][SEPARATOR] = M[T_][AND_SIGN] = M[T_][OR_SIGN] = new std::vector();
-    M[T_][GREATER_SIGN] = M[T_][LESS_SIGN] = M[T_][EQUAL_SIGN] = M[T_][DIFF_SIGN] = M[T_][LESS_EQ_SIGN] = M[T_][GREATER_EQ_SIGN] = new std::vector({makeNonTerminal(B), makeNonTerminal(T)});
+    M[T_][TERMINATOR] = M[T_][RPAREN] = M[T_][RBRACKET] = M[T_][THEN] = M[T_][SEPARATOR] = M[T_][AND_SIGN] = M[T_][OR_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>());
+    M[T_][GREATER_SIGN] = M[T_][LESS_SIGN] = M[T_][EQUAL_SIGN] = M[T_][DIFF_SIGN] = M[T_][LESS_EQ_SIGN] = M[T_][GREATER_EQ_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(B), makeNonTerminal(T)}));
 
-    M[B][GREATER_SIGN] = new std::vector({makeToken(GREATER_SIGN)});
-    M[B][LESS_SIGN] = new std::vector({makeToken(LESS_SIGN)});
-    M[B][EQUAL_SIGN] = new std::vector({makeToken(EQUAL_SIGN)});
-    M[B][DIFF_SIGN] = new std::vector({makeToken(DIFF_SIGN)});
-    M[B][LESS_EQ_SIGN] = new std::vector({makeToken(LESS_EQ_SIGN)});
-    M[B][GREATER_EQ_SIGN] = new std::vector({makeToken(GREATER_EQ_SIGN)});
+    M[B][GREATER_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(GREATER_SIGN)}));
+    M[B][LESS_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(LESS_SIGN)}));
+    M[B][EQUAL_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(EQUAL_SIGN)}));
+    M[B][DIFF_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(DIFF_SIGN)}));
+    M[B][LESS_EQ_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(LESS_EQ_SIGN)}));
+    M[B][GREATER_EQ_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(GREATER_EQ_SIGN)}));
 
-    M[T2][LBRACKET] = M[T2][IDENTIFIER] = M[T2][MINUS_SIGN] = M[T2][NEG_SIGN] = new std::vector({makeNonTerminal(T3), makeNonTerminal(T2_)});
+    M[T2][LBRACKET] = M[T2][IDENTIFIER] = M[T2][MINUS_SIGN] = M[T2][NEG_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(T3), makeNonTerminal(T2_)}));
 
-    M[T2_][TERMINATOR] = M[T2_][RPAREN] = M[T2_][RBRACKET] = M[T2_][THEN] = M[T2_][SEPARATOR] = M[T2_][AND_SIGN] = M[T2_][OR_SIGN] = M[T2_][GREATER_SIGN] = M[T2_][LESS_SIGN] = M[T2_][EQUAL_SIGN] = M[T2_][DIFF_SIGN] = M[T2_][LESS_EQ_SIGN] = M[T2_][GREATER_EQ_SIGN] = new std::vector();
-    M[T2_][PLUS_SIGN] = M[T2_][MINUS_SIGN] = new std::vector({makeNonTerminal(C), makeNonTerminal(T2)});
+    M[T2_][TERMINATOR] = M[T2_][RPAREN] = M[T2_][RBRACKET] = M[T2_][THEN] = M[T2_][SEPARATOR] = M[T2_][AND_SIGN] = M[T2_][OR_SIGN] = M[T2_][GREATER_SIGN] = M[T2_][LESS_SIGN] = M[T2_][EQUAL_SIGN] = M[T2_][DIFF_SIGN] = M[T2_][LESS_EQ_SIGN] = M[T2_][GREATER_EQ_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>());
+    M[T2_][PLUS_SIGN] = M[T2_][MINUS_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(C), makeNonTerminal(T2)}));
 
-    M[C][PLUS_SIGN] = new std::vector({makeToken(PLUS_SIGN)});
-    M[C][MINUS_SIGN] = new std::vector({makeToken(MINUS_SIGN)});
+    M[C][PLUS_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(PLUS_SIGN)}));
+    M[C][MINUS_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(MINUS_SIGN)}));
 
-    M[T3][LBRACKET] = M[T3][IDENTIFIER] = M[T3][MINUS_SIGN] = M[T3][NEG_SIGN] = new std::vector({makeNonTerminal(F), makeNonTerminal(T3_)});
+    M[T3][LBRACKET] = M[T3][IDENTIFIER] = M[T3][MINUS_SIGN] = M[T3][NEG_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(F), makeNonTerminal(T3_)}));
 
-    M[T3_][TERMINATOR] = M[T3_][RPAREN] = M[T3_][RBRACKET] = M[T3_][THEN] = M[T3_][SEPARATOR] = M[T3_][AND_SIGN] = M[T3_][OR_SIGN] = M[T3_][GREATER_SIGN] = M[T3_][LESS_SIGN] = M[T3_][EQUAL_SIGN] = M[T3_][DIFF_SIGN] = M[T3_][LESS_EQ_SIGN] = M[T3_][GREATER_EQ_SIGN] = M[T3_][PLUS_SIGN] = M[T3_][MINUS_SIGN] = new std::vector();
-    M[T3_][MULT_SIGN] = M[T3_][DIV_SIGN] = M[T3_][MOD_SIGN] = new std::vector({makeNonTerminal(D), makeNonTerminal(T3)});
+    M[T3_][TERMINATOR] = M[T3_][RPAREN] = M[T3_][RBRACKET] = M[T3_][THEN] = M[T3_][SEPARATOR] = M[T3_][AND_SIGN] = M[T3_][OR_SIGN] = M[T3_][GREATER_SIGN] = M[T3_][LESS_SIGN] = M[T3_][EQUAL_SIGN] = M[T3_][DIFF_SIGN] = M[T3_][LESS_EQ_SIGN] = M[T3_][GREATER_EQ_SIGN] = M[T3_][PLUS_SIGN] = M[T3_][MINUS_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>());
+    M[T3_][MULT_SIGN] = M[T3_][DIV_SIGN] = M[T3_][MOD_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeNonTerminal(D), makeNonTerminal(T3)}));
 
-    M[D][MULT_SIGN] = new std::vector({makeToken(MULT_SIGN)});
-    M[D][DIV_SIGN] = new std::vector({makeToken(DIV_SIGN)});
-    M[D][MOD_SIGN] = new std::vector({makeToken(MOD_SIGN)});
+    M[D][MULT_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(MULT_SIGN)}));
+    M[D][DIV_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(DIV_SIGN)}));
+    M[D][MOD_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(MOD_SIGN)}));
 
-    M[F][LBRACKET] = new std::vector({makeToken(LPAREN), makeNonTerminal(F), makeToken(RPAREN)});
-    M[F][IDENTIFIER] = new std::vector({makeToken(IDENTIFIER)});
-    M[F][MINUS_SIGN] = new std::vector({makeToken(MINUS_SIGN), makeNonTerminal(F)});
-    M[F][NEG_SIGN] = new std::vector({makeToken(NEG_SIGN), makeNonTerminal(F)});
+    M[F][LBRACKET] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(LPAREN), makeNonTerminal(F), makeToken(RPAREN)}));
+    M[F][IDENTIFIER] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(IDENTIFIER)}));
+    M[F][MINUS_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(MINUS_SIGN), makeNonTerminal(F)}));
+    M[F][NEG_SIGN] = std::shared_ptr<std::vector<Token>>(new std::vector<Token>({makeToken(NEG_SIGN), makeNonTerminal(F)}));
 }
 
-main(int argc, char const *argv[]) {
+int main(int argc, char const *argv[]) {
     std::stack<Token> stack;
     enum token proximoDaFita;
 
-    std::vector<std::vector<std::vector<Token>*>> M;
+    std::vector<std::vector<std::shared_ptr<std::vector<Token>>>> M;
 
     populateM(M);
+    stack.push(makeNonTerminal(PROG));
 
     while (!stack.empty()) {
         Token X = stack.top();
-        if (X.isTerminal and X.terminal == proximoDaFita) {
-            stack.pop();
-            proximoDaFita = yylex();
-        } else if (X.isTerminal) {
-            return 0;
-        } else if (M[X.nont][proximoDaFita] == nullptr) {
-            return 0;
+        if (X.isTerminal) {
+            if (X.terminal == proximoDaFita) {
+                stack.pop();
+                proximoDaFita = (enum token) yylex();
+            } else {
+                return 0; // erro
+            }
         } else {
-            stack.pop();
-            std::vector<Token> &production = *(M[X.nont][proximoDaFita]);
-            for (auto it = production.rbegin(); it != production.rend(); it++) {
-                stack.push(*it);
+            if (M[X.nont][proximoDaFita] == nullptr) {
+               return 0; // erro
+            } else {
+                stack.pop();
+                std::vector<Token> &production = *(M[X.nont][proximoDaFita]);
+                for (auto it = production.rbegin(); it != production.rend(); it++) {
+                    stack.push(*it);
+                }
             }
         }
     }
