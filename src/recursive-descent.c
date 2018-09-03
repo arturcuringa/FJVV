@@ -8,6 +8,18 @@ void error() { printf("Parsing error on line %d and col %d!\n", line, col); }
 void advance() { tok = yylex(); }
 void eat(enum token t) { if (tok == t) advance(); else error(); }
 
+void SUPERIDLIST(){
+	switch(tok){
+		case IDENTIFIER:
+			IDENTIFIERTOK();
+			break;
+		default:
+			break;
+	}
+
+
+}
+
 void CONTROLSTMT(){
 	switch(tok){
 		case IF:
