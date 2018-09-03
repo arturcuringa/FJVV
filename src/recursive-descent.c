@@ -613,6 +613,9 @@ void LITERAL() {
 		case FLOAT:
 			FLOATTOK();
 			break;
+		case CHAR:
+			CHARTOK();
+			break;
 		default:
 			printf("i, literally, expected a literal......\n");
 	}
