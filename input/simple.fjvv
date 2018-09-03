@@ -4,6 +4,7 @@ DECLARE (c) cHaR;
 
 fill: PROCEDURE (a, alen, value);
 	LOOP;
+	ENDLOOP;
 END fill;
 
 START;
