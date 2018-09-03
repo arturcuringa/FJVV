@@ -449,7 +449,6 @@ void T3() {
 
 void T3_() {
 	switch (tok) {
-		switch (tok) {
 		case TERMINATOR:
 		case RPAREN:
 		case RBRACKET:
@@ -489,7 +488,7 @@ void D() {
 			MOD_SIGNTOK();
 			break;
 		default:
-			printf("*, /, or \% pwleeeease\n", );
+			printf("*, /, or %% pwleeeease\n");
 	}
 }
 
