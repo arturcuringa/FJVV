@@ -63,6 +63,7 @@ loop 			(?i:loop)
 endloop 		(?i:endloop)
 exitwhen 		(?i:exitwhen)
 stop 			(?i:stop)
+skip  			(?i:skip)
 
 %%
 {whitespace} {col++;}
