@@ -8,7 +8,7 @@ void error() { printf("Parsing error on line %d and col %d!\n", line, col); }
 void advance() { tok = yylex(); }
 void eat(enum token t) { if (tok == t) advance(); else printf("this token is too big to eat!\n"); }
 
-void SUPERIDLIST(){
+void SUPERIDLIST() {
 	switch (tok) {
 		case IDENTIFIER:
 			IDLIST();
@@ -16,11 +16,9 @@ void SUPERIDLIST(){
 		default:
 			break;
 	}
-
-
 }
 
-void CONTROLSTMT(){
+void CONTROLSTMT() {
 	switch (tok) {
 		case IF:
 			IFSTMT();
@@ -40,7 +38,7 @@ void CONTROLSTMT(){
 
 }
 
-void LOOPSTMT(){
+void LOOPSTMT() {
 	switch (tok) {
 		case LOOP:
 			LOOPTOK();
@@ -53,7 +51,7 @@ void LOOPSTMT(){
 	}
 }
 
-void IOSTMT(){
+void IOSTMT() {
 	switch (tok) {
 		case GET:
 			GETTOK();
@@ -73,7 +71,7 @@ void IOSTMT(){
 	}
 
 }
-void LBRACKETTOK(){
+void LBRACKETTOK() {
 	switch(tok){
 		case LBRACKET:
 			eat(LBRACKET);
@@ -83,7 +81,7 @@ void LBRACKETTOK(){
 	}
 }
 
-void RBRACKETTOK(){
+void RBRACKETTOK() {
 	switch(tok){
 		case RBRACKET:
 			eat(RBRACKET);
@@ -93,7 +91,7 @@ void RBRACKETTOK(){
 	}
 }
 
-void OFTOK(){
+void OFTOK() {
 	switch(tok){
 		case OF:
 			eat(OF);
@@ -103,7 +101,7 @@ void OFTOK(){
 	}
 }
 
-void PUTTOK(){
+void PUTTOK() {
 	switch (tok) {
 		case PUT:
 			eat(PUT);
@@ -114,7 +112,7 @@ void PUTTOK(){
 
 }
 
-void GETTOK(){
+void GETTOK() {
 	switch (tok) {
 		case GET:
 			eat(GET);
@@ -124,7 +122,7 @@ void GETTOK(){
 	}
 }
 
-void IFSTMT(){
+void IFSTMT() {
 	switch (tok) {
 		case IF:
 			IFTOK();
@@ -137,10 +135,9 @@ void IFSTMT(){
 		default:
 			error();
 	}
-
 }
 
-void PROCSTMT(){
+void PROCSTMT() {
 	switch (tok) {
 		case LPAREN:
 			eat(LPAREN);
@@ -153,7 +150,7 @@ void PROCSTMT(){
 	}
 }
 
-void STOPSTMT(){
+void STOPSTMT() {
 	switch (tok) {
 		case STOP:
 			STOPTOK();
@@ -163,7 +160,7 @@ void STOPSTMT(){
 	}
 }
 
-void SKIPSTMT(){
+void SKIPSTMT() {
 	switch (tok) {
 		case SKIP:
 			SKIPTOK();
@@ -173,7 +170,7 @@ void SKIPSTMT(){
 	}
 }
 
-void GOTOSTMT(){
+void GOTOSTMT() {
 	switch (tok) {
 		case GOTO:
 			GOTOTOK();
@@ -184,7 +181,7 @@ void GOTOSTMT(){
 	}
 }
 
-void ELSESTMT(){
+void ELSESTMT() {
 	switch (tok) {
 		case ELSE:
 			ELSETOK();
@@ -218,7 +215,7 @@ void ATTRSTMT() {
 
 }
 
-void POSTLABELESSSTMT(){
+void POSTLABELESSSTMT() {
 	switch (tok) {
 		case ATTR_SIGN:
 			ATTRSTMT();
@@ -250,7 +247,7 @@ void CONTROLSTSMT() {
     }
 }
 
-void IDLESSSTMT(){
+void IDLESSSTMT() {
 	switch (tok) {
 		case STOP:
 			STOPSTMT();
@@ -868,6 +865,7 @@ void F() {
 			break;
 		case IDENTIFIER:
 			IDENTIFIERTOK();
+			ARRAYACCESS();
 			break;
 		case MINUS_SIGN:
 			MINUS_SIGNTOK();
@@ -880,6 +878,40 @@ void F() {
 		case INTEGER:
 		case FLOAT:
 			LITERAL();
+			break;
+		default:
+			break;
+	}
+}
+
+
+void ARRAYACCESS() {
+	switch (tok) {
+		case TERMINATOR:
+		case RPAREN:
+		case RBRACKET:
+		case THEN:
+		case ATTR_SIGN:
+		case SEPARATOR:
+		case AND_SIGN:
+		case OR_SIGN:
+		case GREATER_SIGN:
+		case LESS_SIGN:
+		case EQUAL_SIGN:
+		case DIFF_SIGN:
+		case LESS_EQ_SIGN:
+		case GREATER_EQ_SIGN:
+		case PLUS_SIGN:
+		case MINUS_SIGN:
+		case MULT_SIGN:
+		case DIV_SIGN:
+		case MOD_SIGN:
+			break;
+		case LBRACKET:
+			LBRACKETTOK();
+			E();
+			RBRACKETTOK();
+			ARRAYACCESS();
 			break;
 		default:
 			break;
@@ -902,7 +934,7 @@ void LITERAL() {
 	}
 }
 
-void ARRAYTOK(){
+void ARRAYTOK() {
 	switch (tok) {
 		case ARRAY:
 			eat(ARRAY);
@@ -912,7 +944,7 @@ void ARRAYTOK(){
 	}
 }
 
-void ARRAYTYPE(){
+void ARRAYTYPE() {
 	switch(tok) {
 		case ARRAY:
 			ARRAYTOK();
@@ -1171,7 +1203,7 @@ void ENDLOOPTOK() {
 	}
 }
 
-void CHAR_TYPETOK(){
+void CHAR_TYPETOK() {
 	switch (tok) {
 		case CHAR_TYPE:
 			eat(CHAR_TYPE);
@@ -1182,7 +1214,7 @@ void CHAR_TYPETOK(){
 
 }
 
-void INT_TYPETOK(){
+void INT_TYPETOK() {
 	switch (tok) {
 		case INT_TYPE:
 			eat(INT_TYPE);
@@ -1193,7 +1225,7 @@ void INT_TYPETOK(){
 
 }
 
-void FLOAT_TYPETOK(){
+void FLOAT_TYPETOK() {
 	switch (tok) {
 		case FLOAT_TYPE:
 			eat(FLOAT_TYPE);

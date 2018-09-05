@@ -58,6 +58,7 @@ void T3();
 void T3_();
 void D();
 void F();
+void ARRAYACCESS();
 void LITERAL();
 void ARRAYTOK();
 void IDLIST2();
