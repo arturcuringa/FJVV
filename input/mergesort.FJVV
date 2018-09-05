@@ -16,27 +16,37 @@ merge: PROCEDURE (leftFirst, leftLast, rightFirst, rightLast);
     LOOP;
         EXITWHEN leftIt > leftLast | rightIt > rightLast;
         IF arr[leftIt] < arr[rightIt] THEN
-            aux[mergeIt := mergeIt + 1] := arr[leftIt := leftIt + 1];
+            aux[mergeIt] := arr[leftIt];
+            mergeIt := mergeIt + 1;
+            leftIt := leftIt + 1;
         ELSE
-            aux[mergeIt := mergeIt + 1] := arr[rightIt := rightIt + 1];
+            aux[mergeIt] := arr[rightIt];
+            mergeIt := mergeIt + 1;
+            rightIt := rightIt + 1;
         ENDIF;
     ENDLOOP;
 
     LOOP;
         EXITWHEN leftIt > leftLast;
-        aux[mergeIt := mergeIt + 1] := arr[leftIt := leftIt + 1];
+        aux[mergeIt] := arr[leftIt];
+        mergeIt := mergeIt + 1;
+        leftIt := leftIt + 1;
     ENDLOOP;
 
     LOOP;
         EXITWHEN rightIt > rightLast;
-        aux[mergeIt := mergeIt + 1] := arr[rightIt := rightIt + 1];
+        aux[mergeIt] := arr[rightIt];
+        mergeIt := mergeIt + 1;
+        rightIt := rightIt + 1;
     ENDLOOP;
 
     mergeIt := 0;
     leftIt := leftFirst;
     LOOP;
         EXITWHEN leftIt > rightLast;
-        arr[leftIt := leftIt + 1] := aux[mergeIt := mergeIt + 1];
+        arr[leftIt] := aux[mergeIt];
+        leftIt := leftIt + 1;
+        mergeIt := mergeIt + 1
     ENDLOOP;
 END merge;
 
