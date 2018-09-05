@@ -46,7 +46,7 @@ merge: PROCEDURE (leftFirst, leftLast, rightFirst, rightLast);
         EXITWHEN leftIt > rightLast;
         arr[leftIt] := aux[mergeIt];
         leftIt := leftIt + 1;
-        mergeIt := mergeIt + 1
+        mergeIt := mergeIt + 1;
     ENDLOOP;
 END merge;
 

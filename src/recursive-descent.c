@@ -188,7 +188,7 @@ void ELSESTMT() {
 			STMTLIST();
 			break;
 		default:
-			error();
+			break;
 	}
 }
 
@@ -206,6 +206,9 @@ void EXITWHENSTMT() {
 void ATTRSTMT() {
 	switch (tok) {
 		case ATTR_SIGN:
+		case TERMINATOR:
+		case LBRACKET:
+			ARRAYACCESS();
 			eat(ATTR_SIGN);
 			E();
 			break;
@@ -218,6 +221,8 @@ void ATTRSTMT() {
 void POSTLABELESSSTMT() {
 	switch (tok) {
 		case ATTR_SIGN:
+		case TERMINATOR:
+		case LBRACKET:
 			ATTRSTMT();
 			break;
 		case LPAREN:
@@ -384,6 +389,8 @@ void POSTLABELSTMT() {
 			STMT();
 			break;
 		case ATTR_SIGN: 
+		case TERMINATOR:
+		case LBRACKET:
 			ATTRSTMT();
 			break;
 		case LPAREN:
@@ -1057,7 +1064,7 @@ void PROCDECL() {
 void LABELSTMT() {
 	switch (tok) {
 		case IDENTIFIER:
-			eat(IDENTIFIER);
+			IDENTIFIERTOK();
 			POSTLABELSTMT();
 			break;
 		default:
