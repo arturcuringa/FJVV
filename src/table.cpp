@@ -187,17 +187,25 @@ int main(int argc, char const *argv[]) {
         if (X.isTerminal) {
             if (X.terminal == proximoDaFita) {
                 stack.pop();
-                int yylexres = yylex();
-                proximoDaFita = (enum token) yylexres;
+                proximoDaFita = (enum token) yylex();
             } else {
                 std::cout << "Esperava encontrar terminal " << tokenNames[X.terminal] << ", encontrou " << tokenNames[proximoDaFita] << std::endl;
-                return 0; // erro
+                stack.pop();
             }
         } else {
             if (M[X.nont][proximoDaFita] == nullptr) {
-                std::cout << "Token inesperado: \"" << tokenNames[proximoDaFita] << "\" para produção " << nontNames[X.nont] << std::endl;
-                std::cout << "Regra da gramatica inexistente, saindo" << std::endl;
-               return 0; // erro
+                std::cout << "Token inesperado: \"" << yytext << "\"" << std::endl;
+
+                while (proximoDaFita != TERMINATOR) {
+                    proximoDaFita = (enum token) yylex();
+                }
+
+                while (!(stack.top().isTerminal && stack.top().terminal == TERMINATOR)) {
+                    stack.pop();
+                }
+
+                proximoDaFita = (enum token) yylex();
+                stack.pop();
             } else {
                 stack.pop();
                 std::vector<Token> &production = *(M[X.nont][proximoDaFita]);
