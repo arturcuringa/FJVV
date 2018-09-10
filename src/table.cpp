@@ -187,8 +187,7 @@ int main(int argc, char const *argv[]) {
         if (X.isTerminal) {
             if (X.terminal == proximoDaFita) {
                 stack.pop();
-                int yylexres = yylex();
-                proximoDaFita = (enum token) yylexres;
+                proximoDaFita = (enum token) yylex();
             } else {
                 std::cout << "Esperava encontrar terminal " << tokenNames[X.terminal] << ", encontrou " << tokenNames[proximoDaFita] << std::endl;
                 stack.pop();
