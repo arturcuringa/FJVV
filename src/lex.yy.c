@@ -904,7 +904,7 @@ case 9:
 YY_RULE_SETUP
 #line 105 "lexical.lex"
 {
-	update_cursor("int_type");
+	update_cursor();
 	return INT_TYPE;
 }
 	YY_BREAK
@@ -912,7 +912,7 @@ case 10:
 YY_RULE_SETUP
 #line 110 "lexical.lex"
 {
-	update_cursor("float_type");
+	update_cursor();
 	return FLOAT_TYPE;
 }
 	YY_BREAK
@@ -920,7 +920,7 @@ case 11:
 YY_RULE_SETUP
 #line 115 "lexical.lex"
 {
-	update_cursor("char_type");
+	update_cursor();
 	return CHAR_TYPE;
 }
 	YY_BREAK
@@ -928,7 +928,7 @@ case 12:
 YY_RULE_SETUP
 #line 120 "lexical.lex"
 {
-	update_cursor("plus_sign");
+	update_cursor();
 	return PLUS_SIGN;
 }
 	YY_BREAK
@@ -936,7 +936,7 @@ case 13:
 YY_RULE_SETUP
 #line 125 "lexical.lex"
 {
-	update_cursor("minus_sign");
+	update_cursor();
 	return MINUS_SIGN;
 }
 	YY_BREAK
@@ -944,7 +944,7 @@ case 14:
 YY_RULE_SETUP
 #line 130 "lexical.lex"
 {
-	update_cursor("mod_sign");
+	update_cursor();
 	return MOD_SIGN;
 }
 	YY_BREAK
@@ -952,7 +952,7 @@ case 15:
 YY_RULE_SETUP
 #line 135 "lexical.lex"
 {
-	update_cursor("div_sign");
+	update_cursor();
 	return DIV_SIGN;
 }
 	YY_BREAK
@@ -960,7 +960,7 @@ case 16:
 YY_RULE_SETUP
 #line 140 "lexical.lex"
 {
-	update_cursor("mult_sign");
+	update_cursor();
 	return MULT_SIGN;
 }
 	YY_BREAK
@@ -968,7 +968,7 @@ case 17:
 YY_RULE_SETUP
 #line 145 "lexical.lex"
 {
-	update_cursor("equal_sign");
+	update_cursor();
 	return EQUAL_SIGN;
 }
 	YY_BREAK
@@ -976,7 +976,7 @@ case 18:
 YY_RULE_SETUP
 #line 150 "lexical.lex"
 {
-	update_cursor("attr_sign");
+	update_cursor();
 	return ATTR_SIGN;
 }
 	YY_BREAK
@@ -984,7 +984,7 @@ case 19:
 YY_RULE_SETUP
 #line 155 "lexical.lex"
 {
-	update_cursor("less_sign");
+	update_cursor();
 	return LESS_SIGN;
 }
 	YY_BREAK
@@ -992,7 +992,7 @@ case 20:
 YY_RULE_SETUP
 #line 160 "lexical.lex"
 {
-	update_cursor("less_sign");
+	update_cursor();
 	return LESS_EQ_SIGN;
 }
 	YY_BREAK
@@ -1000,7 +1000,7 @@ case 21:
 YY_RULE_SETUP
 #line 165 "lexical.lex"
 {
-	update_cursor("greater_sign");
+	update_cursor();
 	return GREATER_SIGN;
 }
 	YY_BREAK
@@ -1008,7 +1008,7 @@ case 22:
 YY_RULE_SETUP
 #line 170 "lexical.lex"
 {
-	update_cursor("greater_sign");
+	update_cursor();
 	return GREATER_EQ_SIGN;
 }
 	YY_BREAK
@@ -1016,7 +1016,7 @@ case 23:
 YY_RULE_SETUP
 #line 175 "lexical.lex"
 {
-	update_cursor("diff_sign");
+	update_cursor();
 	return DIFF_SIGN;
 }
 	YY_BREAK
@@ -1024,7 +1024,7 @@ case 24:
 YY_RULE_SETUP
 #line 180 "lexical.lex"
 {
-	update_cursor("or_sign");
+	update_cursor();
 	return OR_SIGN;
 }
 	YY_BREAK
@@ -1032,7 +1032,7 @@ case 25:
 YY_RULE_SETUP
 #line 185 "lexical.lex"
 {
-	update_cursor("and_sign");
+	update_cursor();
 	return AND_SIGN;
 }
 	YY_BREAK
@@ -1040,7 +1040,7 @@ case 26:
 YY_RULE_SETUP
 #line 190 "lexical.lex"
 {
-	update_cursor("neg_sign");
+	update_cursor();
 	return NEG_SIGN;
 }
 	YY_BREAK

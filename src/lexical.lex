@@ -103,92 +103,92 @@ skip  			(?i:skip)
 }
 
 {int_type} {
-	update_cursor("int_type");
+	update_cursor();
 	return INT_TYPE;
 }
 
 {float_type} {
-	update_cursor("float_type");
+	update_cursor();
 	return FLOAT_TYPE;
 }
 
 {char_type} {
-	update_cursor("char_type");
+	update_cursor();
 	return CHAR_TYPE;
 }
 
 {plus_sign} {
-	update_cursor("plus_sign");
+	update_cursor();
 	return PLUS_SIGN;
 }
 
 {minus_sign} {
-	update_cursor("minus_sign");
+	update_cursor();
 	return MINUS_SIGN;
 }
 
 {mod_sign} {
-	update_cursor("mod_sign");
+	update_cursor();
 	return MOD_SIGN;
 }
 
 {div_sign} {
-	update_cursor("div_sign");
+	update_cursor();
 	return DIV_SIGN;
 }
 
 {mult_sign} {
-	update_cursor("mult_sign");
+	update_cursor();
 	return MULT_SIGN;
 }
 
 {equal_sign} {
-	update_cursor("equal_sign");
+	update_cursor();
 	return EQUAL_SIGN;
 }
 
 {attr_sign} {
-	update_cursor("attr_sign");
+	update_cursor();
 	return ATTR_SIGN;
 }
 
 {less_sign} {
-	update_cursor("less_sign");
+	update_cursor();
 	return LESS_SIGN;
 }
 
 {less_eq_sign} {
-	update_cursor("less_sign");
+	update_cursor();
 	return LESS_EQ_SIGN;
 }
 
 {greater_sign} {
-	update_cursor("greater_sign");
+	update_cursor();
 	return GREATER_SIGN;
 }
 
 {greater_eq_sign} {
-	update_cursor("greater_sign");
+	update_cursor();
 	return GREATER_EQ_SIGN;
 }
 
 {diff_sign} {
-	update_cursor("diff_sign");
+	update_cursor();
 	return DIFF_SIGN;
 }
 
 {or_sign} {
-	update_cursor("or_sign");
+	update_cursor();
 	return OR_SIGN;
 }
 
 {and_sign} {
-	update_cursor("and_sign");
+	update_cursor();
 	return AND_SIGN;
 }
 
 {neg_sign} {
-	update_cursor("neg_sign");
+	update_cursor();
 	return NEG_SIGN;
 }
 
