@@ -294,6 +294,8 @@ skip  			(?i:skip)
 
 \n {line++;col=1;}
 
+<<EOF>> {return END_OF_FILE;}
+
 %%
 
 void lexema_status(const char * token_name){

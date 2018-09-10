@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 int main(int argc, char const *argv[]) {
-	while (yylex()) {}
+	enum token tok;
+	do {tok = yylex();} while (tok != END_OF_FILE);
 	return 0;
 }

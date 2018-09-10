@@ -51,6 +51,7 @@ enum token {
 	ENDLOOP,
 	EXITWHEN,
 	STOP,
+	END_OF_FILE,
 	TOKENENUMSIZE
 };
 
@@ -103,7 +104,8 @@ const char* tokenNames[] = {
     "LOOP",
     "ENDLOOP",
     "EXITWHEN",
-    "STOP"
+    "STOP",
+    "END_OF_FILE"
 };
 
 #endif
