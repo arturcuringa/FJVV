@@ -178,8 +178,8 @@ int main(int argc, char const *argv[]) {
     enum token proximoDaFita = (enum token) yylex();
 
     std::vector<std::vector<std::shared_ptr<std::vector<Token>>>> M;
-
     populateM(M);
+
     stack.push(makeNonTerminal(PROG));
 
     while (!stack.empty()) {
@@ -194,21 +194,13 @@ int main(int argc, char const *argv[]) {
             }
         } else {
             if (M[X.nont][proximoDaFita] == nullptr) {
-                std::cout << "Token inesperado: \"" << yytext << std::endl;
-                while (stack.top().isTerminal and stack.top().terminal != TERMINATOR) stack.pop();
-                
-                int yylexres = yylex();
-                proximoDaFita = (enum token) yylexres;
+                std::cout << "Token inesperado: \"" << yytext << "\"" << std::endl;
 
-                while (proximoDaFita != TERMINATOR) {
-                    int yylexres = yylex();
-                    proximoDaFita = (enum token) yylexres;
-                }
+                while (!stack.top().isTerminal or (stack.top().isTerminal and stack.top().terminal != TERMINATOR)) stack.pop();
+                do { proximoDaFita = (enum token) yylex(); } while (proximoDaFita != TERMINATOR);
 
-                int yylexres = yylex();
-                proximoDaFita = (enum token) yylexres;
+                proximoDaFita = (enum token) yylex();
                 stack.pop();
-
             } else {
                 stack.pop();
                 std::vector<Token> &production = *(M[X.nont][proximoDaFita]);
