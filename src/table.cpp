@@ -6,6 +6,7 @@
 #include "nont.h"
 #include "lex.yy.c"
 
+bool noError = true;
 
 struct Token {
     union {
@@ -189,11 +190,15 @@ int main(int argc, char const *argv[]) {
                 stack.pop();
                 proximoDaFita = (enum token) yylex();
             } else {
+                noError = false;
+
                 std::cout << "Esperava encontrar terminal " << tokenNames[X.terminal] << ", encontrou " << tokenNames[proximoDaFita] << std::endl;
                 stack.pop();
             }
         } else {
             if (M[X.nont][proximoDaFita] == nullptr) {
+                noError = false;
+
                 std::cout << "Token inesperado: \"" << yytext << "\"" << std::endl;
 
                 while (!stack.top().isTerminal or (stack.top().isTerminal and stack.top().terminal != TERMINATOR)) stack.pop();
@@ -210,6 +215,8 @@ int main(int argc, char const *argv[]) {
             }
         }
     }
+
+    std::cout << "Successful parsing!" << std::endl;
 
     return 0;
 }
