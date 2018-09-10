@@ -3,6 +3,9 @@
 
 int main(int argc, char const *argv[]) {
 	enum token tok;
-	do {tok = yylex();} while (tok != END_OF_FILE);
+	do {tok = yylex();
+		lexeme_status(tokenNames[tok]);
+	} while (tok != END_OF_FILE);
+
 	return 0;
 }
