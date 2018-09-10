@@ -11,8 +11,9 @@ table: bin
 bin:
 	mkdir -p bin
 
-clean:
-	rm src/lex.yy.c 
+clean: bin
+	rm -f src/lex.yy.c
+	rm -r bin/
 
 lexical:
 	./bin/lexical < $(input)
