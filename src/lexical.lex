@@ -6,8 +6,8 @@
     #include "enum_token.h"
     unsigned int line = 1;
     unsigned int col = 1;
-    void lexema_status(const char * token_name);
-    void status_and_update_cursor(const char * token_name);
+    void lexeme_status(const char * token_name);
+    void update_cursor();
 %}
 
 whitespace		 [ \t\r\f]
@@ -68,226 +68,226 @@ skip  			(?i:skip)
 {whitespace} {col++;}
 
 {char} {
-	status_and_update_cursor("char");
+	update_cursor();
 	return CHAR;
 }
 
 {array} {
-	status_and_update_cursor("array");
+	update_cursor();
 	return ARRAY;
 }
 
 {of} {
-	status_and_update_cursor("of");
+	update_cursor();
 	return OF;
 }
 
 {start} {
-	status_and_update_cursor("start");
+	update_cursor();
 	return START;
 }
 
 {end} {
-	status_and_update_cursor("end");
+	update_cursor();
 	return END;
 }
 
 {procedure} {
-	status_and_update_cursor("procedure");
+	update_cursor();
 	return PROCEDURE;
 }
 
 {declare} {
-	status_and_update_cursor("declare");
+	update_cursor();
 	return DECLARE;
 }
 
 {int_type} {
-	status_and_update_cursor("int_type");
+	update_cursor("int_type");
 	return INT_TYPE;
 }
 
 {float_type} {
-	status_and_update_cursor("float_type");
+	update_cursor("float_type");
 	return FLOAT_TYPE;
 }
 
 {char_type} {
-	status_and_update_cursor("char_type");
+	update_cursor("char_type");
 	return CHAR_TYPE;
 }
 
 {plus_sign} {
-	status_and_update_cursor("plus_sign");
+	update_cursor("plus_sign");
 	return PLUS_SIGN;
 }
 
 {minus_sign} {
-	status_and_update_cursor("minus_sign");
+	update_cursor("minus_sign");
 	return MINUS_SIGN;
 }
 
 {mod_sign} {
-	status_and_update_cursor("mod_sign");
+	update_cursor("mod_sign");
 	return MOD_SIGN;
 }
 
 {div_sign} {
-	status_and_update_cursor("div_sign");
+	update_cursor("div_sign");
 	return DIV_SIGN;
 }
 
 {mult_sign} {
-	status_and_update_cursor("mult_sign");
+	update_cursor("mult_sign");
 	return MULT_SIGN;
 }
 
 {equal_sign} {
-	status_and_update_cursor("equal_sign");
+	update_cursor("equal_sign");
 	return EQUAL_SIGN;
 }
 
 {attr_sign} {
-	status_and_update_cursor("attr_sign");
+	update_cursor("attr_sign");
 	return ATTR_SIGN;
 }
 
 {less_sign} {
-	status_and_update_cursor("less_sign");
+	update_cursor("less_sign");
 	return LESS_SIGN;
 }
 
 {less_eq_sign} {
-	status_and_update_cursor("less_sign");
+	update_cursor("less_sign");
 	return LESS_EQ_SIGN;
 }
 
 {greater_sign} {
-	status_and_update_cursor("greater_sign");
+	update_cursor("greater_sign");
 	return GREATER_SIGN;
 }
 
 {greater_eq_sign} {
-	status_and_update_cursor("greater_sign");
+	update_cursor("greater_sign");
 	return GREATER_EQ_SIGN;
 }
 
 {diff_sign} {
-	status_and_update_cursor("diff_sign");
+	update_cursor("diff_sign");
 	return DIFF_SIGN;
 }
 
 {or_sign} {
-	status_and_update_cursor("or_sign");
+	update_cursor("or_sign");
 	return OR_SIGN;
 }
 
 {and_sign} {
-	status_and_update_cursor("and_sign");
+	update_cursor("and_sign");
 	return AND_SIGN;
 }
 
 {neg_sign} {
-	status_and_update_cursor("neg_sign");
+	update_cursor("neg_sign");
 	return NEG_SIGN;
 }
 
 {integer} {
-	status_and_update_cursor("integer");
+	update_cursor();
 	return INTEGER;
 }
 
 {float} {
-	status_and_update_cursor("float");
+	update_cursor();
 	return FLOAT;
 }
 
 {separator} {
-	status_and_update_cursor("separator");
+	update_cursor();
 	return SEPARATOR;
 }
 
 {lparen} {
-	status_and_update_cursor("lparen");
+	update_cursor();
 	return LPAREN;
 }
 
 {rparen} {
-	status_and_update_cursor("rparen");
+	update_cursor();
 	return RPAREN; 
 }
 
 {lbracket} {
-	status_and_update_cursor("lbracket");
+	update_cursor();
 	return LBRACKET;
 }
 
 {rbracket} {
-	status_and_update_cursor("rbracket");
+	update_cursor();
 	return RBRACKET;
 }
 
 {colon} {
-	status_and_update_cursor("colon");
+	update_cursor();
 	return COLON;
 }
 
 {terminator} {
-	status_and_update_cursor("terminator");
+	update_cursor();
 	return TERMINATOR;
 }
 
 {if} {
-	status_and_update_cursor("if");
+	update_cursor();
 	return IF;
 }
 
 {endif} {
-	status_and_update_cursor("endif");
+	update_cursor();
 	return ENDIF;
 }
 
 {else} {
-	status_and_update_cursor("else");
+	update_cursor();
 	return ELSE;
 }
 
 {then} {
-	status_and_update_cursor("then");
+	update_cursor();
 	return THEN;
 }
 
 {goto} {
-	status_and_update_cursor("goto");
+	update_cursor();
 	return GOTO;
 }
 
 {loop} {
-	status_and_update_cursor("loop");
+	update_cursor();
 	return LOOP;
 }
 
 {endloop} {
-	status_and_update_cursor("endloop");
+	update_cursor();
 	return ENDLOOP;
 }
 
 {exitwhen} {
-	status_and_update_cursor("exitwhen");
+	update_cursor();
 	return EXITWHEN;
 }
 
 {stop} {
-	status_and_update_cursor("stop");
+	update_cursor();
 	return STOP;
 }
 
-{comment} {status_and_update_cursor("comment");}
+{comment} {update_cursor();}
 
 {identifier} {
 	if((size_t)yyleng > 16)
 		printf("Identifier %s with more than 16 characters (len %lu, line %u, col %u) \n",yytext, (size_t)yyleng, line, col);
-	status_and_update_cursor("identifier");
+	update_cursor();
 	return IDENTIFIER; 
 }
 . {printf("Error :%s \n", yytext);col++;}
@@ -298,12 +298,11 @@ skip  			(?i:skip)
 
 %%
 
-void lexema_status(const char * token_name){
+void lexeme_status(const char * token_name){
 	printf("%25s %25s   (len %zu, line %d, col %u)\n",token_name, yytext, yyleng, line, col);
 }
 
-void status_and_update_cursor(const char * token_name){
-	lexema_status(token_name);
+void update_cursor(){
 	col += yyleng;
 }
 

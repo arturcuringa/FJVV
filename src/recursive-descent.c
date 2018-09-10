@@ -4,7 +4,11 @@
 #include <stdio.h>
 
 enum token tok;
-void error() { printf("Parsing error on line %d and col %d!\n", line, col); }
+int noError = 1;
+void error() { 
+	printf("Parsing error on line %d and col %d!\n", line, col);
+	noError = 0;
+ }
 void advance() { tok = yylex(); }
 void eat(enum token t) { if (tok == t) advance(); else printf("this token is too big to eat!\n"); }
 
@@ -1256,6 +1260,6 @@ void PROGRAM() {
 int main(int argc, char const *argv[]) {
 	advance();
 	PROGRAM();
-
+	if(noError){printf("Successful parsing!\n");}
 	return 0;
 }
