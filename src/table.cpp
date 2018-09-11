@@ -216,7 +216,7 @@ int main(int argc, char const *argv[]) {
         }
     }
 
-    std::cout << "Successful parsing!" << std::endl;
+    if (noError) std::cout << "Successful parsing!" << std::endl;
 
     return 0;
 }
