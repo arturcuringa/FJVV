@@ -192,14 +192,14 @@ int main(int argc, char const *argv[]) {
             } else {
                 noError = false;
 
-                std::cout << "Esperava encontrar terminal " << tokenNames[X.terminal] << ", encontrou " << tokenNames[proximoDaFita] << std::endl;
+                std::cout << "Expected terminal symbol " << tokenNames[X.terminal] << ", found " << tokenNames[proximoDaFita] << std::endl;
                 stack.pop();
             }
         } else {
             if (M[X.nont][proximoDaFita] == nullptr) {
                 noError = false;
 
-                std::cout << "Token inesperado: \"" << yytext << "\"" << std::endl;
+                std::cout << "Unexpected token: \"" << yytext << "\"" << std::endl;
 
                 while (!stack.top().isTerminal or (stack.top().isTerminal and stack.top().terminal != TERMINATOR)) stack.pop();
                 do { proximoDaFita = (enum token) yylex(); } while (proximoDaFita != TERMINATOR);

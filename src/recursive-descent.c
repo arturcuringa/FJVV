@@ -5,12 +5,22 @@
 
 enum token tok;
 int noError = 1;
+
 void error() { 
 	printf("Parsing error on line %d and col %d!\n", line, col);
 	noError = 0;
- }
+}
+
 void advance() { tok = yylex(); }
-void eat(enum token t) { if (tok == t) advance(); else printf("this token is too big to eat!\n"); }
+void eat(enum token t) {
+	if (tok == t) {
+		advance();
+	} else {
+		printf("Could not consume token %s, expected %s\n",
+			tokenNames[tok], tokenNames[t]);
+		noError = 0;
+	}
+}
 
 void SUPERIDLIST() {
 	switch (tok) {
@@ -39,7 +49,6 @@ void CONTROLSTMT() {
 		default:
 			error();
 	}
-
 }
 
 void LOOPSTMT() {
@@ -76,32 +85,35 @@ void IOSTMT() {
 
 }
 void LBRACKETTOK() {
-	switch(tok){
+	switch (tok) {
 		case LBRACKET:
 			eat(LBRACKET);
 			break;
 		default:
 			error();
+			printf("Expected '[', found %s\n", tokenNames[tok]);
 	}
 }
 
 void RBRACKETTOK() {
-	switch(tok){
+	switch (tok) {
 		case RBRACKET:
 			eat(RBRACKET);
 			break;
 		default:
 			error();
+			printf("Expected ']', found %s\n", tokenNames[tok]);
 	}
 }
 
 void OFTOK() {
-	switch(tok){
+	switch (tok) {
 		case OF:
 			eat(OF);
 			break;
 		default:
 			error();
+			printf("Expected 'OF', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -112,6 +124,7 @@ void PUTTOK() {
 			break;
 		default:
 			error();
+			printf("Expected 'PUT', found %s\n", tokenNames[tok]);
 	}
 
 }
@@ -122,7 +135,8 @@ void GETTOK() {
 			eat(GET);
 			break;
 		default:
-			error();	
+			error();
+			printf("Expected 'GET', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -282,7 +296,8 @@ void STARTTOK() {
 			eat(START);
 			break;
 		default:
-			printf("Missing 'START' \n" );
+			error();
+			printf("Expected 'START', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -292,7 +307,8 @@ void TERMINATORTOK() {
 			eat(TERMINATOR);
 			break;
 		default:
-			printf("missing ;\n");
+			error();
+			printf("Expected ';', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -302,7 +318,8 @@ void SEPARATORTOK() {
 			eat(SEPARATOR);
 			break;
 		default:
-			printf("missing ,\n");
+			error();
+			printf("Expected ',', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -312,7 +329,8 @@ void AND_SIGNTOK() {
 			eat(AND_SIGN);
 			break;
 		default:
-			printf("missing &\n");
+			error();
+			printf("Expected '&', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -322,7 +340,8 @@ void OR_SIGNTOK() {
 			eat(OR_SIGN);
 			break;
 		default:
-			printf("missing |\n");
+			error();
+			printf("Expected '|', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -332,7 +351,8 @@ void GREATER_SIGNTOK() {
 			eat(GREATER_SIGN);
 			break;
 		default:
-			printf("missing >\n");
+			error();
+			printf("Expected '>', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -342,7 +362,8 @@ void LESS_SIGNTOK() {
 			eat(LESS_SIGN);
 			break;
 		default:
-			printf("missing <\n");
+			error();
+			printf("Expected '<', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -352,7 +373,8 @@ void EQUAL_SIGNTOK() {
 			eat(EQUAL_SIGN);
 			break;
 		default:
-			printf("missing =\n");
+			error();
+			printf("Expected '=', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -362,7 +384,8 @@ void DIFF_SIGNTOK() {
 			eat(DIFF_SIGN);
 			break;
 		default:
-			printf("missing !=\n");
+			error();
+			printf("Expected '!=', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -372,7 +395,8 @@ void LESS_EQ_SIGNTOK() {
 			eat(LESS_EQ_SIGN);
 			break;
 		default:
-			printf("missing <=\n");
+			error();
+			printf("Expected '<=', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -382,7 +406,8 @@ void GREATER_EQ_SIGNTOK() {
 			eat(GREATER_EQ_SIGN);
 			break;
 		default:
-			printf("missing >=\n");
+			error();
+			printf("Expected '>=', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -442,6 +467,7 @@ void LPARENTOK() {
 			break;
 		default:
 			error();
+			printf("Expected '(', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -452,6 +478,7 @@ void RPARENTOK() {
 			break;
 		default:
 			error();
+			printf("Expected ')', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -462,6 +489,7 @@ void DECLARETOK() {
 			break;
 		default:
 			error();
+			printf("Expected 'DECLARE', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -472,6 +500,7 @@ void ENDTOK() {
 			break;
 		default:
 			error();
+			printf("Expected 'END', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -480,19 +509,9 @@ void IDENTIFIERTOK() {
 		case IDENTIFIER:
 			eat(IDENTIFIER);
 			break;
-		
 		default:
 			error();
-	}
-}
-
-void COMMATOK() {
-	switch (tok) {
-		case SEPARATOR:
-			eat(SEPARATOR);
-			break;
-		default:
-			error();
+			printf("Expected identifier, found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -503,6 +522,7 @@ void PROCEDURETOK() {
 			break;
 		default:
 			error();
+			printf("Expected 'PROCEDURE', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -513,6 +533,7 @@ void CHARTOK() {
 			break;
 		default:
 			error();
+			printf("Expected char, found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -523,6 +544,7 @@ void COLONTOK() {
 			break;
 		default:
 			error();
+			printf("Expected ':', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -534,6 +556,7 @@ void DIV_SIGNTOK() {
 			break;
 		default:
 			error();
+			printf("Expected '/', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -544,6 +567,7 @@ void FLOATTOK() {
 			break;
 		default:
 			error();
+			printf("Expected float, found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -554,6 +578,7 @@ void INTEGERTOK() {
 			break;
 		default:
 			error();
+			printf("Expected integer, found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -564,6 +589,7 @@ void MINUS_SIGNTOK() {
 			break;
 		default:
 			error();
+			printf("Expected '-', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -574,6 +600,7 @@ void MOD_SIGNTOK() {
 			break;
 		default:
 			error();
+			printf("Expected '%%', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -584,6 +611,7 @@ void MULT_SIGNTOK() {
 			break;
 		default:
 			error();
+			printf("Expected '*', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -594,6 +622,7 @@ void NEG_SIGNTOK() {
 			break;
 		default:
 			error();
+			printf("Expected '!', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -604,6 +633,7 @@ void PLUS_SIGNTOK() {
 			break;
 		default:
 			error();
+			printf("Expected '+', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -651,7 +681,7 @@ void E() {
 			E_();
 			break;
 		default:
-			printf("Expected an expression I think? Do you have one?\n");
+			error();
 	}
 }
 
@@ -682,7 +712,7 @@ void A() {
 			OR_SIGNTOK();
 			break;
 		default:
-			printf("Something Terrible Befell This Parser\n");
+			error();
 	}
 }
 
@@ -698,7 +728,7 @@ void T() {
 			T_();
 			break;
 		default:
-			printf("Invalid expression >:(\n");
+			error();
 	}
 }
 
@@ -747,7 +777,7 @@ void B() {
 			GREATER_EQ_SIGNTOK();
 			break;
 		default:
-			printf("whaaaaaaaaat\n");
+			error();
 	}
 }
 
@@ -763,7 +793,7 @@ void T2() {
 			T2_();
 			break;
 		default:
-			printf("get outta my face with that expression\n");
+			error();
 	}
 }
 
@@ -802,7 +832,7 @@ void C() {
 			MINUS_SIGNTOK();
 			break;
 		default:
-			printf("nöööööö\n");
+			error();
 	}
 }
 
@@ -818,7 +848,7 @@ void T3() {
 			T3_();
 			break;
 		default:
-			printf(":o\n");
+			error();
 	}
 }
 
@@ -863,7 +893,7 @@ void D() {
 			MOD_SIGNTOK();
 			break;
 		default:
-			printf("*, /, or %% pwleeeease\n");
+			error();
 	}
 }
 
@@ -941,7 +971,7 @@ void LITERAL() {
 			CHARTOK();
 			break;
 		default:
-			printf("i, literally, expected a literal......\n");
+			error();
 	}
 }
 
@@ -951,7 +981,8 @@ void ARRAYTOK() {
 			eat(ARRAY);
 			break;
 		default:
-			printf("Missing ARRAY declaration!\n");
+			error();
+			printf("Expected 'ARRAY', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -966,9 +997,8 @@ void ARRAYTYPE() {
 			DATATYPE();
 			break;
 		default:
-		error();
+			error();
 	}
-
 }
 
 void DATATYPE() {
@@ -1061,7 +1091,7 @@ void PROCDECL() {
 			TERMINATORTOK();
 			break;
 		default:
-			printf("Something went wrong\n");
+			error();
 	}
 }
 
@@ -1091,8 +1121,7 @@ void SUPERSTMT() {
 			IDLESSSTMT();
 			break;
 		default:
-			printf("Something happened\n");
-			break;
+			error();
 	}
 }
 
@@ -1121,6 +1150,7 @@ void IFTOK() {
 			break;
 		default:
 			error();
+			printf("Expected 'IF', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -1131,6 +1161,7 @@ void ELSETOK() {
 			break;
 		default:
 			error();
+			printf("Expected 'ELSE', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -1141,6 +1172,7 @@ void GOTOTOK() {
 			break;
 		default:
 			error();
+			printf("Expected 'GOTO', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -1151,6 +1183,7 @@ void LOOPTOK() {
 			break;
 		default:
 			error();
+			printf("Expected 'LOOP', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -1161,6 +1194,7 @@ void EXITWHENTOK() {
 			break;
 		default:
 			error();
+			printf("Expected 'EXITWHEN', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -1171,6 +1205,7 @@ void STOPTOK() {
 			break;
 		default:
 			error();
+			printf("Expected 'STOP', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -1181,6 +1216,7 @@ void SKIPTOK() {
 			break;
 		default:
 			error();
+			printf("Expected 'SKIP', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -1191,6 +1227,7 @@ void THENTOK() {
 			break;
 		default:
 			error();
+			printf("Expected 'THEN', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -1201,6 +1238,7 @@ void ENDIFTOK() {
 			break;
 		default:
 			error();
+			printf("Expected 'ENDIF', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -1211,6 +1249,7 @@ void ENDLOOPTOK() {
 			break;
 		default:
 			error();
+			printf("Expected 'ENDLOOP', found %s\n", tokenNames[tok]);
 	}
 }
 
@@ -1221,8 +1260,8 @@ void CHAR_TYPETOK() {
 			break;
 		default:
 			error();
+			printf("Expected 'CHAR', found %s\n", tokenNames[tok]);
 	}
-
 }
 
 void INT_TYPETOK() {
@@ -1232,8 +1271,8 @@ void INT_TYPETOK() {
 			break;
 		default:
 			error();
+			printf("Expected 'INT', found %s\n", tokenNames[tok]);
 	}
-
 }
 
 void FLOAT_TYPETOK() {
@@ -1243,8 +1282,8 @@ void FLOAT_TYPETOK() {
 			break;
 		default:
 			error();
+			printf("Expected 'FLOAT', found %s\n", tokenNames[tok]);
 	}
-
 }
 
 void PROGRAM() {
@@ -1260,6 +1299,7 @@ void PROGRAM() {
 int main(int argc, char const *argv[]) {
 	advance();
 	PROGRAM();
-	if(noError){printf("Successful parsing!\n");}
+	if (noError)
+		printf("Successful parsing!\n");
 	return 0;
 }
