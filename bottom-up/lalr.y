@@ -66,7 +66,7 @@ data_type: INT_TYPE
 	| CHAR_TYPE 
 	| array_nont;
 
-array_nont: ARRAY '[' expr ']' data_type;
+array_nont: ARRAY '[' expr ']' OF data_type;
 
 super_id_list: /* '' */ 
 	| id_list;
@@ -119,7 +119,7 @@ exit_stmt: EXITWHEN expr;
 stop_stmt: STOP;
 
 io_stmt: GET id_list
-	| PUT skip_stmt '(' id_list ')';
+	| PUT skip_stmt '(' expr_list ')';
 
 skip_stmt: SKIP 
 	| /* '' */;
