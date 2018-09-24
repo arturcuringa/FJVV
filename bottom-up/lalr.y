@@ -22,7 +22,7 @@ void yyerror(const char *str){
 program : START ';' END ';' ;
 %%
 
-main (){
+int main() {
 	return(yyparse());
 }
 
