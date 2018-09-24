@@ -54,7 +54,7 @@ extern int yydebug;
     CHAR_TYPE = 264,
     ARRAY = 265,
     OF = 266,
-    ID = 267,
+    IDENTIFIER = 267,
     INTEGER = 268,
     FLOAT = 269,
     CHAR = 270,
@@ -86,7 +86,7 @@ extern int yydebug;
 #define CHAR_TYPE 264
 #define ARRAY 265
 #define OF 266
-#define ID 267
+#define IDENTIFIER 267
 #define INTEGER 268
 #define FLOAT 269
 #define CHAR 270
