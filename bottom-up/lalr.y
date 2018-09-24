@@ -17,11 +17,11 @@ void yyerror(const char *str){
 %token GOTO LOOP ENDLOOP EXITWHEN STOP 
 %token GET PUT SKIP 
 %token ATTR_SIGN DIFF_SIGN GREATER_EQ_SIGN LESS_EQ_SIGN
-%left & |
-%left > < = != <= >=
-%left + -
-%left * / %
-%nonassoc ! 
+%left '&' '|'
+%left '>' '<' '=' '!=' '<=' '>='
+%left '*' '/' '%'
+%left '+' '-'
+%nonassoc '!' '-' 
 
 %%
 program : START ';' END ';' ;
