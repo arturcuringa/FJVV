@@ -3,9 +3,11 @@
 
 #include <stdio.h>
 #include <string.h>
+extern unsigned int line;
+extern unsigned int col;
 
 void yyerror(const char *str){
-	fprintf(stderr, "error: %s \n", str);
+	fprintf(stderr, "error (line %d, col %d): %s\n", line, col, str);
 }
 
 %}
@@ -150,7 +152,7 @@ expr: expr '+' expr
     | '!' expr 
     | '-' expr %prec UMINUS 
     | IDENTIFIER array_access 
-    | literal
+    | literal ;
 
 array_access: /* '' */ 
 	| '[' expr ']' array_access;
