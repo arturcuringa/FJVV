@@ -465,9 +465,9 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "l.l"
+#line 1 "lexical.lex"
 #define YY_NO_INPUT 1
-#line 5 "l.l"
+#line 5 "lexical.lex"
 
 #include "y.tab.h" 
 
@@ -656,7 +656,7 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 10 "l.l"
+#line 10 "lexical.lex"
 
 
 #line 663 "lex.yy.c"
@@ -744,28 +744,28 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 12 "l.l"
+#line 12 "lexical.lex"
 return START;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 13 "l.l"
+#line 13 "lexical.lex"
 return ';';
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 14 "l.l"
+#line 14 "lexical.lex"
 return END;
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 15 "l.l"
+#line 15 "lexical.lex"
 ;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 16 "l.l"
+#line 16 "lexical.lex"
 ECHO;
 	YY_BREAK
 #line 772 "lex.yy.c"
@@ -1729,7 +1729,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 16 "l.l"
+#line 16 "lexical.lex"
 
 
 

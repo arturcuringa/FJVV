@@ -1,5 +1,5 @@
 all: bin
-	lex l.l
+	lex lexical.lex
 	yacc -d lalr.y
 	gcc lex.yy.c y.tab.c -o bin/bu
 bin: 
