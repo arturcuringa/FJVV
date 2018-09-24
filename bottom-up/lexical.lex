@@ -27,7 +27,7 @@ char 			\'(.|"\n")\'
 (?i:end) 	{update_cursor(); return END;}
 (?i:declare) 	{update_cursor(); return DECLARE;}
 (?i:procedure) 	{update_cursor(); return PROCEDURE;}
-(?i:int)	{update_cursor(); return INT_TYPE;}
+(?i:integer)	{update_cursor(); return INT_TYPE;}
 (?i:float) 	{update_cursor(); return FLOAT_TYPE;}
 (?i:char) 	{update_cursor(); return CHAR_TYPE;}
 (?i:array) 	{update_cursor(); return ARRAY;}
