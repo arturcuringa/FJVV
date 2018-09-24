@@ -68,6 +68,17 @@ attr_stmt: array_access ATTR_SIGN e;
 literal: INTEGER | FLOAT | CHAR;
 e: literal;
 array_access: /* '' */ | '[' e ']' array_access;
+idless_stmt: stop_stmt | io_stmt | control_stmt 
+control_stmt: if_stmt | goto_stmt | loop_stmt | exit_stmt
+if_stmt: IF e THEN stmt_list else_stmt ENDIF
+else_stmt: ELSE stmt_list | /* '' */
+goto_stmt: GOTO IDENTIFIER
+loop_stmt: LOOP ';' stmt_list ENDLOOP
+exit_stmt: EXITWHEN e
+stop_stmt: STOP
+io_stmt: GET id_list | PUT skip_stmt '(' id_list ')'
+skip_stmt: SKIP | /* '' */
+proc_stmt: '(' expr_list ')'
 
 %%
 
