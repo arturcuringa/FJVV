@@ -9,9 +9,9 @@
 
 %%
 
-"start" return start;
-";"	return terminator;
-"end" 	return end;
+"start" return START;
+";"	return ';';
+"end" 	return END;
 [\t\r\ \n] ;
 %%
 

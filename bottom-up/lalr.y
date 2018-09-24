@@ -19,7 +19,7 @@ void yyerror(const char *str){
 %token ATTR_SIGN DIFF_SIGN GREATER_EQ_SIGN LESS_EQ_SIGN 
 
 %%
-program : start ';' end ';' ;
+program : START ';' END ';' ;
 %%
 
 main (){

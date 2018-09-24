@@ -45,15 +45,67 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    start = 258,
-    terminator = 259,
-    end = 260
+    START = 258,
+    END = 259,
+    DECLARE = 260,
+    PROCEDURE = 261,
+    INT_TYPE = 262,
+    FLOAT_TYPE = 263,
+    CHAR_TYPE = 264,
+    ARRAY = 265,
+    OF = 266,
+    ID = 267,
+    INTEGER = 268,
+    FLOAT = 269,
+    CHAR = 270,
+    IF = 271,
+    THEN = 272,
+    ENDIF = 273,
+    ELSE = 274,
+    GOTO = 275,
+    LOOP = 276,
+    ENDLOOP = 277,
+    EXITWHEN = 278,
+    STOP = 279,
+    GET = 280,
+    PUT = 281,
+    SKIP = 282,
+    ATTR_SIGN = 283,
+    DIFF_SIGN = 284,
+    GREATER_EQ_SIGN = 285,
+    LESS_EQ_SIGN = 286
   };
 #endif
 /* Tokens.  */
-#define start 258
-#define terminator 259
-#define end 260
+#define START 258
+#define END 259
+#define DECLARE 260
+#define PROCEDURE 261
+#define INT_TYPE 262
+#define FLOAT_TYPE 263
+#define CHAR_TYPE 264
+#define ARRAY 265
+#define OF 266
+#define ID 267
+#define INTEGER 268
+#define FLOAT 269
+#define CHAR 270
+#define IF 271
+#define THEN 272
+#define ENDIF 273
+#define ELSE 274
+#define GOTO 275
+#define LOOP 276
+#define ENDLOOP 277
+#define EXITWHEN 278
+#define STOP 279
+#define GET 280
+#define PUT 281
+#define SKIP 282
+#define ATTR_SIGN 283
+#define DIFF_SIGN 284
+#define GREATER_EQ_SIGN 285
+#define LESS_EQ_SIGN 286
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
