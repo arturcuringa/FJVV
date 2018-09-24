@@ -44,6 +44,7 @@ void yyerror(const char *str){
 %left '*' '/' '%'
 %left '+' '-'
 %nonassoc '!' 
+%right UMINUS
 
 %%
 program : decl_list proc_decl_list START ';' stmt_list  END ';' ;
