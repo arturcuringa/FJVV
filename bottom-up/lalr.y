@@ -47,27 +47,76 @@ void yyerror(const char *str){
 %right UMINUS
 
 %%
-program : decl_list proc_decl_list START ';' stmt_list  END ';' ;
-decl_list: /* '' */ | decl_stmt ';' decl_list
-decl_stmt: DECLARE '(' id_list ')' data_type
-proc_decl_list: /* '' */ | proc_decl proc_decl_list
+program: decl_list proc_decl_list START ';' stmt_list  END ';' ;
+
+decl_list: /* '' */ 
+	| decl_stmt ';' decl_list;
+
+decl_stmt: DECLARE '(' id_list ')' data_type;
+
+proc_decl_list: /* '' */ 
+	| proc_decl proc_decl_list;
+
 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER ';'
-data_type: INT_TYPE | FLOAT_TYPE | CHAR_TYPE | array_nont
-array_nont: ARRAY '[' e ']' data_type
-super_id_list: /* '' */ | id_list
-id_list: IDENTIFIER id_list2
-id_list2: ',' IDENTIFIER id_list2 | /* '' */
-stmt_list: /* '' */ | super_stmt ';' stmt_list ;
+
+data_type: INT_TYPE 
+	| FLOAT_TYPE 
+	| CHAR_TYPE 
+	| array_nont;
+
+array_nont: ARRAY '[' expr ']' data_type;
+
+super_id_list: /* '' */ 
+	| id_list;
+
+id_list: IDENTIFIER id_list2;
+
+id_list2: ',' IDENTIFIER id_list2 
+	| /* '' */;
+
+stmt_list: /* '' */ 
+	| super_stmt ';' stmt_list ;
+
 super_stmt: label_stmt ;
+
 label_stmt: IDENTIFIER post_label_stmt;
-post_label_stmt: ':'stmt | attr_stmt ;
+
+post_label_stmt: ':'stmt 
+	| attr_stmt ;
+
 stmt: labelless_stmt ;
+
 labelless_stmt: IDENTIFIER post_labelless_stmt;
+
 post_labelless_stmt: attr_stmt ;
-attr_stmt: array_access ATTR_SIGN e;
-literal: INTEGER | FLOAT | CHAR;
-e: literal;
-array_access: /* '' */ | '[' e ']' array_access;
+
+attr_stmt: array_access ATTR_SIGN expr;
+
+literal: INTEGER 
+	| FLOAT 
+	| CHAR;
+
+expr: expr '+' expr 
+    | expr '-' expr 
+    | expr '*' expr 
+    | expr '%' expr 
+    | expr '/' expr 
+    | expr '<' expr 
+    | expr '>' expr 
+    | expr '=' expr 
+    | expr DIFF_SIGN expr 
+    | expr GREATER_EQ_SIGN expr 
+    | expr LESS_EQ_SIGN expr 
+    | expr '&' expr 
+    | expr '|' expr 
+    | '(' expr ')' 
+    | '!' expr 
+    | '-' expr %prec UMINUS 
+    | IDENTIFIER array_access 
+    | literal
+
+array_access: /* '' */ 
+	| '[' expr ']' array_access;
 
 %%
 
