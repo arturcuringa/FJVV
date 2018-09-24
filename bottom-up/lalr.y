@@ -39,6 +39,11 @@ void yyerror(const char *str){
 %token DIFF_SIGN
 %token GREATER_EQ_SIGN
 %token LESS_EQ_SIGN 
+%left '&' '|'
+%left '>' '<' '=' DIFF_SIGN LESS_EQ_SIGN GREATER_EQ_SIGN
+%left '*' '/' '%'
+%left '+' '-'
+%nonassoc '!' 
 
 %%
 program : decl_list proc_decl_list START ';' stmt_list  END ';' ;
@@ -65,7 +70,7 @@ array_access: /* '' */ | '[' e ']' array_access;
 
 %%
 
-main (){
+int main() {
 	return(yyparse());
 }
 
