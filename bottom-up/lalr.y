@@ -16,7 +16,12 @@ void yyerror(const char *str){
 %token IF THEN ENDIF ELSE
 %token GOTO LOOP ENDLOOP EXITWHEN STOP 
 %token GET PUT SKIP 
-%token ATTR_SIGN DIFF_SIGN GREATER_EQ_SIGN LESS_EQ_SIGN 
+%token ATTR_SIGN DIFF_SIGN GREATER_EQ_SIGN LESS_EQ_SIGN
+%left & |
+%left > < = != <= >=
+%left + -
+%left * / %
+%nonassoc ! 
 
 %%
 program : START ';' END ';' ;
