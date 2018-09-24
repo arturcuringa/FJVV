@@ -57,7 +57,7 @@ decl_stmt: DECLARE '(' id_list ')' data_type;
 proc_decl_list: /* '' */ 
 	| proc_decl proc_decl_list;
 
-proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER ';'
+proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER ';' ;
 
 data_type: INT_TYPE 
 	| FLOAT_TYPE 
@@ -77,18 +77,20 @@ id_list2: ',' IDENTIFIER id_list2
 stmt_list: /* '' */ 
 	| super_stmt ';' stmt_list ;
 
-super_stmt: label_stmt ;
+super_stmt: label_stmt  | idless_stmt;
 
 label_stmt: IDENTIFIER post_label_stmt;
 
-post_label_stmt: ':'stmt 
-	| attr_stmt ;
+post_label_stmt: ':' stmt 
+	| attr_stmt 
+	| proc_stmt ;
 
-stmt: labelless_stmt ;
+stmt: labelless_stmt | idless_stmt ;
 
 labelless_stmt: IDENTIFIER post_labelless_stmt;
 
-post_labelless_stmt: attr_stmt ;
+post_labelless_stmt: attr_stmt
+	| proc_stmt ;
 
 attr_stmt: array_access ATTR_SIGN expr;
 
@@ -122,6 +124,11 @@ skip_stmt: SKIP
 
 proc_stmt: '(' expr_list ')';
 
+expr_list: /* '' */
+	   | expr expr_list_tail ;
+
+expr_list_tail: ',' expr expr_list_tail
+	 	| /* '' */ ;
 literal: INTEGER 
 	| FLOAT 
 	| CHAR;

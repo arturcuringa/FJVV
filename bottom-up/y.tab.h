@@ -73,7 +73,8 @@ extern int yydebug;
     ATTR_SIGN = 283,
     DIFF_SIGN = 284,
     GREATER_EQ_SIGN = 285,
-    LESS_EQ_SIGN = 286
+    LESS_EQ_SIGN = 286,
+    UMINUS = 287
   };
 #endif
 /* Tokens.  */
@@ -106,6 +107,7 @@ extern int yydebug;
 #define DIFF_SIGN 284
 #define GREATER_EQ_SIGN 285
 #define LESS_EQ_SIGN 286
+#define UMINUS 287
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
