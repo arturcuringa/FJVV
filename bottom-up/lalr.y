@@ -119,7 +119,7 @@ exit_stmt: EXITWHEN expr;
 stop_stmt: STOP;
 
 io_stmt: GET id_list
-	| PUT skip_stmt '(' id_list ')';
+	| PUT skip_stmt '(' expr_list ')';
 
 skip_stmt: SKIP 
 	| /* '' */;
