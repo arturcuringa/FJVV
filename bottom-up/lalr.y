@@ -5,7 +5,7 @@
 #include <string.h>
 extern unsigned int line;
 extern unsigned int col;
-
+int yydebug = 1;
 void yyerror(const char *str){
 	fprintf(stderr, "error (line %d, col %d): %s\n", line, col, str);
 }
@@ -77,7 +77,8 @@ id_list2: ',' IDENTIFIER id_list2
 	| /* '' */;
 
 stmt_list: /* '' */ 
-	| super_stmt ';' stmt_list ;
+	| super_stmt ';' stmt_list {printf("staterment at %d \n", line);}
+	;
 
 super_stmt: label_stmt  | idless_stmt;
 
