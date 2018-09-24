@@ -10,10 +10,16 @@ void yyerror(const char *str){
 
 %}
 
-%token start terminator end
+%token START END DECLARE PROCEDURE 
+%token INT_TYPE FLOAT_TYPE CHAR_TYPE ARRAY OF 
+%token ID INTEGER FLOAT CHAR
+%token IF THEN ENDIF ELSE
+%token GOTO LOOP ENDLOOP EXITWHEN STOP 
+%token GET PUT SKIP 
+%token ATTR_SIGN DIFF_SIGN GREATER_EQ_SIGN LESS_EQ_SIGN 
 
 %%
-program : start terminator end terminator ;
+program : start ';' end ';' ;
 %%
 
 main (){
