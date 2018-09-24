@@ -54,12 +54,14 @@ program: decl_list proc_decl_list START ';' stmt_list  END ';' ;
 decl_list: /* '' */ 
 	| decl_stmt ';' decl_list;
 
-decl_stmt: DECLARE '(' id_list ')' data_type;
+decl_stmt: DECLARE '(' id_list ')' data_type
+	| error { printf ("Erro na declaração\n"); };
 
 proc_decl_list: /* '' */ 
-	| proc_decl proc_decl_list;
+	| proc_decl ';' proc_decl_list;
 
-proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER ';' ;
+proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER
+	| error { printf ("Erro na declaração de procedimento\n"); };
 
 data_type: INT_TYPE 
 	| FLOAT_TYPE 
@@ -77,10 +79,13 @@ id_list2: ',' IDENTIFIER id_list2
 	| /* '' */;
 
 stmt_list: /* '' */ 
-	| super_stmt ';' stmt_list {printf("staterment at %d \n", line);}
+	| super_stmt ';' stmt_list {printf("staterment at %d \n", line); }
+	| error { printf("Erro no statement\n"); }
 	;
 
-super_stmt: label_stmt  | idless_stmt;
+super_stmt: label_stmt 
+	| idless_stmt
+	| error {};
 
 label_stmt: IDENTIFIER post_label_stmt;
 
