@@ -92,6 +92,36 @@ post_labelless_stmt: attr_stmt ;
 
 attr_stmt: array_access ATTR_SIGN expr;
 
+idless_stmt: stop_stmt 
+	| io_stmt
+	| control_stmt ;
+
+control_stmt: if_stmt 
+	| goto_stmt
+	| loop_stmt 
+	| exit_stmt;
+
+if_stmt: IF expr THEN stmt_list else_stmt ENDIF;
+
+else_stmt: ELSE stmt_list 
+		 | /* '' */;
+
+goto_stmt: GOTO IDENTIFIER;
+
+loop_stmt: LOOP ';' stmt_list ENDLOOP;
+
+exit_stmt: EXITWHEN expr;
+
+stop_stmt: STOP;
+
+io_stmt: GET id_list
+	| PUT skip_stmt '(' id_list ')';
+
+skip_stmt: SKIP 
+	| /* '' */;
+
+proc_stmt: '(' expr_list ')';
+
 literal: INTEGER 
 	| FLOAT 
 	| CHAR;
@@ -117,7 +147,6 @@ expr: expr '+' expr
 
 array_access: /* '' */ 
 	| '[' expr ']' array_access;
-
 %%
 
 int main() {
