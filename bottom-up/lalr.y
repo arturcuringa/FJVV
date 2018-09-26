@@ -50,20 +50,22 @@ void yyerror(const char *str){
 
 %%
 program: decl_list proc_decl_list START ';' stmt_list  END ';' ;
-	| error
 
 decl_list: /* '' */ 
-	| decl_stmt ';' decl_list;
-	| error ';' decl_list;
+	| decl_list decl_stmt ';' 
+	| decl_list error ';'
+	;
 
 decl_stmt: DECLARE '(' id_list ')' data_type;
 
 proc_decl_list: /* '' */ 
-	| proc_decl ';' proc_decl_list
-	| error ';' proc_decl_list
+	| proc_decl_list proc_decl ';'
+	| proc_decl_list error ';'
 	;
 
-proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER;
+proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER
+	| error ';' stmt_list END IDENTIFIER
+	;
 
 data_type: INT_TYPE 
 	| FLOAT_TYPE 
@@ -75,10 +77,8 @@ array_nont: ARRAY '[' expr ']' OF data_type;
 super_id_list: /* '' */ 
 	| id_list;
 
-id_list: IDENTIFIER id_list2;
-
-id_list2: ',' IDENTIFIER id_list2 
-	| /* '' */;
+id_list: IDENTIFIER
+	| id_list ',' IDENTIFIER;
 
 stmt_list: /* '' */ 
 	| super_stmt ';' stmt_list {printf("statement at %d \n", line); }

@@ -1,7 +1,7 @@
 DECLARE (arr ARRAY [1000] OF INTEGER;
 DECLARE (i, j, menor, temp) INTEGER;
 
-insertionsort: PROCEDURE (size);
+insertionsort PROCEDURE (size);
     i := 0;
     size := size - 1;
     LOOP;
