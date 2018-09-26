@@ -1,2225 +1,2364 @@
-Gramática
+State 0 conflicts: 1 shift/reduce
+State 6 conflicts: 1 shift/reduce
+State 13 conflicts: 1 shift/reduce
+
+
+Grammar
 
     0 $accept: program $end
 
     1 program: decl_list proc_decl_list START ';' stmt_list END ';'
+    2        | error
 
-    2 decl_list: %empty
-    3          | decl_stmt ';' decl_list
+    3 decl_list: %empty
+    4          | decl_stmt ';' decl_list
+    5          | error ';' decl_list
 
-    4 decl_stmt: DECLARE '(' id_list ')' data_type
+    6 decl_stmt: DECLARE '(' id_list ')' data_type
 
-    5 proc_decl_list: %empty
-    6               | proc_decl proc_decl_list
+    7 proc_decl_list: %empty
+    8               | proc_decl ';' proc_decl_list
+    9               | error ';' proc_decl_list
 
-    7 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER ';'
+   10 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER
 
-    8 data_type: INT_TYPE
-    9          | FLOAT_TYPE
-   10          | CHAR_TYPE
-   11          | array_nont
+   11 data_type: INT_TYPE
+   12          | FLOAT_TYPE
+   13          | CHAR_TYPE
+   14          | array_nont
 
-   12 array_nont: ARRAY '[' expr ']' OF data_type
+   15 array_nont: ARRAY '[' expr ']' OF data_type
 
-   13 super_id_list: %empty
-   14              | id_list
+   16 super_id_list: %empty
+   17              | id_list
 
-   15 id_list: IDENTIFIER id_list2
+   18 id_list: IDENTIFIER id_list2
 
-   16 id_list2: ',' IDENTIFIER id_list2
-   17         | %empty
+   19 id_list2: ',' IDENTIFIER id_list2
+   20         | %empty
 
-   18 stmt_list: %empty
-   19          | super_stmt ';' stmt_list
+   21 stmt_list: %empty
+   22          | super_stmt ';' stmt_list
+   23          | error ';' stmt_list
 
-   20 super_stmt: label_stmt
-   21           | idless_stmt
+   24 super_stmt: label_stmt
+   25           | idless_stmt
 
-   22 label_stmt: IDENTIFIER post_label_stmt
+   26 label_stmt: IDENTIFIER post_label_stmt
 
-   23 post_label_stmt: ':' stmt
-   24                | attr_stmt
-   25                | proc_stmt
+   27 post_label_stmt: ':' stmt
+   28                | attr_stmt
+   29                | proc_stmt
 
-   26 stmt: labelless_stmt
-   27     | idless_stmt
+   30 stmt: labelless_stmt
+   31     | idless_stmt
 
-   28 labelless_stmt: IDENTIFIER post_labelless_stmt
+   32 labelless_stmt: IDENTIFIER post_labelless_stmt
 
-   29 post_labelless_stmt: attr_stmt
-   30                    | proc_stmt
+   33 post_labelless_stmt: attr_stmt
+   34                    | proc_stmt
 
-   31 attr_stmt: array_access ATTR_SIGN expr
+   35 attr_stmt: array_access ATTR_SIGN expr
 
-   32 idless_stmt: stop_stmt
-   33            | io_stmt
-   34            | control_stmt
+   36 idless_stmt: stop_stmt
+   37            | io_stmt
+   38            | control_stmt
 
-   35 control_stmt: if_stmt
-   36             | goto_stmt
-   37             | loop_stmt
-   38             | exit_stmt
+   39 control_stmt: if_stmt
+   40             | goto_stmt
+   41             | loop_stmt
+   42             | exit_stmt
 
-   39 if_stmt: IF expr THEN stmt_list else_stmt ENDIF
+   43 if_stmt: IF expr THEN stmt_list else_stmt ENDIF
 
-   40 else_stmt: ELSE stmt_list
-   41          | %empty
+   44 else_stmt: ELSE stmt_list
+   45          | %empty
 
-   42 goto_stmt: GOTO IDENTIFIER
+   46 goto_stmt: GOTO IDENTIFIER
 
-   43 loop_stmt: LOOP ';' stmt_list ENDLOOP
+   47 loop_stmt: LOOP ';' stmt_list ENDLOOP
 
-   44 exit_stmt: EXITWHEN expr
+   48 exit_stmt: EXITWHEN expr
 
-   45 stop_stmt: STOP
+   49 stop_stmt: STOP
 
-   46 io_stmt: GET id_list
-   47        | PUT skip_stmt '(' expr_list ')'
+   50 io_stmt: GET id_list
+   51        | PUT skip_stmt '(' expr_list ')'
 
-   48 skip_stmt: SKIP
-   49          | %empty
+   52 skip_stmt: SKIP
+   53          | %empty
 
-   50 proc_stmt: '(' expr_list ')'
+   54 proc_stmt: '(' expr_list ')'
 
-   51 expr_list: %empty
-   52          | expr expr_list_tail
+   55 expr_list: %empty
+   56          | expr expr_list_tail
 
-   53 expr_list_tail: ',' expr expr_list_tail
-   54               | %empty
+   57 expr_list_tail: ',' expr expr_list_tail
+   58               | %empty
 
-   55 literal: INTEGER
-   56        | FLOAT
-   57        | CHAR
+   59 literal: INTEGER
+   60        | FLOAT
+   61        | CHAR
 
-   58 expr: expr '+' expr
-   59     | expr '-' expr
-   60     | expr '*' expr
-   61     | expr '%' expr
-   62     | expr '/' expr
-   63     | expr '<' expr
-   64     | expr '>' expr
-   65     | expr '=' expr
-   66     | expr DIFF_SIGN expr
-   67     | expr GREATER_EQ_SIGN expr
-   68     | expr LESS_EQ_SIGN expr
-   69     | expr '&' expr
-   70     | expr '|' expr
-   71     | '(' expr ')'
-   72     | '!' expr
-   73     | '-' expr
-   74     | IDENTIFIER array_access
-   75     | literal
+   62 expr: expr '+' expr
+   63     | expr '-' expr
+   64     | expr '*' expr
+   65     | expr '%' expr
+   66     | expr '/' expr
+   67     | expr '<' expr
+   68     | expr '>' expr
+   69     | expr '=' expr
+   70     | expr DIFF_SIGN expr
+   71     | expr GREATER_EQ_SIGN expr
+   72     | expr LESS_EQ_SIGN expr
+   73     | expr '&' expr
+   74     | expr '|' expr
+   75     | '(' expr ')'
+   76     | '!' expr
+   77     | '-' expr
+   78     | IDENTIFIER array_access
+   79     | literal
 
-   76 array_access: %empty
-   77             | '[' expr ']' array_access
+   80 array_access: %empty
+   81             | '[' expr ']' array_access
 
 
-Terminais, com as regras onde eles aparecem
+Terminals, with rules where they appear
 
 $end (0) 0
-'!' (33) 72
-'%' (37) 61
-'&' (38) 69
-'(' (40) 4 7 47 50 71
-')' (41) 4 7 47 50 71
-'*' (42) 60
-'+' (43) 58
-',' (44) 16 53
-'-' (45) 59 73
-'/' (47) 62
-':' (58) 7 23
-';' (59) 1 3 7 19 43
-'<' (60) 63
-'=' (61) 65
-'>' (62) 64
-'[' (91) 12 77
-']' (93) 12 77
-'|' (124) 70
-error (256)
+'!' (33) 76
+'%' (37) 65
+'&' (38) 73
+'(' (40) 6 10 51 54 75
+')' (41) 6 10 51 54 75
+'*' (42) 64
+'+' (43) 62
+',' (44) 19 57
+'-' (45) 63 77
+'/' (47) 66
+':' (58) 10 27
+';' (59) 1 4 5 8 9 10 22 23 47
+'<' (60) 67
+'=' (61) 69
+'>' (62) 68
+'[' (91) 15 81
+']' (93) 15 81
+'|' (124) 74
+error (256) 2 5 9 23
 START (258) 1
-END (259) 1 7
-DECLARE (260) 4
-PROCEDURE (261) 7
-INT_TYPE (262) 8
-FLOAT_TYPE (263) 9
-CHAR_TYPE (264) 10
-ARRAY (265) 12
-OF (266) 12
-IDENTIFIER (267) 7 15 16 22 28 42 74
-INTEGER (268) 55
-FLOAT (269) 56
-CHAR (270) 57
-IF (271) 39
-THEN (272) 39
-ENDIF (273) 39
-ELSE (274) 40
-GOTO (275) 42
-LOOP (276) 43
-ENDLOOP (277) 43
-EXITWHEN (278) 44
-STOP (279) 45
-GET (280) 46
-PUT (281) 47
-SKIP (282) 48
-ATTR_SIGN (283) 31
-DIFF_SIGN (284) 66
-GREATER_EQ_SIGN (285) 67
-LESS_EQ_SIGN (286) 68
+END (259) 1 10
+DECLARE (260) 6
+PROCEDURE (261) 10
+INT_TYPE (262) 11
+FLOAT_TYPE (263) 12
+CHAR_TYPE (264) 13
+ARRAY (265) 15
+OF (266) 15
+IDENTIFIER (267) 10 18 19 26 32 46 78
+INTEGER (268) 59
+FLOAT (269) 60
+CHAR (270) 61
+IF (271) 43
+THEN (272) 43
+ENDIF (273) 43
+ELSE (274) 44
+GOTO (275) 46
+LOOP (276) 47
+ENDLOOP (277) 47
+EXITWHEN (278) 48
+STOP (279) 49
+GET (280) 50
+PUT (281) 51
+SKIP (282) 52
+ATTR_SIGN (283) 35
+DIFF_SIGN (284) 70
+GREATER_EQ_SIGN (285) 71
+LESS_EQ_SIGN (286) 72
 UMINUS (287)
 
 
-Não terminais com as regras onde eles aparecem
+Nonterminals, with rules where they appear
 
 $accept (51)
-    à esquerda: 0
+    on left: 0
 program (52)
-    à esquerda: 1, à direita: 0
+    on left: 1 2, on right: 0
 decl_list (53)
-    à esquerda: 2 3, à direita: 1 3
+    on left: 3 4 5, on right: 1 4 5
 decl_stmt (54)
-    à esquerda: 4, à direita: 3
+    on left: 6, on right: 4
 proc_decl_list (55)
-    à esquerda: 5 6, à direita: 1 6
+    on left: 7 8 9, on right: 1 8 9
 proc_decl (56)
-    à esquerda: 7, à direita: 6
+    on left: 10, on right: 8
 data_type (57)
-    à esquerda: 8 9 10 11, à direita: 4 12
+    on left: 11 12 13 14, on right: 6 15
 array_nont (58)
-    à esquerda: 12, à direita: 11
+    on left: 15, on right: 14
 super_id_list (59)
-    à esquerda: 13 14, à direita: 7
+    on left: 16 17, on right: 10
 id_list (60)
-    à esquerda: 15, à direita: 4 14 46
+    on left: 18, on right: 6 17 50
 id_list2 (61)
-    à esquerda: 16 17, à direita: 15 16
+    on left: 19 20, on right: 18 19
 stmt_list (62)
-    à esquerda: 18 19, à direita: 1 7 19 39 40 43
+    on left: 21 22 23, on right: 1 10 22 23 43 44 47
 super_stmt (63)
-    à esquerda: 20 21, à direita: 19
+    on left: 24 25, on right: 22
 label_stmt (64)
-    à esquerda: 22, à direita: 20
+    on left: 26, on right: 24
 post_label_stmt (65)
-    à esquerda: 23 24 25, à direita: 22
+    on left: 27 28 29, on right: 26
 stmt (66)
-    à esquerda: 26 27, à direita: 23
+    on left: 30 31, on right: 27
 labelless_stmt (67)
-    à esquerda: 28, à direita: 26
+    on left: 32, on right: 30
 post_labelless_stmt (68)
-    à esquerda: 29 30, à direita: 28
+    on left: 33 34, on right: 32
 attr_stmt (69)
-    à esquerda: 31, à direita: 24 29
+    on left: 35, on right: 28 33
 idless_stmt (70)
-    à esquerda: 32 33 34, à direita: 21 27
+    on left: 36 37 38, on right: 25 31
 control_stmt (71)
-    à esquerda: 35 36 37 38, à direita: 34
+    on left: 39 40 41 42, on right: 38
 if_stmt (72)
-    à esquerda: 39, à direita: 35
+    on left: 43, on right: 39
 else_stmt (73)
-    à esquerda: 40 41, à direita: 39
+    on left: 44 45, on right: 43
 goto_stmt (74)
-    à esquerda: 42, à direita: 36
+    on left: 46, on right: 40
 loop_stmt (75)
-    à esquerda: 43, à direita: 37
+    on left: 47, on right: 41
 exit_stmt (76)
-    à esquerda: 44, à direita: 38
+    on left: 48, on right: 42
 stop_stmt (77)
-    à esquerda: 45, à direita: 32
+    on left: 49, on right: 36
 io_stmt (78)
-    à esquerda: 46 47, à direita: 33
+    on left: 50 51, on right: 37
 skip_stmt (79)
-    à esquerda: 48 49, à direita: 47
+    on left: 52 53, on right: 51
 proc_stmt (80)
-    à esquerda: 50, à direita: 25 30
+    on left: 54, on right: 29 34
 expr_list (81)
-    à esquerda: 51 52, à direita: 47 50
+    on left: 55 56, on right: 51 54
 expr_list_tail (82)
-    à esquerda: 53 54, à direita: 52 53
+    on left: 57 58, on right: 56 57
 literal (83)
-    à esquerda: 55 56 57, à direita: 75
+    on left: 59 60 61, on right: 79
 expr (84)
-    à esquerda: 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74
-    75, à direita: 12 31 39 44 52 53 58 59 60 61 62 63 64 65 66 67
-    68 69 70 71 72 73 77
+    on left: 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79,
+    on right: 15 35 43 48 56 57 62 63 64 65 66 67 68 69 70 71 72 73
+    74 75 76 77 81
 array_access (85)
-    à esquerda: 76 77, à direita: 31 74 77
+    on left: 80 81, on right: 35 78 81
 
 
-Estado 0
+State 0
 
     0 $accept: . program $end
 
-    DECLARE  deslocar, e ir ao estado 1
+    error    shift, and go to state 1
+    DECLARE  shift, and go to state 2
 
-    $padrão  reduzir usando a regra 2 (decl_list)
+    error       [reduce using rule 3 (decl_list)]
+    START       reduce using rule 3 (decl_list)
+    IDENTIFIER  reduce using rule 3 (decl_list)
 
-    program    ir ao estado 2
-    decl_list  ir ao estado 3
-    decl_stmt  ir ao estado 4
-
-
-Estado 1
-
-    4 decl_stmt: DECLARE . '(' id_list ')' data_type
-
-    '('  deslocar, e ir ao estado 5
+    program    go to state 3
+    decl_list  go to state 4
+    decl_stmt  go to state 5
 
 
-Estado 2
+State 1
+
+    2 program: error .
+    5 decl_list: error . ';' decl_list
+
+    ';'  shift, and go to state 6
+
+    $default  reduce using rule 2 (program)
+
+
+State 2
+
+    6 decl_stmt: DECLARE . '(' id_list ')' data_type
+
+    '('  shift, and go to state 7
+
+
+State 3
 
     0 $accept: program . $end
 
-    $end  deslocar, e ir ao estado 6
+    $end  shift, and go to state 8
 
 
-Estado 3
+State 4
 
     1 program: decl_list . proc_decl_list START ';' stmt_list END ';'
 
-    IDENTIFIER  deslocar, e ir ao estado 7
+    error       shift, and go to state 9
+    IDENTIFIER  shift, and go to state 10
 
-    $padrão  reduzir usando a regra 5 (proc_decl_list)
+    START  reduce using rule 7 (proc_decl_list)
 
-    proc_decl_list  ir ao estado 8
-    proc_decl       ir ao estado 9
-
-
-Estado 4
-
-    3 decl_list: decl_stmt . ';' decl_list
-
-    ';'  deslocar, e ir ao estado 10
+    proc_decl_list  go to state 11
+    proc_decl       go to state 12
 
 
-Estado 5
+State 5
 
-    4 decl_stmt: DECLARE '(' . id_list ')' data_type
+    4 decl_list: decl_stmt . ';' decl_list
 
-    IDENTIFIER  deslocar, e ir ao estado 11
-
-    id_list  ir ao estado 12
+    ';'  shift, and go to state 13
 
 
-Estado 6
+State 6
+
+    5 decl_list: error ';' . decl_list
+
+    error    shift, and go to state 14
+    DECLARE  shift, and go to state 2
+
+    error       [reduce using rule 3 (decl_list)]
+    START       reduce using rule 3 (decl_list)
+    IDENTIFIER  reduce using rule 3 (decl_list)
+
+    decl_list  go to state 15
+    decl_stmt  go to state 5
+
+
+State 7
+
+    6 decl_stmt: DECLARE '(' . id_list ')' data_type
+
+    IDENTIFIER  shift, and go to state 16
+
+    id_list  go to state 17
+
+
+State 8
 
     0 $accept: program $end .
 
-    $padrão  aceitar
+    $default  accept
 
 
-Estado 7
+State 9
 
-    7 proc_decl: IDENTIFIER . ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER ';'
+    9 proc_decl_list: error . ';' proc_decl_list
 
-    ':'  deslocar, e ir ao estado 13
+    ';'  shift, and go to state 18
 
 
-Estado 8
+State 10
+
+   10 proc_decl: IDENTIFIER . ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER
+
+    ':'  shift, and go to state 19
+
+
+State 11
 
     1 program: decl_list proc_decl_list . START ';' stmt_list END ';'
 
-    START  deslocar, e ir ao estado 14
+    START  shift, and go to state 20
 
 
-Estado 9
+State 12
 
-    6 proc_decl_list: proc_decl . proc_decl_list
+    8 proc_decl_list: proc_decl . ';' proc_decl_list
 
-    IDENTIFIER  deslocar, e ir ao estado 7
-
-    $padrão  reduzir usando a regra 5 (proc_decl_list)
-
-    proc_decl_list  ir ao estado 15
-    proc_decl       ir ao estado 9
+    ';'  shift, and go to state 21
 
 
-Estado 10
+State 13
 
-    3 decl_list: decl_stmt ';' . decl_list
+    4 decl_list: decl_stmt ';' . decl_list
 
-    DECLARE  deslocar, e ir ao estado 1
+    error    shift, and go to state 14
+    DECLARE  shift, and go to state 2
 
-    $padrão  reduzir usando a regra 2 (decl_list)
+    error       [reduce using rule 3 (decl_list)]
+    START       reduce using rule 3 (decl_list)
+    IDENTIFIER  reduce using rule 3 (decl_list)
 
-    decl_list  ir ao estado 16
-    decl_stmt  ir ao estado 4
-
-
-Estado 11
-
-   15 id_list: IDENTIFIER . id_list2
-
-    ','  deslocar, e ir ao estado 17
-
-    $padrão  reduzir usando a regra 17 (id_list2)
-
-    id_list2  ir ao estado 18
+    decl_list  go to state 22
+    decl_stmt  go to state 5
 
 
-Estado 12
+State 14
 
-    4 decl_stmt: DECLARE '(' id_list . ')' data_type
+    5 decl_list: error . ';' decl_list
 
-    ')'  deslocar, e ir ao estado 19
-
-
-Estado 13
-
-    7 proc_decl: IDENTIFIER ':' . PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER ';'
-
-    PROCEDURE  deslocar, e ir ao estado 20
+    ';'  shift, and go to state 6
 
 
-Estado 14
+State 15
+
+    5 decl_list: error ';' decl_list .
+
+    $default  reduce using rule 5 (decl_list)
+
+
+State 16
+
+   18 id_list: IDENTIFIER . id_list2
+
+    ','  shift, and go to state 23
+
+    $default  reduce using rule 20 (id_list2)
+
+    id_list2  go to state 24
+
+
+State 17
+
+    6 decl_stmt: DECLARE '(' id_list . ')' data_type
+
+    ')'  shift, and go to state 25
+
+
+State 18
+
+    9 proc_decl_list: error ';' . proc_decl_list
+
+    error       shift, and go to state 9
+    IDENTIFIER  shift, and go to state 10
+
+    START  reduce using rule 7 (proc_decl_list)
+
+    proc_decl_list  go to state 26
+    proc_decl       go to state 12
+
+
+State 19
+
+   10 proc_decl: IDENTIFIER ':' . PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER
+
+    PROCEDURE  shift, and go to state 27
+
+
+State 20
 
     1 program: decl_list proc_decl_list START . ';' stmt_list END ';'
 
-    ';'  deslocar, e ir ao estado 21
+    ';'  shift, and go to state 28
 
 
-Estado 15
+State 21
 
-    6 proc_decl_list: proc_decl proc_decl_list .
+    8 proc_decl_list: proc_decl ';' . proc_decl_list
 
-    $padrão  reduzir usando a regra 6 (proc_decl_list)
+    error       shift, and go to state 9
+    IDENTIFIER  shift, and go to state 10
 
+    START  reduce using rule 7 (proc_decl_list)
 
-Estado 16
-
-    3 decl_list: decl_stmt ';' decl_list .
-
-    $padrão  reduzir usando a regra 3 (decl_list)
-
-
-Estado 17
-
-   16 id_list2: ',' . IDENTIFIER id_list2
-
-    IDENTIFIER  deslocar, e ir ao estado 22
+    proc_decl_list  go to state 29
+    proc_decl       go to state 12
 
 
-Estado 18
+State 22
 
-   15 id_list: IDENTIFIER id_list2 .
+    4 decl_list: decl_stmt ';' decl_list .
 
-    $padrão  reduzir usando a regra 15 (id_list)
-
-
-Estado 19
-
-    4 decl_stmt: DECLARE '(' id_list ')' . data_type
-
-    INT_TYPE    deslocar, e ir ao estado 23
-    FLOAT_TYPE  deslocar, e ir ao estado 24
-    CHAR_TYPE   deslocar, e ir ao estado 25
-    ARRAY       deslocar, e ir ao estado 26
-
-    data_type   ir ao estado 27
-    array_nont  ir ao estado 28
+    $default  reduce using rule 4 (decl_list)
 
 
-Estado 20
+State 23
 
-    7 proc_decl: IDENTIFIER ':' PROCEDURE . '(' super_id_list ')' ';' stmt_list END IDENTIFIER ';'
+   19 id_list2: ',' . IDENTIFIER id_list2
 
-    '('  deslocar, e ir ao estado 29
+    IDENTIFIER  shift, and go to state 30
 
 
-Estado 21
+State 24
+
+   18 id_list: IDENTIFIER id_list2 .
+
+    $default  reduce using rule 18 (id_list)
+
+
+State 25
+
+    6 decl_stmt: DECLARE '(' id_list ')' . data_type
+
+    INT_TYPE    shift, and go to state 31
+    FLOAT_TYPE  shift, and go to state 32
+    CHAR_TYPE   shift, and go to state 33
+    ARRAY       shift, and go to state 34
+
+    data_type   go to state 35
+    array_nont  go to state 36
+
+
+State 26
+
+    9 proc_decl_list: error ';' proc_decl_list .
+
+    $default  reduce using rule 9 (proc_decl_list)
+
+
+State 27
+
+   10 proc_decl: IDENTIFIER ':' PROCEDURE . '(' super_id_list ')' ';' stmt_list END IDENTIFIER
+
+    '('  shift, and go to state 37
+
+
+State 28
 
     1 program: decl_list proc_decl_list START ';' . stmt_list END ';'
 
-    IDENTIFIER  deslocar, e ir ao estado 30
-    IF          deslocar, e ir ao estado 31
-    GOTO        deslocar, e ir ao estado 32
-    LOOP        deslocar, e ir ao estado 33
-    EXITWHEN    deslocar, e ir ao estado 34
-    STOP        deslocar, e ir ao estado 35
-    GET         deslocar, e ir ao estado 36
-    PUT         deslocar, e ir ao estado 37
+    error       shift, and go to state 38
+    IDENTIFIER  shift, and go to state 39
+    IF          shift, and go to state 40
+    GOTO        shift, and go to state 41
+    LOOP        shift, and go to state 42
+    EXITWHEN    shift, and go to state 43
+    STOP        shift, and go to state 44
+    GET         shift, and go to state 45
+    PUT         shift, and go to state 46
 
-    $padrão  reduzir usando a regra 18 (stmt_list)
+    END  reduce using rule 21 (stmt_list)
 
-    stmt_list     ir ao estado 38
-    super_stmt    ir ao estado 39
-    label_stmt    ir ao estado 40
-    idless_stmt   ir ao estado 41
-    control_stmt  ir ao estado 42
-    if_stmt       ir ao estado 43
-    goto_stmt     ir ao estado 44
-    loop_stmt     ir ao estado 45
-    exit_stmt     ir ao estado 46
-    stop_stmt     ir ao estado 47
-    io_stmt       ir ao estado 48
+    stmt_list     go to state 47
+    super_stmt    go to state 48
+    label_stmt    go to state 49
+    idless_stmt   go to state 50
+    control_stmt  go to state 51
+    if_stmt       go to state 52
+    goto_stmt     go to state 53
+    loop_stmt     go to state 54
+    exit_stmt     go to state 55
+    stop_stmt     go to state 56
+    io_stmt       go to state 57
 
 
-Estado 22
+State 29
 
-   16 id_list2: ',' IDENTIFIER . id_list2
+    8 proc_decl_list: proc_decl ';' proc_decl_list .
 
-    ','  deslocar, e ir ao estado 17
+    $default  reduce using rule 8 (proc_decl_list)
 
-    $padrão  reduzir usando a regra 17 (id_list2)
 
-    id_list2  ir ao estado 49
+State 30
 
+   19 id_list2: ',' IDENTIFIER . id_list2
 
-Estado 23
+    ','  shift, and go to state 23
 
-    8 data_type: INT_TYPE .
+    $default  reduce using rule 20 (id_list2)
 
-    $padrão  reduzir usando a regra 8 (data_type)
+    id_list2  go to state 58
 
 
-Estado 24
+State 31
 
-    9 data_type: FLOAT_TYPE .
+   11 data_type: INT_TYPE .
 
-    $padrão  reduzir usando a regra 9 (data_type)
+    $default  reduce using rule 11 (data_type)
 
 
-Estado 25
+State 32
 
-   10 data_type: CHAR_TYPE .
+   12 data_type: FLOAT_TYPE .
 
-    $padrão  reduzir usando a regra 10 (data_type)
+    $default  reduce using rule 12 (data_type)
 
 
-Estado 26
+State 33
 
-   12 array_nont: ARRAY . '[' expr ']' OF data_type
+   13 data_type: CHAR_TYPE .
 
-    '['  deslocar, e ir ao estado 50
+    $default  reduce using rule 13 (data_type)
 
 
-Estado 27
+State 34
 
-    4 decl_stmt: DECLARE '(' id_list ')' data_type .
+   15 array_nont: ARRAY . '[' expr ']' OF data_type
 
-    $padrão  reduzir usando a regra 4 (decl_stmt)
+    '['  shift, and go to state 59
 
 
-Estado 28
+State 35
 
-   11 data_type: array_nont .
+    6 decl_stmt: DECLARE '(' id_list ')' data_type .
 
-    $padrão  reduzir usando a regra 11 (data_type)
+    $default  reduce using rule 6 (decl_stmt)
 
 
-Estado 29
+State 36
 
-    7 proc_decl: IDENTIFIER ':' PROCEDURE '(' . super_id_list ')' ';' stmt_list END IDENTIFIER ';'
+   14 data_type: array_nont .
 
-    IDENTIFIER  deslocar, e ir ao estado 11
+    $default  reduce using rule 14 (data_type)
 
-    $padrão  reduzir usando a regra 13 (super_id_list)
 
-    super_id_list  ir ao estado 51
-    id_list        ir ao estado 52
+State 37
 
+   10 proc_decl: IDENTIFIER ':' PROCEDURE '(' . super_id_list ')' ';' stmt_list END IDENTIFIER
 
-Estado 30
+    IDENTIFIER  shift, and go to state 16
 
-   22 label_stmt: IDENTIFIER . post_label_stmt
+    $default  reduce using rule 16 (super_id_list)
 
-    '('  deslocar, e ir ao estado 53
-    ':'  deslocar, e ir ao estado 54
-    '['  deslocar, e ir ao estado 55
+    super_id_list  go to state 60
+    id_list        go to state 61
 
-    $padrão  reduzir usando a regra 76 (array_access)
 
-    post_label_stmt  ir ao estado 56
-    attr_stmt        ir ao estado 57
-    proc_stmt        ir ao estado 58
-    array_access     ir ao estado 59
+State 38
 
+   23 stmt_list: error . ';' stmt_list
 
-Estado 31
+    ';'  shift, and go to state 62
 
-   39 if_stmt: IF . expr THEN stmt_list else_stmt ENDIF
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+State 39
 
-    literal  ir ao estado 67
-    expr     ir ao estado 68
+   26 label_stmt: IDENTIFIER . post_label_stmt
 
+    '('  shift, and go to state 63
+    ':'  shift, and go to state 64
+    '['  shift, and go to state 65
 
-Estado 32
+    $default  reduce using rule 80 (array_access)
 
-   42 goto_stmt: GOTO . IDENTIFIER
+    post_label_stmt  go to state 66
+    attr_stmt        go to state 67
+    proc_stmt        go to state 68
+    array_access     go to state 69
 
-    IDENTIFIER  deslocar, e ir ao estado 69
 
+State 40
 
-Estado 33
+   43 if_stmt: IF . expr THEN stmt_list else_stmt ENDIF
 
-   43 loop_stmt: LOOP . ';' stmt_list ENDLOOP
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-    ';'  deslocar, e ir ao estado 70
+    literal  go to state 77
+    expr     go to state 78
 
 
-Estado 34
+State 41
 
-   44 exit_stmt: EXITWHEN . expr
+   46 goto_stmt: GOTO . IDENTIFIER
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+    IDENTIFIER  shift, and go to state 79
 
-    literal  ir ao estado 67
-    expr     ir ao estado 71
 
+State 42
 
-Estado 35
+   47 loop_stmt: LOOP . ';' stmt_list ENDLOOP
 
-   45 stop_stmt: STOP .
+    ';'  shift, and go to state 80
 
-    $padrão  reduzir usando a regra 45 (stop_stmt)
 
+State 43
 
-Estado 36
+   48 exit_stmt: EXITWHEN . expr
 
-   46 io_stmt: GET . id_list
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-    IDENTIFIER  deslocar, e ir ao estado 11
+    literal  go to state 77
+    expr     go to state 81
 
-    id_list  ir ao estado 72
 
+State 44
 
-Estado 37
+   49 stop_stmt: STOP .
 
-   47 io_stmt: PUT . skip_stmt '(' expr_list ')'
+    $default  reduce using rule 49 (stop_stmt)
 
-    SKIP  deslocar, e ir ao estado 73
 
-    $padrão  reduzir usando a regra 49 (skip_stmt)
+State 45
 
-    skip_stmt  ir ao estado 74
+   50 io_stmt: GET . id_list
 
+    IDENTIFIER  shift, and go to state 16
 
-Estado 38
+    id_list  go to state 82
+
+
+State 46
+
+   51 io_stmt: PUT . skip_stmt '(' expr_list ')'
+
+    SKIP  shift, and go to state 83
+
+    $default  reduce using rule 53 (skip_stmt)
+
+    skip_stmt  go to state 84
+
+
+State 47
 
     1 program: decl_list proc_decl_list START ';' stmt_list . END ';'
 
-    END  deslocar, e ir ao estado 75
+    END  shift, and go to state 85
 
 
-Estado 39
+State 48
 
-   19 stmt_list: super_stmt . ';' stmt_list
+   22 stmt_list: super_stmt . ';' stmt_list
 
-    ';'  deslocar, e ir ao estado 76
+    ';'  shift, and go to state 86
 
 
-Estado 40
+State 49
 
-   20 super_stmt: label_stmt .
+   24 super_stmt: label_stmt .
 
-    $padrão  reduzir usando a regra 20 (super_stmt)
+    $default  reduce using rule 24 (super_stmt)
 
 
-Estado 41
+State 50
 
-   21 super_stmt: idless_stmt .
+   25 super_stmt: idless_stmt .
 
-    $padrão  reduzir usando a regra 21 (super_stmt)
+    $default  reduce using rule 25 (super_stmt)
 
 
-Estado 42
+State 51
 
-   34 idless_stmt: control_stmt .
+   38 idless_stmt: control_stmt .
 
-    $padrão  reduzir usando a regra 34 (idless_stmt)
+    $default  reduce using rule 38 (idless_stmt)
 
 
-Estado 43
+State 52
 
-   35 control_stmt: if_stmt .
+   39 control_stmt: if_stmt .
 
-    $padrão  reduzir usando a regra 35 (control_stmt)
+    $default  reduce using rule 39 (control_stmt)
 
 
-Estado 44
+State 53
 
-   36 control_stmt: goto_stmt .
+   40 control_stmt: goto_stmt .
 
-    $padrão  reduzir usando a regra 36 (control_stmt)
+    $default  reduce using rule 40 (control_stmt)
 
 
-Estado 45
+State 54
 
-   37 control_stmt: loop_stmt .
+   41 control_stmt: loop_stmt .
 
-    $padrão  reduzir usando a regra 37 (control_stmt)
+    $default  reduce using rule 41 (control_stmt)
 
 
-Estado 46
+State 55
 
-   38 control_stmt: exit_stmt .
+   42 control_stmt: exit_stmt .
 
-    $padrão  reduzir usando a regra 38 (control_stmt)
+    $default  reduce using rule 42 (control_stmt)
 
 
-Estado 47
+State 56
 
-   32 idless_stmt: stop_stmt .
+   36 idless_stmt: stop_stmt .
 
-    $padrão  reduzir usando a regra 32 (idless_stmt)
+    $default  reduce using rule 36 (idless_stmt)
 
 
-Estado 48
+State 57
 
-   33 idless_stmt: io_stmt .
+   37 idless_stmt: io_stmt .
 
-    $padrão  reduzir usando a regra 33 (idless_stmt)
+    $default  reduce using rule 37 (idless_stmt)
 
 
-Estado 49
+State 58
 
-   16 id_list2: ',' IDENTIFIER id_list2 .
+   19 id_list2: ',' IDENTIFIER id_list2 .
 
-    $padrão  reduzir usando a regra 16 (id_list2)
+    $default  reduce using rule 19 (id_list2)
 
 
-Estado 50
+State 59
 
-   12 array_nont: ARRAY '[' . expr ']' OF data_type
+   15 array_nont: ARRAY '[' . expr ']' OF data_type
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-    literal  ir ao estado 67
-    expr     ir ao estado 77
+    literal  go to state 77
+    expr     go to state 87
 
 
-Estado 51
+State 60
 
-    7 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list . ')' ';' stmt_list END IDENTIFIER ';'
+   10 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list . ')' ';' stmt_list END IDENTIFIER
 
-    ')'  deslocar, e ir ao estado 78
+    ')'  shift, and go to state 88
 
 
-Estado 52
+State 61
 
-   14 super_id_list: id_list .
+   17 super_id_list: id_list .
 
-    $padrão  reduzir usando a regra 14 (super_id_list)
+    $default  reduce using rule 17 (super_id_list)
 
 
-Estado 53
+State 62
 
-   50 proc_stmt: '(' . expr_list ')'
+   23 stmt_list: error ';' . stmt_list
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+    error       shift, and go to state 38
+    IDENTIFIER  shift, and go to state 39
+    IF          shift, and go to state 40
+    GOTO        shift, and go to state 41
+    LOOP        shift, and go to state 42
+    EXITWHEN    shift, and go to state 43
+    STOP        shift, and go to state 44
+    GET         shift, and go to state 45
+    PUT         shift, and go to state 46
 
-    $padrão  reduzir usando a regra 51 (expr_list)
+    END      reduce using rule 21 (stmt_list)
+    ENDIF    reduce using rule 21 (stmt_list)
+    ELSE     reduce using rule 21 (stmt_list)
+    ENDLOOP  reduce using rule 21 (stmt_list)
 
-    expr_list  ir ao estado 79
-    literal    ir ao estado 67
-    expr       ir ao estado 80
+    stmt_list     go to state 89
+    super_stmt    go to state 48
+    label_stmt    go to state 49
+    idless_stmt   go to state 50
+    control_stmt  go to state 51
+    if_stmt       go to state 52
+    goto_stmt     go to state 53
+    loop_stmt     go to state 54
+    exit_stmt     go to state 55
+    stop_stmt     go to state 56
+    io_stmt       go to state 57
 
 
-Estado 54
+State 63
 
-   23 post_label_stmt: ':' . stmt
+   54 proc_stmt: '(' . expr_list ')'
 
-    IDENTIFIER  deslocar, e ir ao estado 81
-    IF          deslocar, e ir ao estado 31
-    GOTO        deslocar, e ir ao estado 32
-    LOOP        deslocar, e ir ao estado 33
-    EXITWHEN    deslocar, e ir ao estado 34
-    STOP        deslocar, e ir ao estado 35
-    GET         deslocar, e ir ao estado 36
-    PUT         deslocar, e ir ao estado 37
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-    stmt            ir ao estado 82
-    labelless_stmt  ir ao estado 83
-    idless_stmt     ir ao estado 84
-    control_stmt    ir ao estado 42
-    if_stmt         ir ao estado 43
-    goto_stmt       ir ao estado 44
-    loop_stmt       ir ao estado 45
-    exit_stmt       ir ao estado 46
-    stop_stmt       ir ao estado 47
-    io_stmt         ir ao estado 48
+    $default  reduce using rule 55 (expr_list)
 
+    expr_list  go to state 90
+    literal    go to state 77
+    expr       go to state 91
 
-Estado 55
 
-   77 array_access: '[' . expr ']' array_access
+State 64
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+   27 post_label_stmt: ':' . stmt
 
-    literal  ir ao estado 67
-    expr     ir ao estado 85
+    IDENTIFIER  shift, and go to state 92
+    IF          shift, and go to state 40
+    GOTO        shift, and go to state 41
+    LOOP        shift, and go to state 42
+    EXITWHEN    shift, and go to state 43
+    STOP        shift, and go to state 44
+    GET         shift, and go to state 45
+    PUT         shift, and go to state 46
 
+    stmt            go to state 93
+    labelless_stmt  go to state 94
+    idless_stmt     go to state 95
+    control_stmt    go to state 51
+    if_stmt         go to state 52
+    goto_stmt       go to state 53
+    loop_stmt       go to state 54
+    exit_stmt       go to state 55
+    stop_stmt       go to state 56
+    io_stmt         go to state 57
 
-Estado 56
 
-   22 label_stmt: IDENTIFIER post_label_stmt .
+State 65
 
-    $padrão  reduzir usando a regra 22 (label_stmt)
+   81 array_access: '[' . expr ']' array_access
 
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-Estado 57
+    literal  go to state 77
+    expr     go to state 96
 
-   24 post_label_stmt: attr_stmt .
 
-    $padrão  reduzir usando a regra 24 (post_label_stmt)
+State 66
 
+   26 label_stmt: IDENTIFIER post_label_stmt .
 
-Estado 58
+    $default  reduce using rule 26 (label_stmt)
 
-   25 post_label_stmt: proc_stmt .
 
-    $padrão  reduzir usando a regra 25 (post_label_stmt)
+State 67
 
+   28 post_label_stmt: attr_stmt .
 
-Estado 59
+    $default  reduce using rule 28 (post_label_stmt)
 
-   31 attr_stmt: array_access . ATTR_SIGN expr
 
-    ATTR_SIGN  deslocar, e ir ao estado 86
+State 68
 
+   29 post_label_stmt: proc_stmt .
 
-Estado 60
+    $default  reduce using rule 29 (post_label_stmt)
 
-   74 expr: IDENTIFIER . array_access
 
-    '['  deslocar, e ir ao estado 55
+State 69
 
-    $padrão  reduzir usando a regra 76 (array_access)
+   35 attr_stmt: array_access . ATTR_SIGN expr
 
-    array_access  ir ao estado 87
+    ATTR_SIGN  shift, and go to state 97
 
 
-Estado 61
+State 70
 
-   55 literal: INTEGER .
+   78 expr: IDENTIFIER . array_access
 
-    $padrão  reduzir usando a regra 55 (literal)
+    '['  shift, and go to state 65
 
+    $default  reduce using rule 80 (array_access)
 
-Estado 62
+    array_access  go to state 98
 
-   56 literal: FLOAT .
 
-    $padrão  reduzir usando a regra 56 (literal)
+State 71
 
+   59 literal: INTEGER .
 
-Estado 63
+    $default  reduce using rule 59 (literal)
 
-   57 literal: CHAR .
 
-    $padrão  reduzir usando a regra 57 (literal)
+State 72
 
+   60 literal: FLOAT .
 
-Estado 64
+    $default  reduce using rule 60 (literal)
 
-   73 expr: '-' . expr
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+State 73
 
-    literal  ir ao estado 67
-    expr     ir ao estado 88
+   61 literal: CHAR .
 
+    $default  reduce using rule 61 (literal)
 
-Estado 65
 
-   72 expr: '!' . expr
+State 74
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+   77 expr: '-' . expr
 
-    literal  ir ao estado 67
-    expr     ir ao estado 89
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
+    literal  go to state 77
+    expr     go to state 99
 
-Estado 66
 
-   71 expr: '(' . expr ')'
+State 75
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+   76 expr: '!' . expr
 
-    literal  ir ao estado 67
-    expr     ir ao estado 90
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
+    literal  go to state 77
+    expr     go to state 100
 
-Estado 67
 
-   75 expr: literal .
+State 76
 
-    $padrão  reduzir usando a regra 75 (expr)
+   75 expr: '(' . expr ')'
 
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-Estado 68
+    literal  go to state 77
+    expr     go to state 101
 
-   39 if_stmt: IF expr . THEN stmt_list else_stmt ENDIF
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
 
-    THEN             deslocar, e ir ao estado 91
-    DIFF_SIGN        deslocar, e ir ao estado 92
-    GREATER_EQ_SIGN  deslocar, e ir ao estado 93
-    LESS_EQ_SIGN     deslocar, e ir ao estado 94
-    '&'              deslocar, e ir ao estado 95
-    '|'              deslocar, e ir ao estado 96
-    '>'              deslocar, e ir ao estado 97
-    '<'              deslocar, e ir ao estado 98
-    '='              deslocar, e ir ao estado 99
-    '*'              deslocar, e ir ao estado 100
-    '/'              deslocar, e ir ao estado 101
-    '%'              deslocar, e ir ao estado 102
-    '+'              deslocar, e ir ao estado 103
-    '-'              deslocar, e ir ao estado 104
+State 77
 
+   79 expr: literal .
 
-Estado 69
+    $default  reduce using rule 79 (expr)
 
-   42 goto_stmt: GOTO IDENTIFIER .
 
-    $padrão  reduzir usando a regra 42 (goto_stmt)
+State 78
 
+   43 if_stmt: IF expr . THEN stmt_list else_stmt ENDIF
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
 
-Estado 70
+    THEN             shift, and go to state 102
+    DIFF_SIGN        shift, and go to state 103
+    GREATER_EQ_SIGN  shift, and go to state 104
+    LESS_EQ_SIGN     shift, and go to state 105
+    '&'              shift, and go to state 106
+    '|'              shift, and go to state 107
+    '>'              shift, and go to state 108
+    '<'              shift, and go to state 109
+    '='              shift, and go to state 110
+    '*'              shift, and go to state 111
+    '/'              shift, and go to state 112
+    '%'              shift, and go to state 113
+    '+'              shift, and go to state 114
+    '-'              shift, and go to state 115
 
-   43 loop_stmt: LOOP ';' . stmt_list ENDLOOP
 
-    IDENTIFIER  deslocar, e ir ao estado 30
-    IF          deslocar, e ir ao estado 31
-    GOTO        deslocar, e ir ao estado 32
-    LOOP        deslocar, e ir ao estado 33
-    EXITWHEN    deslocar, e ir ao estado 34
-    STOP        deslocar, e ir ao estado 35
-    GET         deslocar, e ir ao estado 36
-    PUT         deslocar, e ir ao estado 37
+State 79
 
-    $padrão  reduzir usando a regra 18 (stmt_list)
+   46 goto_stmt: GOTO IDENTIFIER .
 
-    stmt_list     ir ao estado 105
-    super_stmt    ir ao estado 39
-    label_stmt    ir ao estado 40
-    idless_stmt   ir ao estado 41
-    control_stmt  ir ao estado 42
-    if_stmt       ir ao estado 43
-    goto_stmt     ir ao estado 44
-    loop_stmt     ir ao estado 45
-    exit_stmt     ir ao estado 46
-    stop_stmt     ir ao estado 47
-    io_stmt       ir ao estado 48
+    $default  reduce using rule 46 (goto_stmt)
 
 
-Estado 71
+State 80
 
-   44 exit_stmt: EXITWHEN expr .
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
+   47 loop_stmt: LOOP ';' . stmt_list ENDLOOP
 
-    DIFF_SIGN        deslocar, e ir ao estado 92
-    GREATER_EQ_SIGN  deslocar, e ir ao estado 93
-    LESS_EQ_SIGN     deslocar, e ir ao estado 94
-    '&'              deslocar, e ir ao estado 95
-    '|'              deslocar, e ir ao estado 96
-    '>'              deslocar, e ir ao estado 97
-    '<'              deslocar, e ir ao estado 98
-    '='              deslocar, e ir ao estado 99
-    '*'              deslocar, e ir ao estado 100
-    '/'              deslocar, e ir ao estado 101
-    '%'              deslocar, e ir ao estado 102
-    '+'              deslocar, e ir ao estado 103
-    '-'              deslocar, e ir ao estado 104
+    error       shift, and go to state 38
+    IDENTIFIER  shift, and go to state 39
+    IF          shift, and go to state 40
+    GOTO        shift, and go to state 41
+    LOOP        shift, and go to state 42
+    EXITWHEN    shift, and go to state 43
+    STOP        shift, and go to state 44
+    GET         shift, and go to state 45
+    PUT         shift, and go to state 46
 
-    $padrão  reduzir usando a regra 44 (exit_stmt)
+    ENDLOOP  reduce using rule 21 (stmt_list)
 
+    stmt_list     go to state 116
+    super_stmt    go to state 48
+    label_stmt    go to state 49
+    idless_stmt   go to state 50
+    control_stmt  go to state 51
+    if_stmt       go to state 52
+    goto_stmt     go to state 53
+    loop_stmt     go to state 54
+    exit_stmt     go to state 55
+    stop_stmt     go to state 56
+    io_stmt       go to state 57
 
-Estado 72
 
-   46 io_stmt: GET id_list .
+State 81
 
-    $padrão  reduzir usando a regra 46 (io_stmt)
+   48 exit_stmt: EXITWHEN expr .
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
 
+    DIFF_SIGN        shift, and go to state 103
+    GREATER_EQ_SIGN  shift, and go to state 104
+    LESS_EQ_SIGN     shift, and go to state 105
+    '&'              shift, and go to state 106
+    '|'              shift, and go to state 107
+    '>'              shift, and go to state 108
+    '<'              shift, and go to state 109
+    '='              shift, and go to state 110
+    '*'              shift, and go to state 111
+    '/'              shift, and go to state 112
+    '%'              shift, and go to state 113
+    '+'              shift, and go to state 114
+    '-'              shift, and go to state 115
 
-Estado 73
+    $default  reduce using rule 48 (exit_stmt)
 
-   48 skip_stmt: SKIP .
 
-    $padrão  reduzir usando a regra 48 (skip_stmt)
+State 82
 
+   50 io_stmt: GET id_list .
 
-Estado 74
+    $default  reduce using rule 50 (io_stmt)
 
-   47 io_stmt: PUT skip_stmt . '(' expr_list ')'
 
-    '('  deslocar, e ir ao estado 106
+State 83
 
+   52 skip_stmt: SKIP .
 
-Estado 75
+    $default  reduce using rule 52 (skip_stmt)
+
+
+State 84
+
+   51 io_stmt: PUT skip_stmt . '(' expr_list ')'
+
+    '('  shift, and go to state 117
+
+
+State 85
 
     1 program: decl_list proc_decl_list START ';' stmt_list END . ';'
 
-    ';'  deslocar, e ir ao estado 107
-
-
-Estado 76
-
-   19 stmt_list: super_stmt ';' . stmt_list
-
-    IDENTIFIER  deslocar, e ir ao estado 30
-    IF          deslocar, e ir ao estado 31
-    GOTO        deslocar, e ir ao estado 32
-    LOOP        deslocar, e ir ao estado 33
-    EXITWHEN    deslocar, e ir ao estado 34
-    STOP        deslocar, e ir ao estado 35
-    GET         deslocar, e ir ao estado 36
-    PUT         deslocar, e ir ao estado 37
-
-    $padrão  reduzir usando a regra 18 (stmt_list)
-
-    stmt_list     ir ao estado 108
-    super_stmt    ir ao estado 39
-    label_stmt    ir ao estado 40
-    idless_stmt   ir ao estado 41
-    control_stmt  ir ao estado 42
-    if_stmt       ir ao estado 43
-    goto_stmt     ir ao estado 44
-    loop_stmt     ir ao estado 45
-    exit_stmt     ir ao estado 46
-    stop_stmt     ir ao estado 47
-    io_stmt       ir ao estado 48
-
-
-Estado 77
+    ';'  shift, and go to state 118
+
+
+State 86
+
+   22 stmt_list: super_stmt ';' . stmt_list
+
+    error       shift, and go to state 38
+    IDENTIFIER  shift, and go to state 39
+    IF          shift, and go to state 40
+    GOTO        shift, and go to state 41
+    LOOP        shift, and go to state 42
+    EXITWHEN    shift, and go to state 43
+    STOP        shift, and go to state 44
+    GET         shift, and go to state 45
+    PUT         shift, and go to state 46
+
+    END      reduce using rule 21 (stmt_list)
+    ENDIF    reduce using rule 21 (stmt_list)
+    ELSE     reduce using rule 21 (stmt_list)
+    ENDLOOP  reduce using rule 21 (stmt_list)
+
+    stmt_list     go to state 119
+    super_stmt    go to state 48
+    label_stmt    go to state 49
+    idless_stmt   go to state 50
+    control_stmt  go to state 51
+    if_stmt       go to state 52
+    goto_stmt     go to state 53
+    loop_stmt     go to state 54
+    exit_stmt     go to state 55
+    stop_stmt     go to state 56
+    io_stmt       go to state 57
+
+
+State 87
 
-   12 array_nont: ARRAY '[' expr . ']' OF data_type
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
+   15 array_nont: ARRAY '[' expr . ']' OF data_type
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
 
-    DIFF_SIGN        deslocar, e ir ao estado 92
-    GREATER_EQ_SIGN  deslocar, e ir ao estado 93
-    LESS_EQ_SIGN     deslocar, e ir ao estado 94
-    '&'              deslocar, e ir ao estado 95
-    '|'              deslocar, e ir ao estado 96
-    '>'              deslocar, e ir ao estado 97
-    '<'              deslocar, e ir ao estado 98
-    '='              deslocar, e ir ao estado 99
-    '*'              deslocar, e ir ao estado 100
-    '/'              deslocar, e ir ao estado 101
-    '%'              deslocar, e ir ao estado 102
-    '+'              deslocar, e ir ao estado 103
-    '-'              deslocar, e ir ao estado 104
-    ']'              deslocar, e ir ao estado 109
+    DIFF_SIGN        shift, and go to state 103
+    GREATER_EQ_SIGN  shift, and go to state 104
+    LESS_EQ_SIGN     shift, and go to state 105
+    '&'              shift, and go to state 106
+    '|'              shift, and go to state 107
+    '>'              shift, and go to state 108
+    '<'              shift, and go to state 109
+    '='              shift, and go to state 110
+    '*'              shift, and go to state 111
+    '/'              shift, and go to state 112
+    '%'              shift, and go to state 113
+    '+'              shift, and go to state 114
+    '-'              shift, and go to state 115
+    ']'              shift, and go to state 120
 
 
-Estado 78
+State 88
 
-    7 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' . ';' stmt_list END IDENTIFIER ';'
+   10 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' . ';' stmt_list END IDENTIFIER
 
-    ';'  deslocar, e ir ao estado 110
+    ';'  shift, and go to state 121
 
 
-Estado 79
+State 89
 
-   50 proc_stmt: '(' expr_list . ')'
+   23 stmt_list: error ';' stmt_list .
 
-    ')'  deslocar, e ir ao estado 111
+    $default  reduce using rule 23 (stmt_list)
 
 
-Estado 80
+State 90
 
-   52 expr_list: expr . expr_list_tail
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
+   54 proc_stmt: '(' expr_list . ')'
 
-    DIFF_SIGN        deslocar, e ir ao estado 92
-    GREATER_EQ_SIGN  deslocar, e ir ao estado 93
-    LESS_EQ_SIGN     deslocar, e ir ao estado 94
-    '&'              deslocar, e ir ao estado 95
-    '|'              deslocar, e ir ao estado 96
-    '>'              deslocar, e ir ao estado 97
-    '<'              deslocar, e ir ao estado 98
-    '='              deslocar, e ir ao estado 99
-    '*'              deslocar, e ir ao estado 100
-    '/'              deslocar, e ir ao estado 101
-    '%'              deslocar, e ir ao estado 102
-    '+'              deslocar, e ir ao estado 103
-    '-'              deslocar, e ir ao estado 104
-    ','              deslocar, e ir ao estado 112
+    ')'  shift, and go to state 122
 
-    $padrão  reduzir usando a regra 54 (expr_list_tail)
 
-    expr_list_tail  ir ao estado 113
+State 91
 
+   56 expr_list: expr . expr_list_tail
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
 
-Estado 81
+    DIFF_SIGN        shift, and go to state 103
+    GREATER_EQ_SIGN  shift, and go to state 104
+    LESS_EQ_SIGN     shift, and go to state 105
+    '&'              shift, and go to state 106
+    '|'              shift, and go to state 107
+    '>'              shift, and go to state 108
+    '<'              shift, and go to state 109
+    '='              shift, and go to state 110
+    '*'              shift, and go to state 111
+    '/'              shift, and go to state 112
+    '%'              shift, and go to state 113
+    '+'              shift, and go to state 114
+    '-'              shift, and go to state 115
+    ','              shift, and go to state 123
 
-   28 labelless_stmt: IDENTIFIER . post_labelless_stmt
+    $default  reduce using rule 58 (expr_list_tail)
 
-    '('  deslocar, e ir ao estado 53
-    '['  deslocar, e ir ao estado 55
+    expr_list_tail  go to state 124
 
-    $padrão  reduzir usando a regra 76 (array_access)
 
-    post_labelless_stmt  ir ao estado 114
-    attr_stmt            ir ao estado 115
-    proc_stmt            ir ao estado 116
-    array_access         ir ao estado 59
+State 92
 
+   32 labelless_stmt: IDENTIFIER . post_labelless_stmt
 
-Estado 82
+    '('  shift, and go to state 63
+    '['  shift, and go to state 65
 
-   23 post_label_stmt: ':' stmt .
+    $default  reduce using rule 80 (array_access)
 
-    $padrão  reduzir usando a regra 23 (post_label_stmt)
+    post_labelless_stmt  go to state 125
+    attr_stmt            go to state 126
+    proc_stmt            go to state 127
+    array_access         go to state 69
 
 
-Estado 83
+State 93
 
-   26 stmt: labelless_stmt .
+   27 post_label_stmt: ':' stmt .
 
-    $padrão  reduzir usando a regra 26 (stmt)
+    $default  reduce using rule 27 (post_label_stmt)
 
 
-Estado 84
+State 94
 
-   27 stmt: idless_stmt .
+   30 stmt: labelless_stmt .
 
-    $padrão  reduzir usando a regra 27 (stmt)
+    $default  reduce using rule 30 (stmt)
 
 
-Estado 85
+State 95
 
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
-   77 array_access: '[' expr . ']' array_access
+   31 stmt: idless_stmt .
 
-    DIFF_SIGN        deslocar, e ir ao estado 92
-    GREATER_EQ_SIGN  deslocar, e ir ao estado 93
-    LESS_EQ_SIGN     deslocar, e ir ao estado 94
-    '&'              deslocar, e ir ao estado 95
-    '|'              deslocar, e ir ao estado 96
-    '>'              deslocar, e ir ao estado 97
-    '<'              deslocar, e ir ao estado 98
-    '='              deslocar, e ir ao estado 99
-    '*'              deslocar, e ir ao estado 100
-    '/'              deslocar, e ir ao estado 101
-    '%'              deslocar, e ir ao estado 102
-    '+'              deslocar, e ir ao estado 103
-    '-'              deslocar, e ir ao estado 104
-    ']'              deslocar, e ir ao estado 117
+    $default  reduce using rule 31 (stmt)
 
 
-Estado 86
+State 96
 
-   31 attr_stmt: array_access ATTR_SIGN . expr
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
+   81 array_access: '[' expr . ']' array_access
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+    DIFF_SIGN        shift, and go to state 103
+    GREATER_EQ_SIGN  shift, and go to state 104
+    LESS_EQ_SIGN     shift, and go to state 105
+    '&'              shift, and go to state 106
+    '|'              shift, and go to state 107
+    '>'              shift, and go to state 108
+    '<'              shift, and go to state 109
+    '='              shift, and go to state 110
+    '*'              shift, and go to state 111
+    '/'              shift, and go to state 112
+    '%'              shift, and go to state 113
+    '+'              shift, and go to state 114
+    '-'              shift, and go to state 115
+    ']'              shift, and go to state 128
 
-    literal  ir ao estado 67
-    expr     ir ao estado 118
 
+State 97
 
-Estado 87
+   35 attr_stmt: array_access ATTR_SIGN . expr
 
-   74 expr: IDENTIFIER array_access .
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
+
+    literal  go to state 77
+    expr     go to state 129
+
+
+State 98
+
+   78 expr: IDENTIFIER array_access .
+
+    $default  reduce using rule 78 (expr)
+
+
+State 99
+
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
+   77     | '-' expr .
+
+    $default  reduce using rule 77 (expr)
+
+
+State 100
 
-    $padrão  reduzir usando a regra 74 (expr)
-
-
-Estado 88
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
+   76     | '!' expr .
 
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
-   73     | '-' expr .
+    $default  reduce using rule 76 (expr)
 
-    $padrão  reduzir usando a regra 73 (expr)
 
+State 101
 
-Estado 89
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
+   75     | '(' expr . ')'
 
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
-   72     | '!' expr .
+    DIFF_SIGN        shift, and go to state 103
+    GREATER_EQ_SIGN  shift, and go to state 104
+    LESS_EQ_SIGN     shift, and go to state 105
+    '&'              shift, and go to state 106
+    '|'              shift, and go to state 107
+    '>'              shift, and go to state 108
+    '<'              shift, and go to state 109
+    '='              shift, and go to state 110
+    '*'              shift, and go to state 111
+    '/'              shift, and go to state 112
+    '%'              shift, and go to state 113
+    '+'              shift, and go to state 114
+    '-'              shift, and go to state 115
+    ')'              shift, and go to state 130
 
-    $padrão  reduzir usando a regra 72 (expr)
 
+State 102
 
-Estado 90
+   43 if_stmt: IF expr THEN . stmt_list else_stmt ENDIF
 
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
-   71     | '(' expr . ')'
+    error       shift, and go to state 38
+    IDENTIFIER  shift, and go to state 39
+    IF          shift, and go to state 40
+    GOTO        shift, and go to state 41
+    LOOP        shift, and go to state 42
+    EXITWHEN    shift, and go to state 43
+    STOP        shift, and go to state 44
+    GET         shift, and go to state 45
+    PUT         shift, and go to state 46
 
-    DIFF_SIGN        deslocar, e ir ao estado 92
-    GREATER_EQ_SIGN  deslocar, e ir ao estado 93
-    LESS_EQ_SIGN     deslocar, e ir ao estado 94
-    '&'              deslocar, e ir ao estado 95
-    '|'              deslocar, e ir ao estado 96
-    '>'              deslocar, e ir ao estado 97
-    '<'              deslocar, e ir ao estado 98
-    '='              deslocar, e ir ao estado 99
-    '*'              deslocar, e ir ao estado 100
-    '/'              deslocar, e ir ao estado 101
-    '%'              deslocar, e ir ao estado 102
-    '+'              deslocar, e ir ao estado 103
-    '-'              deslocar, e ir ao estado 104
-    ')'              deslocar, e ir ao estado 119
+    ENDIF  reduce using rule 21 (stmt_list)
+    ELSE   reduce using rule 21 (stmt_list)
 
+    stmt_list     go to state 131
+    super_stmt    go to state 48
+    label_stmt    go to state 49
+    idless_stmt   go to state 50
+    control_stmt  go to state 51
+    if_stmt       go to state 52
+    goto_stmt     go to state 53
+    loop_stmt     go to state 54
+    exit_stmt     go to state 55
+    stop_stmt     go to state 56
+    io_stmt       go to state 57
 
-Estado 91
 
-   39 if_stmt: IF expr THEN . stmt_list else_stmt ENDIF
+State 103
 
-    IDENTIFIER  deslocar, e ir ao estado 30
-    IF          deslocar, e ir ao estado 31
-    GOTO        deslocar, e ir ao estado 32
-    LOOP        deslocar, e ir ao estado 33
-    EXITWHEN    deslocar, e ir ao estado 34
-    STOP        deslocar, e ir ao estado 35
-    GET         deslocar, e ir ao estado 36
-    PUT         deslocar, e ir ao estado 37
+   70 expr: expr DIFF_SIGN . expr
 
-    $padrão  reduzir usando a regra 18 (stmt_list)
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-    stmt_list     ir ao estado 120
-    super_stmt    ir ao estado 39
-    label_stmt    ir ao estado 40
-    idless_stmt   ir ao estado 41
-    control_stmt  ir ao estado 42
-    if_stmt       ir ao estado 43
-    goto_stmt     ir ao estado 44
-    loop_stmt     ir ao estado 45
-    exit_stmt     ir ao estado 46
-    stop_stmt     ir ao estado 47
-    io_stmt       ir ao estado 48
+    literal  go to state 77
+    expr     go to state 132
 
 
-Estado 92
+State 104
 
-   66 expr: expr DIFF_SIGN . expr
+   71 expr: expr GREATER_EQ_SIGN . expr
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-    literal  ir ao estado 67
-    expr     ir ao estado 121
+    literal  go to state 77
+    expr     go to state 133
 
 
-Estado 93
+State 105
 
-   67 expr: expr GREATER_EQ_SIGN . expr
+   72 expr: expr LESS_EQ_SIGN . expr
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-    literal  ir ao estado 67
-    expr     ir ao estado 122
+    literal  go to state 77
+    expr     go to state 134
 
 
-Estado 94
+State 106
 
-   68 expr: expr LESS_EQ_SIGN . expr
+   73 expr: expr '&' . expr
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-    literal  ir ao estado 67
-    expr     ir ao estado 123
+    literal  go to state 77
+    expr     go to state 135
 
 
-Estado 95
+State 107
 
-   69 expr: expr '&' . expr
+   74 expr: expr '|' . expr
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-    literal  ir ao estado 67
-    expr     ir ao estado 124
+    literal  go to state 77
+    expr     go to state 136
 
 
-Estado 96
+State 108
 
-   70 expr: expr '|' . expr
+   68 expr: expr '>' . expr
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-    literal  ir ao estado 67
-    expr     ir ao estado 125
+    literal  go to state 77
+    expr     go to state 137
 
 
-Estado 97
+State 109
 
-   64 expr: expr '>' . expr
+   67 expr: expr '<' . expr
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-    literal  ir ao estado 67
-    expr     ir ao estado 126
+    literal  go to state 77
+    expr     go to state 138
 
 
-Estado 98
+State 110
 
-   63 expr: expr '<' . expr
+   69 expr: expr '=' . expr
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-    literal  ir ao estado 67
-    expr     ir ao estado 127
+    literal  go to state 77
+    expr     go to state 139
 
 
-Estado 99
+State 111
 
-   65 expr: expr '=' . expr
+   64 expr: expr '*' . expr
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-    literal  ir ao estado 67
-    expr     ir ao estado 128
+    literal  go to state 77
+    expr     go to state 140
 
 
-Estado 100
+State 112
 
-   60 expr: expr '*' . expr
+   66 expr: expr '/' . expr
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-    literal  ir ao estado 67
-    expr     ir ao estado 129
+    literal  go to state 77
+    expr     go to state 141
 
 
-Estado 101
+State 113
 
-   62 expr: expr '/' . expr
+   65 expr: expr '%' . expr
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-    literal  ir ao estado 67
-    expr     ir ao estado 130
+    literal  go to state 77
+    expr     go to state 142
 
 
-Estado 102
+State 114
 
-   61 expr: expr '%' . expr
+   62 expr: expr '+' . expr
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-    literal  ir ao estado 67
-    expr     ir ao estado 131
+    literal  go to state 77
+    expr     go to state 143
 
 
-Estado 103
+State 115
 
-   58 expr: expr '+' . expr
+   63 expr: expr '-' . expr
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-    literal  ir ao estado 67
-    expr     ir ao estado 132
+    literal  go to state 77
+    expr     go to state 144
 
 
-Estado 104
+State 116
 
-   59 expr: expr '-' . expr
+   47 loop_stmt: LOOP ';' stmt_list . ENDLOOP
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+    ENDLOOP  shift, and go to state 145
 
-    literal  ir ao estado 67
-    expr     ir ao estado 133
 
+State 117
 
-Estado 105
+   51 io_stmt: PUT skip_stmt '(' . expr_list ')'
 
-   43 loop_stmt: LOOP ';' stmt_list . ENDLOOP
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-    ENDLOOP  deslocar, e ir ao estado 134
+    $default  reduce using rule 55 (expr_list)
 
+    expr_list  go to state 146
+    literal    go to state 77
+    expr       go to state 91
 
-Estado 106
 
-   47 io_stmt: PUT skip_stmt '(' . expr_list ')'
-
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
-
-    $padrão  reduzir usando a regra 51 (expr_list)
-
-    expr_list  ir ao estado 135
-    literal    ir ao estado 67
-    expr       ir ao estado 80
-
-
-Estado 107
+State 118
 
     1 program: decl_list proc_decl_list START ';' stmt_list END ';' .
 
-    $padrão  reduzir usando a regra 1 (program)
+    $default  reduce using rule 1 (program)
 
 
-Estado 108
+State 119
 
-   19 stmt_list: super_stmt ';' stmt_list .
+   22 stmt_list: super_stmt ';' stmt_list .
 
-    $padrão  reduzir usando a regra 19 (stmt_list)
+    $default  reduce using rule 22 (stmt_list)
 
 
-Estado 109
+State 120
 
-   12 array_nont: ARRAY '[' expr ']' . OF data_type
+   15 array_nont: ARRAY '[' expr ']' . OF data_type
 
-    OF  deslocar, e ir ao estado 136
+    OF  shift, and go to state 147
 
 
-Estado 110
+State 121
 
-    7 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' . stmt_list END IDENTIFIER ';'
+   10 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' . stmt_list END IDENTIFIER
 
-    IDENTIFIER  deslocar, e ir ao estado 30
-    IF          deslocar, e ir ao estado 31
-    GOTO        deslocar, e ir ao estado 32
-    LOOP        deslocar, e ir ao estado 33
-    EXITWHEN    deslocar, e ir ao estado 34
-    STOP        deslocar, e ir ao estado 35
-    GET         deslocar, e ir ao estado 36
-    PUT         deslocar, e ir ao estado 37
+    error       shift, and go to state 38
+    IDENTIFIER  shift, and go to state 39
+    IF          shift, and go to state 40
+    GOTO        shift, and go to state 41
+    LOOP        shift, and go to state 42
+    EXITWHEN    shift, and go to state 43
+    STOP        shift, and go to state 44
+    GET         shift, and go to state 45
+    PUT         shift, and go to state 46
 
-    $padrão  reduzir usando a regra 18 (stmt_list)
+    END  reduce using rule 21 (stmt_list)
 
-    stmt_list     ir ao estado 137
-    super_stmt    ir ao estado 39
-    label_stmt    ir ao estado 40
-    idless_stmt   ir ao estado 41
-    control_stmt  ir ao estado 42
-    if_stmt       ir ao estado 43
-    goto_stmt     ir ao estado 44
-    loop_stmt     ir ao estado 45
-    exit_stmt     ir ao estado 46
-    stop_stmt     ir ao estado 47
-    io_stmt       ir ao estado 48
+    stmt_list     go to state 148
+    super_stmt    go to state 48
+    label_stmt    go to state 49
+    idless_stmt   go to state 50
+    control_stmt  go to state 51
+    if_stmt       go to state 52
+    goto_stmt     go to state 53
+    loop_stmt     go to state 54
+    exit_stmt     go to state 55
+    stop_stmt     go to state 56
+    io_stmt       go to state 57
 
 
-Estado 111
+State 122
 
-   50 proc_stmt: '(' expr_list ')' .
+   54 proc_stmt: '(' expr_list ')' .
 
-    $padrão  reduzir usando a regra 50 (proc_stmt)
+    $default  reduce using rule 54 (proc_stmt)
 
 
-Estado 112
+State 123
 
-   53 expr_list_tail: ',' . expr expr_list_tail
+   57 expr_list_tail: ',' . expr expr_list_tail
 
-    IDENTIFIER  deslocar, e ir ao estado 60
-    INTEGER     deslocar, e ir ao estado 61
-    FLOAT       deslocar, e ir ao estado 62
-    CHAR        deslocar, e ir ao estado 63
-    '-'         deslocar, e ir ao estado 64
-    '!'         deslocar, e ir ao estado 65
-    '('         deslocar, e ir ao estado 66
+    IDENTIFIER  shift, and go to state 70
+    INTEGER     shift, and go to state 71
+    FLOAT       shift, and go to state 72
+    CHAR        shift, and go to state 73
+    '-'         shift, and go to state 74
+    '!'         shift, and go to state 75
+    '('         shift, and go to state 76
 
-    literal  ir ao estado 67
-    expr     ir ao estado 138
+    literal  go to state 77
+    expr     go to state 149
 
 
-Estado 113
+State 124
 
-   52 expr_list: expr expr_list_tail .
+   56 expr_list: expr expr_list_tail .
 
-    $padrão  reduzir usando a regra 52 (expr_list)
+    $default  reduce using rule 56 (expr_list)
 
 
-Estado 114
+State 125
 
-   28 labelless_stmt: IDENTIFIER post_labelless_stmt .
+   32 labelless_stmt: IDENTIFIER post_labelless_stmt .
 
-    $padrão  reduzir usando a regra 28 (labelless_stmt)
+    $default  reduce using rule 32 (labelless_stmt)
 
 
-Estado 115
+State 126
 
-   29 post_labelless_stmt: attr_stmt .
+   33 post_labelless_stmt: attr_stmt .
 
-    $padrão  reduzir usando a regra 29 (post_labelless_stmt)
+    $default  reduce using rule 33 (post_labelless_stmt)
 
 
-Estado 116
+State 127
 
-   30 post_labelless_stmt: proc_stmt .
+   34 post_labelless_stmt: proc_stmt .
 
-    $padrão  reduzir usando a regra 30 (post_labelless_stmt)
+    $default  reduce using rule 34 (post_labelless_stmt)
 
 
-Estado 117
+State 128
 
-   77 array_access: '[' expr ']' . array_access
+   81 array_access: '[' expr ']' . array_access
 
-    '['  deslocar, e ir ao estado 55
-
-    $padrão  reduzir usando a regra 76 (array_access)
+    '['  shift, and go to state 65
 
-    array_access  ir ao estado 139
-
-
-Estado 118
+    $default  reduce using rule 80 (array_access)
 
-   31 attr_stmt: array_access ATTR_SIGN expr .
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
-
-    DIFF_SIGN        deslocar, e ir ao estado 92
-    GREATER_EQ_SIGN  deslocar, e ir ao estado 93
-    LESS_EQ_SIGN     deslocar, e ir ao estado 94
-    '&'              deslocar, e ir ao estado 95
-    '|'              deslocar, e ir ao estado 96
-    '>'              deslocar, e ir ao estado 97
-    '<'              deslocar, e ir ao estado 98
-    '='              deslocar, e ir ao estado 99
-    '*'              deslocar, e ir ao estado 100
-    '/'              deslocar, e ir ao estado 101
-    '%'              deslocar, e ir ao estado 102
-    '+'              deslocar, e ir ao estado 103
-    '-'              deslocar, e ir ao estado 104
-
-    $padrão  reduzir usando a regra 31 (attr_stmt)
+    array_access  go to state 150
 
 
-Estado 119
-
-   71 expr: '(' expr ')' .
-
-    $padrão  reduzir usando a regra 71 (expr)
-
-
-Estado 120
-
-   39 if_stmt: IF expr THEN stmt_list . else_stmt ENDIF
-
-    ELSE  deslocar, e ir ao estado 140
-
-    $padrão  reduzir usando a regra 41 (else_stmt)
-
-    else_stmt  ir ao estado 141
-
-
-Estado 121
-
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   66     | expr DIFF_SIGN expr .
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
-
-    '*'  deslocar, e ir ao estado 100
-    '/'  deslocar, e ir ao estado 101
-    '%'  deslocar, e ir ao estado 102
-    '+'  deslocar, e ir ao estado 103
-    '-'  deslocar, e ir ao estado 104
-
-    $padrão  reduzir usando a regra 66 (expr)
-
-
-Estado 122
-
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   67     | expr GREATER_EQ_SIGN expr .
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
-
-    '*'  deslocar, e ir ao estado 100
-    '/'  deslocar, e ir ao estado 101
-    '%'  deslocar, e ir ao estado 102
-    '+'  deslocar, e ir ao estado 103
-    '-'  deslocar, e ir ao estado 104
-
-    $padrão  reduzir usando a regra 67 (expr)
-
-
-Estado 123
-
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   68     | expr LESS_EQ_SIGN expr .
-   69     | expr . '&' expr
-   70     | expr . '|' expr
-
-    '*'  deslocar, e ir ao estado 100
-    '/'  deslocar, e ir ao estado 101
-    '%'  deslocar, e ir ao estado 102
-    '+'  deslocar, e ir ao estado 103
-    '-'  deslocar, e ir ao estado 104
-
-    $padrão  reduzir usando a regra 68 (expr)
-
-
-Estado 124
-
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   69     | expr '&' expr .
-   70     | expr . '|' expr
-
-    DIFF_SIGN        deslocar, e ir ao estado 92
-    GREATER_EQ_SIGN  deslocar, e ir ao estado 93
-    LESS_EQ_SIGN     deslocar, e ir ao estado 94
-    '>'              deslocar, e ir ao estado 97
-    '<'              deslocar, e ir ao estado 98
-    '='              deslocar, e ir ao estado 99
-    '*'              deslocar, e ir ao estado 100
-    '/'              deslocar, e ir ao estado 101
-    '%'              deslocar, e ir ao estado 102
-    '+'              deslocar, e ir ao estado 103
-    '-'              deslocar, e ir ao estado 104
-
-    $padrão  reduzir usando a regra 69 (expr)
-
-
-Estado 125
-
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
-   70     | expr '|' expr .
-
-    DIFF_SIGN        deslocar, e ir ao estado 92
-    GREATER_EQ_SIGN  deslocar, e ir ao estado 93
-    LESS_EQ_SIGN     deslocar, e ir ao estado 94
-    '>'              deslocar, e ir ao estado 97
-    '<'              deslocar, e ir ao estado 98
-    '='              deslocar, e ir ao estado 99
-    '*'              deslocar, e ir ao estado 100
-    '/'              deslocar, e ir ao estado 101
-    '%'              deslocar, e ir ao estado 102
-    '+'              deslocar, e ir ao estado 103
-    '-'              deslocar, e ir ao estado 104
-
-    $padrão  reduzir usando a regra 70 (expr)
-
-
-Estado 126
-
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   64     | expr '>' expr .
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
-
-    '*'  deslocar, e ir ao estado 100
-    '/'  deslocar, e ir ao estado 101
-    '%'  deslocar, e ir ao estado 102
-    '+'  deslocar, e ir ao estado 103
-    '-'  deslocar, e ir ao estado 104
-
-    $padrão  reduzir usando a regra 64 (expr)
-
-
-Estado 127
-
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   63     | expr '<' expr .
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
-
-    '*'  deslocar, e ir ao estado 100
-    '/'  deslocar, e ir ao estado 101
-    '%'  deslocar, e ir ao estado 102
-    '+'  deslocar, e ir ao estado 103
-    '-'  deslocar, e ir ao estado 104
-
-    $padrão  reduzir usando a regra 63 (expr)
-
-
-Estado 128
-
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   65     | expr '=' expr .
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
-
-    '*'  deslocar, e ir ao estado 100
-    '/'  deslocar, e ir ao estado 101
-    '%'  deslocar, e ir ao estado 102
-    '+'  deslocar, e ir ao estado 103
-    '-'  deslocar, e ir ao estado 104
-
-    $padrão  reduzir usando a regra 65 (expr)
-
-
-Estado 129
-
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   60     | expr '*' expr .
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
-
-    '+'  deslocar, e ir ao estado 103
-    '-'  deslocar, e ir ao estado 104
-
-    $padrão  reduzir usando a regra 60 (expr)
-
-
-Estado 130
-
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   62     | expr '/' expr .
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
-
-    '+'  deslocar, e ir ao estado 103
-    '-'  deslocar, e ir ao estado 104
-
-    $padrão  reduzir usando a regra 62 (expr)
-
-
-Estado 131
-
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   61     | expr '%' expr .
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
-
-    '+'  deslocar, e ir ao estado 103
-    '-'  deslocar, e ir ao estado 104
-
-    $padrão  reduzir usando a regra 61 (expr)
-
-
-Estado 132
-
-   58 expr: expr . '+' expr
-   58     | expr '+' expr .
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
-
-    $padrão  reduzir usando a regra 58 (expr)
-
-
-Estado 133
-
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   59     | expr '-' expr .
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
-
-    $padrão  reduzir usando a regra 59 (expr)
-
-
-Estado 134
-
-   43 loop_stmt: LOOP ';' stmt_list ENDLOOP .
-
-    $padrão  reduzir usando a regra 43 (loop_stmt)
-
-
-Estado 135
-
-   47 io_stmt: PUT skip_stmt '(' expr_list . ')'
-
-    ')'  deslocar, e ir ao estado 142
-
-
-Estado 136
-
-   12 array_nont: ARRAY '[' expr ']' OF . data_type
-
-    INT_TYPE    deslocar, e ir ao estado 23
-    FLOAT_TYPE  deslocar, e ir ao estado 24
-    CHAR_TYPE   deslocar, e ir ao estado 25
-    ARRAY       deslocar, e ir ao estado 26
-
-    data_type   ir ao estado 143
-    array_nont  ir ao estado 28
-
-
-Estado 137
-
-    7 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list . END IDENTIFIER ';'
-
-    END  deslocar, e ir ao estado 144
-
-
-Estado 138
+State 129
 
-   53 expr_list_tail: ',' expr . expr_list_tail
-   58 expr: expr . '+' expr
-   59     | expr . '-' expr
-   60     | expr . '*' expr
-   61     | expr . '%' expr
-   62     | expr . '/' expr
-   63     | expr . '<' expr
-   64     | expr . '>' expr
-   65     | expr . '=' expr
-   66     | expr . DIFF_SIGN expr
-   67     | expr . GREATER_EQ_SIGN expr
-   68     | expr . LESS_EQ_SIGN expr
-   69     | expr . '&' expr
-   70     | expr . '|' expr
+   35 attr_stmt: array_access ATTR_SIGN expr .
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
 
-    DIFF_SIGN        deslocar, e ir ao estado 92
-    GREATER_EQ_SIGN  deslocar, e ir ao estado 93
-    LESS_EQ_SIGN     deslocar, e ir ao estado 94
-    '&'              deslocar, e ir ao estado 95
-    '|'              deslocar, e ir ao estado 96
-    '>'              deslocar, e ir ao estado 97
-    '<'              deslocar, e ir ao estado 98
-    '='              deslocar, e ir ao estado 99
-    '*'              deslocar, e ir ao estado 100
-    '/'              deslocar, e ir ao estado 101
-    '%'              deslocar, e ir ao estado 102
-    '+'              deslocar, e ir ao estado 103
-    '-'              deslocar, e ir ao estado 104
-    ','              deslocar, e ir ao estado 112
+    DIFF_SIGN        shift, and go to state 103
+    GREATER_EQ_SIGN  shift, and go to state 104
+    LESS_EQ_SIGN     shift, and go to state 105
+    '&'              shift, and go to state 106
+    '|'              shift, and go to state 107
+    '>'              shift, and go to state 108
+    '<'              shift, and go to state 109
+    '='              shift, and go to state 110
+    '*'              shift, and go to state 111
+    '/'              shift, and go to state 112
+    '%'              shift, and go to state 113
+    '+'              shift, and go to state 114
+    '-'              shift, and go to state 115
 
-    $padrão  reduzir usando a regra 54 (expr_list_tail)
+    $default  reduce using rule 35 (attr_stmt)
 
-    expr_list_tail  ir ao estado 145
 
+State 130
 
-Estado 139
+   75 expr: '(' expr ')' .
+
+    $default  reduce using rule 75 (expr)
+
+
+State 131
+
+   43 if_stmt: IF expr THEN stmt_list . else_stmt ENDIF
+
+    ELSE  shift, and go to state 151
+
+    $default  reduce using rule 45 (else_stmt)
+
+    else_stmt  go to state 152
+
+
+State 132
+
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   70     | expr DIFF_SIGN expr .
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
+
+    '*'  shift, and go to state 111
+    '/'  shift, and go to state 112
+    '%'  shift, and go to state 113
+    '+'  shift, and go to state 114
+    '-'  shift, and go to state 115
+
+    $default  reduce using rule 70 (expr)
+
+
+State 133
+
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   71     | expr GREATER_EQ_SIGN expr .
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
+
+    '*'  shift, and go to state 111
+    '/'  shift, and go to state 112
+    '%'  shift, and go to state 113
+    '+'  shift, and go to state 114
+    '-'  shift, and go to state 115
+
+    $default  reduce using rule 71 (expr)
+
+
+State 134
+
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   72     | expr LESS_EQ_SIGN expr .
+   73     | expr . '&' expr
+   74     | expr . '|' expr
+
+    '*'  shift, and go to state 111
+    '/'  shift, and go to state 112
+    '%'  shift, and go to state 113
+    '+'  shift, and go to state 114
+    '-'  shift, and go to state 115
+
+    $default  reduce using rule 72 (expr)
+
+
+State 135
+
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   73     | expr '&' expr .
+   74     | expr . '|' expr
+
+    DIFF_SIGN        shift, and go to state 103
+    GREATER_EQ_SIGN  shift, and go to state 104
+    LESS_EQ_SIGN     shift, and go to state 105
+    '>'              shift, and go to state 108
+    '<'              shift, and go to state 109
+    '='              shift, and go to state 110
+    '*'              shift, and go to state 111
+    '/'              shift, and go to state 112
+    '%'              shift, and go to state 113
+    '+'              shift, and go to state 114
+    '-'              shift, and go to state 115
+
+    $default  reduce using rule 73 (expr)
+
+
+State 136
+
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
+   74     | expr '|' expr .
+
+    DIFF_SIGN        shift, and go to state 103
+    GREATER_EQ_SIGN  shift, and go to state 104
+    LESS_EQ_SIGN     shift, and go to state 105
+    '>'              shift, and go to state 108
+    '<'              shift, and go to state 109
+    '='              shift, and go to state 110
+    '*'              shift, and go to state 111
+    '/'              shift, and go to state 112
+    '%'              shift, and go to state 113
+    '+'              shift, and go to state 114
+    '-'              shift, and go to state 115
+
+    $default  reduce using rule 74 (expr)
+
+
+State 137
+
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   68     | expr '>' expr .
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
+
+    '*'  shift, and go to state 111
+    '/'  shift, and go to state 112
+    '%'  shift, and go to state 113
+    '+'  shift, and go to state 114
+    '-'  shift, and go to state 115
+
+    $default  reduce using rule 68 (expr)
+
+
+State 138
+
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   67     | expr '<' expr .
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
+
+    '*'  shift, and go to state 111
+    '/'  shift, and go to state 112
+    '%'  shift, and go to state 113
+    '+'  shift, and go to state 114
+    '-'  shift, and go to state 115
+
+    $default  reduce using rule 67 (expr)
+
+
+State 139
+
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   69     | expr '=' expr .
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
+
+    '*'  shift, and go to state 111
+    '/'  shift, and go to state 112
+    '%'  shift, and go to state 113
+    '+'  shift, and go to state 114
+    '-'  shift, and go to state 115
+
+    $default  reduce using rule 69 (expr)
+
+
+State 140
+
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   64     | expr '*' expr .
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
+
+    '+'  shift, and go to state 114
+    '-'  shift, and go to state 115
+
+    $default  reduce using rule 64 (expr)
+
+
+State 141
+
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   66     | expr '/' expr .
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
+
+    '+'  shift, and go to state 114
+    '-'  shift, and go to state 115
+
+    $default  reduce using rule 66 (expr)
+
+
+State 142
+
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   65     | expr '%' expr .
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
+
+    '+'  shift, and go to state 114
+    '-'  shift, and go to state 115
+
+    $default  reduce using rule 65 (expr)
+
+
+State 143
+
+   62 expr: expr . '+' expr
+   62     | expr '+' expr .
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
+
+    $default  reduce using rule 62 (expr)
+
+
+State 144
+
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   63     | expr '-' expr .
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
+
+    $default  reduce using rule 63 (expr)
+
+
+State 145
+
+   47 loop_stmt: LOOP ';' stmt_list ENDLOOP .
+
+    $default  reduce using rule 47 (loop_stmt)
+
+
+State 146
+
+   51 io_stmt: PUT skip_stmt '(' expr_list . ')'
+
+    ')'  shift, and go to state 153
+
+
+State 147
+
+   15 array_nont: ARRAY '[' expr ']' OF . data_type
+
+    INT_TYPE    shift, and go to state 31
+    FLOAT_TYPE  shift, and go to state 32
+    CHAR_TYPE   shift, and go to state 33
+    ARRAY       shift, and go to state 34
+
+    data_type   go to state 154
+    array_nont  go to state 36
+
+
+State 148
+
+   10 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list . END IDENTIFIER
+
+    END  shift, and go to state 155
+
+
+State 149
 
-   77 array_access: '[' expr ']' array_access .
+   57 expr_list_tail: ',' expr . expr_list_tail
+   62 expr: expr . '+' expr
+   63     | expr . '-' expr
+   64     | expr . '*' expr
+   65     | expr . '%' expr
+   66     | expr . '/' expr
+   67     | expr . '<' expr
+   68     | expr . '>' expr
+   69     | expr . '=' expr
+   70     | expr . DIFF_SIGN expr
+   71     | expr . GREATER_EQ_SIGN expr
+   72     | expr . LESS_EQ_SIGN expr
+   73     | expr . '&' expr
+   74     | expr . '|' expr
 
-    $padrão  reduzir usando a regra 77 (array_access)
+    DIFF_SIGN        shift, and go to state 103
+    GREATER_EQ_SIGN  shift, and go to state 104
+    LESS_EQ_SIGN     shift, and go to state 105
+    '&'              shift, and go to state 106
+    '|'              shift, and go to state 107
+    '>'              shift, and go to state 108
+    '<'              shift, and go to state 109
+    '='              shift, and go to state 110
+    '*'              shift, and go to state 111
+    '/'              shift, and go to state 112
+    '%'              shift, and go to state 113
+    '+'              shift, and go to state 114
+    '-'              shift, and go to state 115
+    ','              shift, and go to state 123
 
+    $default  reduce using rule 58 (expr_list_tail)
 
-Estado 140
+    expr_list_tail  go to state 156
 
-   40 else_stmt: ELSE . stmt_list
 
-    IDENTIFIER  deslocar, e ir ao estado 30
-    IF          deslocar, e ir ao estado 31
-    GOTO        deslocar, e ir ao estado 32
-    LOOP        deslocar, e ir ao estado 33
-    EXITWHEN    deslocar, e ir ao estado 34
-    STOP        deslocar, e ir ao estado 35
-    GET         deslocar, e ir ao estado 36
-    PUT         deslocar, e ir ao estado 37
+State 150
 
-    $padrão  reduzir usando a regra 18 (stmt_list)
+   81 array_access: '[' expr ']' array_access .
 
-    stmt_list     ir ao estado 146
-    super_stmt    ir ao estado 39
-    label_stmt    ir ao estado 40
-    idless_stmt   ir ao estado 41
-    control_stmt  ir ao estado 42
-    if_stmt       ir ao estado 43
-    goto_stmt     ir ao estado 44
-    loop_stmt     ir ao estado 45
-    exit_stmt     ir ao estado 46
-    stop_stmt     ir ao estado 47
-    io_stmt       ir ao estado 48
+    $default  reduce using rule 81 (array_access)
 
 
-Estado 141
+State 151
 
-   39 if_stmt: IF expr THEN stmt_list else_stmt . ENDIF
+   44 else_stmt: ELSE . stmt_list
 
-    ENDIF  deslocar, e ir ao estado 147
+    error       shift, and go to state 38
+    IDENTIFIER  shift, and go to state 39
+    IF          shift, and go to state 40
+    GOTO        shift, and go to state 41
+    LOOP        shift, and go to state 42
+    EXITWHEN    shift, and go to state 43
+    STOP        shift, and go to state 44
+    GET         shift, and go to state 45
+    PUT         shift, and go to state 46
 
+    ENDIF  reduce using rule 21 (stmt_list)
 
-Estado 142
+    stmt_list     go to state 157
+    super_stmt    go to state 48
+    label_stmt    go to state 49
+    idless_stmt   go to state 50
+    control_stmt  go to state 51
+    if_stmt       go to state 52
+    goto_stmt     go to state 53
+    loop_stmt     go to state 54
+    exit_stmt     go to state 55
+    stop_stmt     go to state 56
+    io_stmt       go to state 57
 
-   47 io_stmt: PUT skip_stmt '(' expr_list ')' .
 
-    $padrão  reduzir usando a regra 47 (io_stmt)
+State 152
 
+   43 if_stmt: IF expr THEN stmt_list else_stmt . ENDIF
 
-Estado 143
+    ENDIF  shift, and go to state 158
 
-   12 array_nont: ARRAY '[' expr ']' OF data_type .
 
-    $padrão  reduzir usando a regra 12 (array_nont)
+State 153
 
+   51 io_stmt: PUT skip_stmt '(' expr_list ')' .
 
-Estado 144
+    $default  reduce using rule 51 (io_stmt)
 
-    7 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END . IDENTIFIER ';'
 
-    IDENTIFIER  deslocar, e ir ao estado 148
+State 154
 
+   15 array_nont: ARRAY '[' expr ']' OF data_type .
 
-Estado 145
+    $default  reduce using rule 15 (array_nont)
 
-   53 expr_list_tail: ',' expr expr_list_tail .
 
-    $padrão  reduzir usando a regra 53 (expr_list_tail)
+State 155
 
+   10 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END . IDENTIFIER
 
-Estado 146
+    IDENTIFIER  shift, and go to state 159
 
-   40 else_stmt: ELSE stmt_list .
 
-    $padrão  reduzir usando a regra 40 (else_stmt)
+State 156
 
+   57 expr_list_tail: ',' expr expr_list_tail .
 
-Estado 147
+    $default  reduce using rule 57 (expr_list_tail)
 
-   39 if_stmt: IF expr THEN stmt_list else_stmt ENDIF .
 
-    $padrão  reduzir usando a regra 39 (if_stmt)
+State 157
 
+   44 else_stmt: ELSE stmt_list .
 
-Estado 148
+    $default  reduce using rule 44 (else_stmt)
 
-    7 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER . ';'
 
-    ';'  deslocar, e ir ao estado 149
+State 158
 
+   43 if_stmt: IF expr THEN stmt_list else_stmt ENDIF .
 
-Estado 149
+    $default  reduce using rule 43 (if_stmt)
 
-    7 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER ';' .
 
-    $padrão  reduzir usando a regra 7 (proc_decl)
+State 159
+
+   10 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER .
+
+    $default  reduce using rule 10 (proc_decl)
