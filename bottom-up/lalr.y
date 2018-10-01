@@ -49,22 +49,24 @@ void yyerror(const char *str){
 %right UMINUS
 
 %%
-program: decl_list proc_decl_list START ';' stmt_list  END ';' ;
+program: decl_list proc_decl_list body
+
+body: START ';' stmt_list  END ';'
 
 decl_list: /* '' */ 
 	| decl_list decl_stmt ';' 
-	| decl_list error ';'
+	| decl_list DECLARE error ';'
 	;
 
-decl_stmt: DECLARE '(' id_list ')' data_type;
+decl_stmt: DECLARE '(' id_list ')' data_type
+	;
 
 proc_decl_list: /* '' */ 
 	| proc_decl_list proc_decl ';'
-	| proc_decl_list error ';'
 	;
 
 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER
-	| error ';' stmt_list END IDENTIFIER
+	| IDENTIFIER error ';' stmt_list END IDENTIFIER
 	;
 
 data_type: INT_TYPE 
@@ -81,8 +83,8 @@ id_list: IDENTIFIER
 	| id_list ',' IDENTIFIER;
 
 stmt_list: /* '' */ 
-	| super_stmt ';' stmt_list {printf("statement at %d \n", line); }
-	| error ';' stmt_list
+	| super_stmt ';' stmt_list
+	| error ';' stmt_list 
 	;
 
 super_stmt: label_stmt 
