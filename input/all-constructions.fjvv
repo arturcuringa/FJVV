@@ -21,7 +21,7 @@ START;
         foo := foo + 1;
         EXITWHEN foo > 5;
     ENDLOOP;
-    GET (bar);
+    GET (bar, a);
 
     example(4, 3);
 

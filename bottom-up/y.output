@@ -76,7 +76,7 @@ Grammar
 
    48 stop_stmt: STOP
 
-   49 io_stmt: GET id_list
+   49 io_stmt: GET '(' id_list ')'
    50        | PUT skip_stmt '(' expr_list ')'
 
    51 skip_stmt: SKIP
@@ -123,8 +123,8 @@ $end (0) 0
 '!' (33) 75
 '%' (37) 64
 '&' (38) 72
-'(' (40) 6 9 50 53 74
-')' (41) 6 9 50 53 74
+'(' (40) 6 9 49 50 53 74
+')' (41) 6 9 49 50 53 74
 '*' (42) 63
 '+' (43) 61
 ',' (44) 19 56
@@ -537,11 +537,9 @@ State 29
 
 State 30
 
-   49 io_stmt: GET . id_list
+   49 io_stmt: GET . '(' id_list ')'
 
-    IDENTIFIER  shift, and go to state 15
-
-    id_list  go to state 72
+    '('  shift, and go to state 72
 
 
 State 31
@@ -1029,12 +1027,11 @@ State 71
 
 State 72
 
-   19 id_list: id_list . ',' IDENTIFIER
-   49 io_stmt: GET id_list .
+   49 io_stmt: GET '(' . id_list ')'
 
-    ','  shift, and go to state 22
+    IDENTIFIER  shift, and go to state 15
 
-    $default  reduce using rule 49 (io_stmt)
+    id_list  go to state 108
 
 
 State 73
@@ -1048,14 +1045,14 @@ State 74
 
    50 io_stmt: PUT skip_stmt . '(' expr_list ')'
 
-    '('  shift, and go to state 108
+    '('  shift, and go to state 109
 
 
 State 75
 
     2 body: START ';' stmt_list END . ';'
 
-    ';'  shift, and go to state 109
+    ';'  shift, and go to state 110
 
 
 State 76
@@ -1077,7 +1074,7 @@ State 76
     ELSE     reduce using rule 20 (stmt_list)
     ENDLOOP  reduce using rule 20 (stmt_list)
 
-    stmt_list     go to state 110
+    stmt_list     go to state 111
     super_stmt    go to state 33
     label_stmt    go to state 34
     idless_stmt   go to state 35
@@ -1094,7 +1091,7 @@ State 77
 
    10 proc_decl: IDENTIFIER error ';' stmt_list . END IDENTIFIER
 
-    END  shift, and go to state 111
+    END  shift, and go to state 112
 
 
 State 78
@@ -1105,8 +1102,8 @@ State 78
 
     $default  reduce using rule 16 (super_id_list)
 
-    super_id_list  go to state 112
-    id_list        go to state 113
+    super_id_list  go to state 113
+    id_list        go to state 114
 
 
 State 79
@@ -1122,7 +1119,7 @@ State 79
     '('         shift, and go to state 66
 
     literal  go to state 67
-    expr     go to state 114
+    expr     go to state 115
 
 
 State 80
@@ -1136,7 +1133,7 @@ State 81
 
    53 proc_stmt: '(' expr_list . ')'
 
-    ')'  shift, and go to state 115
+    ')'  shift, and go to state 116
 
 
 State 82
@@ -1169,11 +1166,11 @@ State 82
     '%'              shift, and go to state 104
     '+'              shift, and go to state 105
     '-'              shift, and go to state 106
-    ','              shift, and go to state 116
+    ','              shift, and go to state 117
 
     $default  reduce using rule 57 (expr_list_tail)
 
-    expr_list_tail  go to state 117
+    expr_list_tail  go to state 118
 
 
 State 83
@@ -1185,9 +1182,9 @@ State 83
 
     $default  reduce using rule 79 (array_access)
 
-    post_labelless_stmt  go to state 118
-    attr_stmt            go to state 119
-    proc_stmt            go to state 120
+    post_labelless_stmt  go to state 119
+    attr_stmt            go to state 120
+    proc_stmt            go to state 121
     array_access         go to state 59
 
 
@@ -1242,7 +1239,7 @@ State 87
     '%'              shift, and go to state 104
     '+'              shift, and go to state 105
     '-'              shift, and go to state 106
-    ']'              shift, and go to state 121
+    ']'              shift, and go to state 122
 
 
 State 88
@@ -1258,7 +1255,7 @@ State 88
     '('         shift, and go to state 66
 
     literal  go to state 67
-    expr     go to state 122
+    expr     go to state 123
 
 
 State 89
@@ -1338,7 +1335,7 @@ State 92
     '%'              shift, and go to state 104
     '+'              shift, and go to state 105
     '-'              shift, and go to state 106
-    ')'              shift, and go to state 123
+    ')'              shift, and go to state 124
 
 
 State 93
@@ -1358,7 +1355,7 @@ State 93
     ENDIF  reduce using rule 20 (stmt_list)
     ELSE   reduce using rule 20 (stmt_list)
 
-    stmt_list     go to state 124
+    stmt_list     go to state 125
     super_stmt    go to state 33
     label_stmt    go to state 34
     idless_stmt   go to state 35
@@ -1384,7 +1381,7 @@ State 94
     '('         shift, and go to state 66
 
     literal  go to state 67
-    expr     go to state 125
+    expr     go to state 126
 
 
 State 95
@@ -1400,7 +1397,7 @@ State 95
     '('         shift, and go to state 66
 
     literal  go to state 67
-    expr     go to state 126
+    expr     go to state 127
 
 
 State 96
@@ -1416,7 +1413,7 @@ State 96
     '('         shift, and go to state 66
 
     literal  go to state 67
-    expr     go to state 127
+    expr     go to state 128
 
 
 State 97
@@ -1432,7 +1429,7 @@ State 97
     '('         shift, and go to state 66
 
     literal  go to state 67
-    expr     go to state 128
+    expr     go to state 129
 
 
 State 98
@@ -1448,7 +1445,7 @@ State 98
     '('         shift, and go to state 66
 
     literal  go to state 67
-    expr     go to state 129
+    expr     go to state 130
 
 
 State 99
@@ -1464,7 +1461,7 @@ State 99
     '('         shift, and go to state 66
 
     literal  go to state 67
-    expr     go to state 130
+    expr     go to state 131
 
 
 State 100
@@ -1480,7 +1477,7 @@ State 100
     '('         shift, and go to state 66
 
     literal  go to state 67
-    expr     go to state 131
+    expr     go to state 132
 
 
 State 101
@@ -1496,7 +1493,7 @@ State 101
     '('         shift, and go to state 66
 
     literal  go to state 67
-    expr     go to state 132
+    expr     go to state 133
 
 
 State 102
@@ -1512,7 +1509,7 @@ State 102
     '('         shift, and go to state 66
 
     literal  go to state 67
-    expr     go to state 133
+    expr     go to state 134
 
 
 State 103
@@ -1528,7 +1525,7 @@ State 103
     '('         shift, and go to state 66
 
     literal  go to state 67
-    expr     go to state 134
+    expr     go to state 135
 
 
 State 104
@@ -1544,7 +1541,7 @@ State 104
     '('         shift, and go to state 66
 
     literal  go to state 67
-    expr     go to state 135
+    expr     go to state 136
 
 
 State 105
@@ -1560,7 +1557,7 @@ State 105
     '('         shift, and go to state 66
 
     literal  go to state 67
-    expr     go to state 136
+    expr     go to state 137
 
 
 State 106
@@ -1576,17 +1573,26 @@ State 106
     '('         shift, and go to state 66
 
     literal  go to state 67
-    expr     go to state 137
+    expr     go to state 138
 
 
 State 107
 
    46 loop_stmt: LOOP ';' stmt_list . ENDLOOP
 
-    ENDLOOP  shift, and go to state 138
+    ENDLOOP  shift, and go to state 139
 
 
 State 108
+
+   19 id_list: id_list . ',' IDENTIFIER
+   49 io_stmt: GET '(' id_list . ')'
+
+    ')'  shift, and go to state 140
+    ','  shift, and go to state 22
+
+
+State 109
 
    50 io_stmt: PUT skip_stmt '(' . expr_list ')'
 
@@ -1600,40 +1606,40 @@ State 108
 
     $default  reduce using rule 54 (expr_list)
 
-    expr_list  go to state 139
+    expr_list  go to state 141
     literal    go to state 67
     expr       go to state 82
 
 
-State 109
+State 110
 
     2 body: START ';' stmt_list END ';' .
 
     $default  reduce using rule 2 (body)
 
 
-State 110
+State 111
 
    21 stmt_list: super_stmt ';' stmt_list .
 
     $default  reduce using rule 21 (stmt_list)
 
 
-State 111
+State 112
 
    10 proc_decl: IDENTIFIER error ';' stmt_list END . IDENTIFIER
 
-    IDENTIFIER  shift, and go to state 140
-
-
-State 112
-
-    9 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list . ')' ';' stmt_list END IDENTIFIER
-
-    ')'  shift, and go to state 141
+    IDENTIFIER  shift, and go to state 142
 
 
 State 113
+
+    9 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list . ')' ';' stmt_list END IDENTIFIER
+
+    ')'  shift, and go to state 143
+
+
+State 114
 
    17 super_id_list: id_list .
    19 id_list: id_list . ',' IDENTIFIER
@@ -1643,7 +1649,7 @@ State 113
     $default  reduce using rule 17 (super_id_list)
 
 
-State 114
+State 115
 
    15 array_nont: ARRAY '[' expr . ']' OF data_type
    61 expr: expr . '+' expr
@@ -1673,17 +1679,17 @@ State 114
     '%'              shift, and go to state 104
     '+'              shift, and go to state 105
     '-'              shift, and go to state 106
-    ']'              shift, and go to state 142
+    ']'              shift, and go to state 144
 
 
-State 115
+State 116
 
    53 proc_stmt: '(' expr_list ')' .
 
     $default  reduce using rule 53 (proc_stmt)
 
 
-State 116
+State 117
 
    56 expr_list_tail: ',' . expr expr_list_tail
 
@@ -1696,38 +1702,38 @@ State 116
     '('         shift, and go to state 66
 
     literal  go to state 67
-    expr     go to state 143
+    expr     go to state 145
 
 
-State 117
+State 118
 
    55 expr_list: expr expr_list_tail .
 
     $default  reduce using rule 55 (expr_list)
 
 
-State 118
+State 119
 
    31 labelless_stmt: IDENTIFIER post_labelless_stmt .
 
     $default  reduce using rule 31 (labelless_stmt)
 
 
-State 119
+State 120
 
    32 post_labelless_stmt: attr_stmt .
 
     $default  reduce using rule 32 (post_labelless_stmt)
 
 
-State 120
+State 121
 
    33 post_labelless_stmt: proc_stmt .
 
     $default  reduce using rule 33 (post_labelless_stmt)
 
 
-State 121
+State 122
 
    80 array_access: '[' expr ']' . array_access
 
@@ -1735,10 +1741,10 @@ State 121
 
     $default  reduce using rule 79 (array_access)
 
-    array_access  go to state 144
+    array_access  go to state 146
 
 
-State 122
+State 123
 
    34 attr_stmt: array_access ATTR_SIGN expr .
    61 expr: expr . '+' expr
@@ -1772,25 +1778,25 @@ State 122
     $default  reduce using rule 34 (attr_stmt)
 
 
-State 123
+State 124
 
    74 expr: '(' expr ')' .
 
     $default  reduce using rule 74 (expr)
 
 
-State 124
+State 125
 
    42 if_stmt: IF expr THEN stmt_list . else_stmt ENDIF
 
-    ELSE  shift, and go to state 145
+    ELSE  shift, and go to state 147
 
     $default  reduce using rule 44 (else_stmt)
 
-    else_stmt  go to state 146
+    else_stmt  go to state 148
 
 
-State 125
+State 126
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -1816,7 +1822,7 @@ State 125
     $default  reduce using rule 69 (expr)
 
 
-State 126
+State 127
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -1842,7 +1848,7 @@ State 126
     $default  reduce using rule 70 (expr)
 
 
-State 127
+State 128
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -1868,7 +1874,7 @@ State 127
     $default  reduce using rule 71 (expr)
 
 
-State 128
+State 129
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -1900,7 +1906,7 @@ State 128
     $default  reduce using rule 72 (expr)
 
 
-State 129
+State 130
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -1932,7 +1938,7 @@ State 129
     $default  reduce using rule 73 (expr)
 
 
-State 130
+State 131
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -1958,7 +1964,7 @@ State 130
     $default  reduce using rule 67 (expr)
 
 
-State 131
+State 132
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -1984,7 +1990,7 @@ State 131
     $default  reduce using rule 66 (expr)
 
 
-State 132
+State 133
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -2010,7 +2016,7 @@ State 132
     $default  reduce using rule 68 (expr)
 
 
-State 133
+State 134
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -2033,7 +2039,7 @@ State 133
     $default  reduce using rule 63 (expr)
 
 
-State 134
+State 135
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -2056,7 +2062,7 @@ State 134
     $default  reduce using rule 65 (expr)
 
 
-State 135
+State 136
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -2079,7 +2085,7 @@ State 135
     $default  reduce using rule 64 (expr)
 
 
-State 136
+State 137
 
    61 expr: expr . '+' expr
    61     | expr '+' expr .
@@ -2099,7 +2105,7 @@ State 136
     $default  reduce using rule 61 (expr)
 
 
-State 137
+State 138
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -2119,42 +2125,49 @@ State 137
     $default  reduce using rule 62 (expr)
 
 
-State 138
+State 139
 
    46 loop_stmt: LOOP ';' stmt_list ENDLOOP .
 
     $default  reduce using rule 46 (loop_stmt)
 
 
-State 139
+State 140
+
+   49 io_stmt: GET '(' id_list ')' .
+
+    $default  reduce using rule 49 (io_stmt)
+
+
+State 141
 
    50 io_stmt: PUT skip_stmt '(' expr_list . ')'
 
-    ')'  shift, and go to state 147
+    ')'  shift, and go to state 149
 
 
-State 140
+State 142
 
    10 proc_decl: IDENTIFIER error ';' stmt_list END IDENTIFIER .
 
     $default  reduce using rule 10 (proc_decl)
 
 
-State 141
+State 143
 
     9 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' . ';' stmt_list END IDENTIFIER
 
-    ';'  shift, and go to state 148
+    ';'  shift, and go to state 150
 
 
-State 142
+State 144
 
    15 array_nont: ARRAY '[' expr ']' . OF data_type
 
-    OF  shift, and go to state 149
+    OF  shift, and go to state 151
 
 
-State 143
+State 145
 
    56 expr_list_tail: ',' expr . expr_list_tail
    61 expr: expr . '+' expr
@@ -2184,21 +2197,21 @@ State 143
     '%'              shift, and go to state 104
     '+'              shift, and go to state 105
     '-'              shift, and go to state 106
-    ','              shift, and go to state 116
+    ','              shift, and go to state 117
 
     $default  reduce using rule 57 (expr_list_tail)
 
-    expr_list_tail  go to state 150
+    expr_list_tail  go to state 152
 
 
-State 144
+State 146
 
    80 array_access: '[' expr ']' array_access .
 
     $default  reduce using rule 80 (array_access)
 
 
-State 145
+State 147
 
    43 else_stmt: ELSE . stmt_list
 
@@ -2214,7 +2227,7 @@ State 145
 
     ENDIF  reduce using rule 20 (stmt_list)
 
-    stmt_list     go to state 151
+    stmt_list     go to state 153
     super_stmt    go to state 33
     label_stmt    go to state 34
     idless_stmt   go to state 35
@@ -2227,21 +2240,21 @@ State 145
     io_stmt       go to state 42
 
 
-State 146
+State 148
 
    42 if_stmt: IF expr THEN stmt_list else_stmt . ENDIF
 
-    ENDIF  shift, and go to state 152
+    ENDIF  shift, and go to state 154
 
 
-State 147
+State 149
 
    50 io_stmt: PUT skip_stmt '(' expr_list ')' .
 
     $default  reduce using rule 50 (io_stmt)
 
 
-State 148
+State 150
 
     9 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' . stmt_list END IDENTIFIER
 
@@ -2257,7 +2270,7 @@ State 148
 
     END  reduce using rule 20 (stmt_list)
 
-    stmt_list     go to state 153
+    stmt_list     go to state 155
     super_stmt    go to state 33
     label_stmt    go to state 34
     idless_stmt   go to state 35
@@ -2270,7 +2283,7 @@ State 148
     io_stmt       go to state 42
 
 
-State 149
+State 151
 
    15 array_nont: ARRAY '[' expr ']' OF . data_type
 
@@ -2279,53 +2292,53 @@ State 149
     CHAR_TYPE   shift, and go to state 47
     ARRAY       shift, and go to state 48
 
-    data_type   go to state 154
+    data_type   go to state 156
     array_nont  go to state 50
 
 
-State 150
+State 152
 
    56 expr_list_tail: ',' expr expr_list_tail .
 
     $default  reduce using rule 56 (expr_list_tail)
 
 
-State 151
+State 153
 
    43 else_stmt: ELSE stmt_list .
 
     $default  reduce using rule 43 (else_stmt)
 
 
-State 152
+State 154
 
    42 if_stmt: IF expr THEN stmt_list else_stmt ENDIF .
 
     $default  reduce using rule 42 (if_stmt)
 
 
-State 153
+State 155
 
     9 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list . END IDENTIFIER
 
-    END  shift, and go to state 155
+    END  shift, and go to state 157
 
 
-State 154
+State 156
 
    15 array_nont: ARRAY '[' expr ']' OF data_type .
 
     $default  reduce using rule 15 (array_nont)
 
 
-State 155
+State 157
 
     9 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END . IDENTIFIER
 
-    IDENTIFIER  shift, and go to state 156
+    IDENTIFIER  shift, and go to state 158
 
 
-State 156
+State 158
 
     9 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER .
 
