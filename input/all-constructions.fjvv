@@ -1,0 +1,38 @@
+DECLARE (arr, aux) ARRAY [1000] OF INTEGER;
+DECLARE (matrix) ARRAY [100] OF ARRAY [100] OF INTEGER;
+DECLARE (foo, bar, fee) INTEGER;
+DECLARE (letter) CHAR;
+
+example: PROCEDURE (first, last);
+    IF first < last THEN
+        PUT (first);
+    ELSE
+        PUT SKIP (last, first);
+    ENDIF;
+END example;
+
+example2: PROCEDURE ();
+    PUT('a');
+END example2;
+
+START;
+    foo := 0;
+    LOOP;
+        foo := foo + 1;
+        EXITWHEN foo > 5;
+    ENDLOOP;
+    GET (bar);
+
+    example(4, 3);
+
+    gotoLabel: PUT(bar);
+    bar := bar + 1;
+    IF bar < 5 THEN
+        GOTO gotoLabel;
+    ENDIF;
+
+    matrix[3][4] := arr[4] + matrix[3][4];
+    
+    STOP;
+
+END;
