@@ -2,16 +2,26 @@
 %{
 
 #include <stdio.h>
+#include <vector>
 #include <string.h>
+#include "lex.yy.c"
+#include "abstract_tree.h"
+
 extern unsigned int line;
 extern unsigned int col;
+extern char* yytext; 
+
 int yydebug = 1;
 void yyerror(const char *str){
 	fprintf(stderr, "error (line %d, col %d): %s\n", line, col, str);
 }
 
+Program root;
+
 %}
 
+%union {int i; std::vector<VarDec> vdc;}
+%type <vdc> decl_list
 %token START
 %token END
 %token DECLARE
@@ -43,18 +53,19 @@ void yyerror(const char *str){
 %token LESS_EQ_SIGN 
 %left '&' '|'
 %left '>' '<' '=' DIFF_SIGN LESS_EQ_SIGN GREATER_EQ_SIGN
-%left '*' '/' '%'
 %left '+' '-'
+%left '*' '/' '%'
 %nonassoc '!' 
 %right UMINUS
 
 %%
-program: decl_list proc_decl_list body
+program: decl_list proc_decl_list body {root = Program(); 
+					root.var_dec = $1;}
 
 body: START ';' stmt_list  END ';'
 
 decl_list: /* '' */ 
-	| decl_list decl_stmt ';' 
+	| decl_list decl_stmt ';' { $$ = std::vector<VarDec>() } 
 	| decl_list DECLARE error ';'
 	;
 
@@ -145,14 +156,14 @@ literal: INTEGER
 	| FLOAT 
 	| CHAR;
 
-expr: expr '+' expr 
-    | expr '-' expr 
-    | expr '*' expr 
-    | expr '%' expr 
-    | expr '/' expr 
-    | expr '<' expr 
-    | expr '>' expr 
-    | expr '=' expr 
+expr: expr '+' expr
+    | expr '-' expr
+    | expr '*' expr
+    | expr '%' expr
+    | expr '/' expr
+    | expr '<' expr
+    | expr '>' expr
+    | expr '=' expr
     | expr DIFF_SIGN expr 
     | expr GREATER_EQ_SIGN expr 
     | expr LESS_EQ_SIGN expr 

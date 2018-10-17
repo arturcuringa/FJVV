@@ -1,0 +1,5 @@
+DECLARE (a,b,c) INTEGER; 
+START;
+a := 5 * 8 + 7;
+b := 8 / 2 + 1;
+END;
