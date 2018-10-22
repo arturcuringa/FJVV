@@ -1,7 +1,12 @@
+#ifndef __ABS_TREE__
+#define __ABS_TREE__
+
 #include <vector>
 #include <string>
 
 enum class  SimpleType {ST_INT, ST_FLOAT, ST_CHAR};
+
+
 
 struct Type{
 	SimpleType type;
@@ -68,3 +73,8 @@ struct Literal : Expr {
 	SimpleType type;
 };
 
+using DecList = std::vector<VarDec>;
+using ProList = std::vector<ProDec>;
+using StmtList = std::vector<Stmt>;
+
+#endif

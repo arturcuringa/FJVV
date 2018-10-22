@@ -30,8 +30,8 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-#ifndef YY_YY_Y_TAB_H_INCLUDED
-# define YY_YY_Y_TAB_H_INCLUDED
+#ifndef YY_YY_LALR_TAB_H_INCLUDED
+# define YY_YY_LALR_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -77,37 +77,6 @@ extern int yydebug;
     UMINUS = 287
   };
 #endif
-/* Tokens.  */
-#define START 258
-#define END 259
-#define DECLARE 260
-#define PROCEDURE 261
-#define INT_TYPE 262
-#define FLOAT_TYPE 263
-#define CHAR_TYPE 264
-#define ARRAY 265
-#define OF 266
-#define IDENTIFIER 267
-#define INTEGER 268
-#define FLOAT 269
-#define CHAR 270
-#define IF 271
-#define THEN 272
-#define ENDIF 273
-#define ELSE 274
-#define GOTO 275
-#define LOOP 276
-#define ENDLOOP 277
-#define EXITWHEN 278
-#define STOP 279
-#define GET 280
-#define PUT 281
-#define SKIP 282
-#define ATTR_SIGN 283
-#define DIFF_SIGN 284
-#define GREATER_EQ_SIGN 285
-#define LESS_EQ_SIGN 286
-#define UMINUS 287
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -115,9 +84,9 @@ typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
 #line 23 "lalr.y" /* yacc.c:1909  */
-int i; std::vector<VarDec> vdc;
+Node vdc; DecList dec_list; ProList pro_list; StmtList stmt_list; 
 
-#line 121 "y.tab.h" /* yacc.c:1909  */
+#line 90 "lalr.tab.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
@@ -128,4 +97,4 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 
-#endif /* !YY_YY_Y_TAB_H_INCLUDED  */
+#endif /* !YY_YY_LALR_TAB_H_INCLUDED  */

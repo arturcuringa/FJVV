@@ -3,7 +3,9 @@
 %option noinput
 
 %{
-#include "y.tab.h"
+#include "abstract_tree.h"
+#include "lalr.tab.h"
+
 unsigned int line = 1;
 unsigned int col = 1;
 void update_cursor();

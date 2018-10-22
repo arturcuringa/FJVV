@@ -20,8 +20,8 @@ Program root;
 
 %}
 
-%union {int i; std::vector<VarDec> vdc;}
-%type <vdc> decl_list
+%union {Node vdc; DecList dec_list; ProList pro_list; StmtList stmt_list; }
+%type <dec_list> decl_list
 %token START
 %token END
 %token DECLARE
@@ -59,13 +59,14 @@ Program root;
 %right UMINUS
 
 %%
-program: decl_list proc_decl_list body {root = Program(); 
-					root.var_dec = $1;}
+program: decl_list proc_decl_list body { root = Program();
+					 root.var_dec = $1; 
+					}
 
 body: START ';' stmt_list  END ';'
 
 decl_list: /* '' */ 
-	| decl_list decl_stmt ';' { $$ = std::vector<VarDec>() } 
+	| decl_list decl_stmt ';' { $$ = DecList(); } 
 	| decl_list DECLARE error ';'
 	;
 

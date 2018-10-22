@@ -570,11 +570,13 @@ char *yytext;
 #line 1 "lexical.lex"
 #define YY_NO_INPUT 1
 #line 6 "lexical.lex"
-#include "y.tab.h"
+#include "abstract_tree.h"
+#include "lalr.tab.h"
+
 unsigned int line = 1;
 unsigned int col = 1;
 void update_cursor();
-#line 578 "lex.yy.c"
+#line 580 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -759,9 +761,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 23 "lexical.lex"
+#line 25 "lexical.lex"
 
-#line 765 "lex.yy.c"
+#line 767 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -846,248 +848,248 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 24 "lexical.lex"
+#line 26 "lexical.lex"
 {col++;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 25 "lexical.lex"
+#line 27 "lexical.lex"
 {update_cursor();}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 26 "lexical.lex"
+#line 28 "lexical.lex"
 {update_cursor(); return START;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 27 "lexical.lex"
+#line 29 "lexical.lex"
 {update_cursor(); return END;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 28 "lexical.lex"
+#line 30 "lexical.lex"
 {update_cursor(); return DECLARE;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 29 "lexical.lex"
+#line 31 "lexical.lex"
 {update_cursor(); return PROCEDURE;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 30 "lexical.lex"
+#line 32 "lexical.lex"
 {update_cursor(); return INT_TYPE;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 31 "lexical.lex"
+#line 33 "lexical.lex"
 {update_cursor(); return FLOAT_TYPE;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 32 "lexical.lex"
+#line 34 "lexical.lex"
 {update_cursor(); return CHAR_TYPE;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 33 "lexical.lex"
+#line 35 "lexical.lex"
 {update_cursor(); return ARRAY;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 34 "lexical.lex"
+#line 36 "lexical.lex"
 {update_cursor(); return OF;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 35 "lexical.lex"
+#line 37 "lexical.lex"
 {update_cursor(); return INTEGER;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 36 "lexical.lex"
+#line 38 "lexical.lex"
 {update_cursor(); return FLOAT;}
 	YY_BREAK
 case 14:
 /* rule 14 can match eol */
 YY_RULE_SETUP
-#line 37 "lexical.lex"
+#line 39 "lexical.lex"
 {update_cursor(); return CHAR;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 38 "lexical.lex"
+#line 40 "lexical.lex"
 {update_cursor(); return IF;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 39 "lexical.lex"
+#line 41 "lexical.lex"
 {update_cursor(); return THEN;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 40 "lexical.lex"
+#line 42 "lexical.lex"
 {update_cursor(); return ENDIF;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 41 "lexical.lex"
+#line 43 "lexical.lex"
 {update_cursor(); return ELSE;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 42 "lexical.lex"
+#line 44 "lexical.lex"
 {update_cursor(); return GOTO;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 43 "lexical.lex"
+#line 45 "lexical.lex"
 {update_cursor(); return LOOP;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 44 "lexical.lex"
+#line 46 "lexical.lex"
 {update_cursor(); return ENDLOOP;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 45 "lexical.lex"
+#line 47 "lexical.lex"
 {update_cursor(); return EXITWHEN;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 46 "lexical.lex"
+#line 48 "lexical.lex"
 {update_cursor(); return STOP;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 47 "lexical.lex"
+#line 49 "lexical.lex"
 {update_cursor(); return GET;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 48 "lexical.lex"
+#line 50 "lexical.lex"
 {update_cursor(); return PUT;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 49 "lexical.lex"
+#line 51 "lexical.lex"
 {update_cursor(); return SKIP;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 50 "lexical.lex"
+#line 52 "lexical.lex"
 {update_cursor(); return '+';}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 51 "lexical.lex"
+#line 53 "lexical.lex"
 {update_cursor(); return '-';}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 52 "lexical.lex"
+#line 54 "lexical.lex"
 {update_cursor(); return '/';}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 53 "lexical.lex"
+#line 55 "lexical.lex"
 {update_cursor(); return '%';}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 54 "lexical.lex"
+#line 56 "lexical.lex"
 {update_cursor(); return '*';}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 55 "lexical.lex"
+#line 57 "lexical.lex"
 {update_cursor(); return '(';}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 56 "lexical.lex"
+#line 58 "lexical.lex"
 {update_cursor(); return ')';}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 57 "lexical.lex"
+#line 59 "lexical.lex"
 {update_cursor(); return ':';}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 58 "lexical.lex"
+#line 60 "lexical.lex"
 {update_cursor(); return ';';}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 59 "lexical.lex"
+#line 61 "lexical.lex"
 {update_cursor(); return '[';}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 60 "lexical.lex"
+#line 62 "lexical.lex"
 {update_cursor(); return ']';}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 61 "lexical.lex"
+#line 63 "lexical.lex"
 {update_cursor(); return ',';}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 62 "lexical.lex"
+#line 64 "lexical.lex"
 {update_cursor(); return '=';}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 63 "lexical.lex"
+#line 65 "lexical.lex"
 {update_cursor(); return ATTR_SIGN;}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 64 "lexical.lex"
+#line 66 "lexical.lex"
 {update_cursor(); return '<';}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 65 "lexical.lex"
+#line 67 "lexical.lex"
 {update_cursor(); return LESS_EQ_SIGN;}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 66 "lexical.lex"
+#line 68 "lexical.lex"
 {update_cursor(); return '>';}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 67 "lexical.lex"
+#line 69 "lexical.lex"
 {update_cursor(); return GREATER_EQ_SIGN;}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 68 "lexical.lex"
+#line 70 "lexical.lex"
 {update_cursor(); return DIFF_SIGN;}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 69 "lexical.lex"
+#line 71 "lexical.lex"
 {update_cursor(); return '|';}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 70 "lexical.lex"
+#line 72 "lexical.lex"
 {update_cursor(); return '&';}
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 71 "lexical.lex"
+#line 73 "lexical.lex"
 {update_cursor(); return '!';}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 73 "lexical.lex"
+#line 75 "lexical.lex"
 {
 	if ((size_t)yyleng > 16)
 		printf("Identifier %s with more than 16 characters (len %lu, line %u, col %u) \n", yytext, (size_t)yyleng, line, col);
@@ -1098,20 +1100,20 @@ YY_RULE_SETUP
 case 50:
 /* rule 50 can match eol */
 YY_RULE_SETUP
-#line 79 "lexical.lex"
+#line 81 "lexical.lex"
 {line++; col=1;}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 80 "lexical.lex"
+#line 82 "lexical.lex"
 {printf("Error: %s\n", yytext); col++;}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 81 "lexical.lex"
+#line 83 "lexical.lex"
 ECHO;
 	YY_BREAK
-#line 1115 "lex.yy.c"
+#line 1117 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2072,10 +2074,11 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 81 "lexical.lex"
+#line 83 "lexical.lex"
 
 
 
 void update_cursor(){
 	col += yyleng;
 }
+

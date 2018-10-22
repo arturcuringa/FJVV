@@ -83,7 +83,7 @@ void yyerror(const char *str){
 Program root;
 
 
-#line 87 "y.tab.c" /* yacc.c:339  */
+#line 87 "lalr.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -102,9 +102,9 @@ Program root;
 #endif
 
 /* In a future release of Bison, this section will be replaced
-   by #include "y.tab.h".  */
-#ifndef YY_YY_Y_TAB_H_INCLUDED
-# define YY_YY_Y_TAB_H_INCLUDED
+   by #include "lalr.tab.h".  */
+#ifndef YY_YY_LALR_TAB_H_INCLUDED
+# define YY_YY_LALR_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -150,37 +150,6 @@ extern int yydebug;
     UMINUS = 287
   };
 #endif
-/* Tokens.  */
-#define START 258
-#define END 259
-#define DECLARE 260
-#define PROCEDURE 261
-#define INT_TYPE 262
-#define FLOAT_TYPE 263
-#define CHAR_TYPE 264
-#define ARRAY 265
-#define OF 266
-#define IDENTIFIER 267
-#define INTEGER 268
-#define FLOAT 269
-#define CHAR 270
-#define IF 271
-#define THEN 272
-#define ENDIF 273
-#define ELSE 274
-#define GOTO 275
-#define LOOP 276
-#define ENDLOOP 277
-#define EXITWHEN 278
-#define STOP 279
-#define GET 280
-#define PUT 281
-#define SKIP 282
-#define ATTR_SIGN 283
-#define DIFF_SIGN 284
-#define GREATER_EQ_SIGN 285
-#define LESS_EQ_SIGN 286
-#define UMINUS 287
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -188,9 +157,9 @@ typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
 #line 23 "lalr.y" /* yacc.c:355  */
-int i; std::vector<VarDec> vdc;
+Node vdc; DecList dec_list; ProList pro_list; StmtList stmt_list; 
 
-#line 194 "y.tab.c" /* yacc.c:355  */
+#line 163 "lalr.tab.c" /* yacc.c:355  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
@@ -201,11 +170,11 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 
-#endif /* !YY_YY_Y_TAB_H_INCLUDED  */
+#endif /* !YY_YY_LALR_TAB_H_INCLUDED  */
 
 /* Copy the second part of user declarations.  */
 
-#line 209 "y.tab.c" /* yacc.c:358  */
+#line 178 "lalr.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -505,15 +474,15 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    62,    62,    65,    67,    68,    69,    72,    75,    76,
-      79,    80,    83,    84,    85,    86,    88,    90,    91,    93,
-      94,    96,    97,    98,   101,   102,   105,   107,   108,   109,
-     111,   111,   113,   115,   116,   118,   120,   121,   122,   124,
-     125,   126,   127,   129,   131,   132,   134,   136,   138,   140,
-     142,   143,   145,   146,   148,   150,   151,   153,   154,   155,
-     156,   157,   159,   160,   161,   162,   163,   164,   165,   166,
-     167,   168,   169,   170,   171,   172,   173,   174,   175,   176,
-     178,   179
+       0,    62,    62,    66,    68,    69,    70,    73,    76,    77,
+      80,    81,    84,    85,    86,    87,    89,    91,    92,    94,
+      95,    97,    98,    99,   102,   103,   106,   108,   109,   110,
+     112,   112,   114,   116,   117,   119,   121,   122,   123,   125,
+     126,   127,   128,   130,   132,   133,   135,   137,   139,   141,
+     143,   144,   146,   147,   149,   151,   152,   154,   155,   156,
+     157,   158,   160,   161,   162,   163,   164,   165,   166,   167,
+     168,   169,   170,   171,   172,   173,   174,   175,   176,   177,
+     179,   180
 };
 #endif
 
@@ -1428,19 +1397,20 @@ yyreduce:
     {
         case 2:
 #line 62 "lalr.y" /* yacc.c:1646  */
-    {root = Program(); 
-					root.var_dec = (yyvsp[-2].vdc);}
-#line 1434 "y.tab.c" /* yacc.c:1646  */
+    { root = Program();
+					 root.var_dec = (yyvsp[-2].dec_list); 
+					}
+#line 1404 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 68 "lalr.y" /* yacc.c:1646  */
-    { (yyval.vdc) = std::vector<VarDec>() }
-#line 1440 "y.tab.c" /* yacc.c:1646  */
+#line 69 "lalr.y" /* yacc.c:1646  */
+    { (yyval.dec_list) = DecList(); }
+#line 1410 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1444 "y.tab.c" /* yacc.c:1646  */
+#line 1414 "lalr.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1668,7 +1638,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 180 "lalr.y" /* yacc.c:1906  */
+#line 181 "lalr.y" /* yacc.c:1906  */
 
 
 int main() {
