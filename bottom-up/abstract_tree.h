@@ -58,7 +58,20 @@ struct Program : Node {
 };
 
 struct Expr : Node {
-	
+	Expr(){
+		name = new std::string("Expr");
+	}
+	void print();
+	Type type;
+};
+
+struct BinOp : Expr {
+	BinOp(){
+		name = new std::string("BinOp");
+	}
+	char op;
+	Expr* lhs;
+	Expr* rhs;
 };
 
 struct AttrStmt : Stmt {
@@ -66,11 +79,6 @@ struct AttrStmt : Stmt {
 	Expr rhs;
 };
 
-struct BinOp : Expr {
-	int op;
-	Expr lhs;
-	Expr rhs;
-};
 
 struct UnOp : Expr {
 	int op;
@@ -83,7 +91,10 @@ struct Access : Expr {
 };
 
 struct Literal : Expr {
-	union {
+	Literal(){
+		name = new std::string("Literal");
+	}
+	union{
 		int i;
 		float f;
 		char c;

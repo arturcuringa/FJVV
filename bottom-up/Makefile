@@ -1,7 +1,7 @@
 all: bin
 	flex lexical.lex
 	bison -d --verbose lalr.y
-	g++ -std=c++11 lalr.tab.c  -o bin/bu
+	g++ -std=c++11 abstract_tree.cpp lalr.tab.c  -o bin/bu
 debug:
 	flex lexical.lex
 	bison -d -t  lalr.y

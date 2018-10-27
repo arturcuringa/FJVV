@@ -1,5 +1,6 @@
 DECLARE (a1) ARRAY [10] OF INTEGER;
 DECLARE (i) INTEGER;
+DECLARE (i2) INTEGER;
 DECLARE (c) cHaR;
 
 fill: PROCEDURE (a, alen, value);
@@ -8,6 +9,7 @@ fill: PROCEDURE (a, alen, value);
 END fill;
 
 START;
-	fill(a1, 10, 0);
+	i2 := 5 + 2;  
+	fill(1, 10, 0);
 	PUT(5.5, .1, 2.);
 END;

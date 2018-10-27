@@ -21,12 +21,16 @@ Program root;
 
 %}
 
-%union {Node vdc; VarDec* var;DecList* dec_list; ProList* pro_list; StmtList* stmt_list; std::string* sg; SimpleType st;}
+%union {Node vdc; VarDec* var;DecList* dec_list; ProList* pro_list; StmtList* stmt_list; std::string* sg; SimpleType st;Expr* expr; int i; Literal* lit; }
 %type <dec_list> decl_list
 %type <var> decl_stmt
 %type <sg> id_list
 %type <st> data_type
 %type <sg> IDENTIFIER 
+%type <stmt_list> stmt_list
+%type <expr> expr
+%type <lit> literal
+%type <i> INTEGER
 %token START
 %token END
 %token DECLARE
@@ -126,7 +130,7 @@ id_list: IDENTIFIER { std::string* s = new std::string(yytext);
        		     $$ = s; }
 	| id_list ',' IDENTIFIER;
 
-stmt_list: /* '' */ 
+stmt_list: /* '' */ {$$ = NULL;}
 	| super_stmt ';' stmt_list
 	| error ';' stmt_list 
 	;
@@ -148,7 +152,7 @@ labelless_stmt: IDENTIFIER post_labelless_stmt;
 post_labelless_stmt: attr_stmt
 	| proc_stmt ;
 
-attr_stmt: array_access ATTR_SIGN expr;
+attr_stmt: array_access ATTR_SIGN expr {$3->print();};
 
 idless_stmt: stop_stmt 
 	| io_stmt
@@ -185,30 +189,74 @@ expr_list: /* '' */
 
 expr_list_tail: ',' expr expr_list_tail
 	 	| /* '' */ ;
-literal: INTEGER 
-	| FLOAT 
+literal: INTEGER {Literal* lit = new Literal();
+       		 lit->i = {std::stoi(yytext)};
+		 $$ = lit;}
+	| FLOAT {Literal* lit = new Literal();
+       		 lit->f = {std::stof(yytext)};
+		 $$ = lit;}
 	| CHAR;
 
-expr: expr '+' expr
-    | expr '-' expr
-    | expr '*' expr
-    | expr '%' expr
-    | expr '/' expr
-    | expr '<' expr
-    | expr '>' expr
-    | expr '=' expr
+expr: expr '+' expr {BinOp* plus = new BinOp();
+    	             plus->op = '+';
+		     plus->lhs = $1;
+		     plus->rhs = $3;
+		     $$ = plus;}
+    | expr '-' expr {BinOp* plus = new BinOp();
+    	             plus->op = '-';
+		     plus->lhs = $1;
+		     plus->rhs = $3;
+		     $$ = plus;}
+    | expr '*' expr {BinOp* plus = new BinOp();
+    	             plus->op = '*';
+		     plus->lhs = $1;
+		     plus->rhs = $3;
+		     $$ = plus;}
+    | expr '%' expr {BinOp* plus = new BinOp();
+    	             plus->op = '%';
+		     plus->lhs = $1;
+		     plus->rhs = $3;
+		     $$ = plus;}
+    | expr '/' expr {BinOp* plus = new BinOp();
+    	             plus->op = '/';
+		     plus->lhs = $1;
+		     plus->rhs = $3;
+		     $$ = plus;}
+    | expr '<' expr {BinOp* plus = new BinOp();
+    	             plus->op = '<';
+		     plus->lhs = $1;
+		     plus->rhs = $3;
+		     $$ = plus;}
+    | expr '>' expr {BinOp* plus = new BinOp();
+    	             plus->op = '>';
+		     plus->lhs = $1;
+		     plus->rhs = $3;
+		     $$ = plus;}
+    | expr '=' expr {BinOp* plus = new BinOp();
+    	             plus->op = '=';
+		     plus->lhs = $1;
+		     plus->rhs = $3;
+		     $$ = plus;}
     | expr DIFF_SIGN expr 
     | expr GREATER_EQ_SIGN expr 
     | expr LESS_EQ_SIGN expr 
-    | expr '&' expr 
-    | expr '|' expr 
+    | expr '&' expr  {BinOp* plus = new BinOp();
+    	             plus->op = '&';
+		     plus->lhs = $1;
+		     plus->rhs = $3;
+		     $$ = plus;}
+    | expr '|' expr {BinOp* plus = new BinOp();
+    	             plus->op = '|';
+		     plus->lhs = $1;
+		     plus->rhs = $3;
+		     $$ = plus;}
     | '(' expr ')' 
     | '!' expr 
     | '-' expr %prec UMINUS 
     | IDENTIFIER array_access 
-    | literal ;
+    | literal { $$ = $1; } ;
 
-array_access: /* '' */ 
+array_access: /* '' */
 	| '[' expr ']' array_access;
 %%
 
