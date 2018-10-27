@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <vector>
 #include <string.h>
+#include <memory>
 #include "lex.yy.c"
 #include "abstract_tree.h"
 
@@ -20,8 +21,12 @@ Program root;
 
 %}
 
-%union {Node vdc; DecList dec_list; ProList pro_list; StmtList stmt_list; }
+%union {Node vdc; VarDec* var;DecList* dec_list; ProList* pro_list; StmtList* stmt_list; std::string* sg; SimpleType st;}
 %type <dec_list> decl_list
+%type <var> decl_stmt
+%type <sg> id_list
+%type <st> data_type
+%type <sg> IDENTIFIER 
 %token START
 %token END
 %token DECLARE
@@ -59,18 +64,44 @@ Program root;
 %right UMINUS
 
 %%
-program: decl_list proc_decl_list body { root = Program();
+program: decl_list proc_decl_list body {
+      					 root = Program();
 					 root.var_dec = $1; 
+					 root.print();
+					 if(root.var_dec != NULL){
+						for(auto i : *(root.var_dec)){
+							i->print();
+						}	
+					 }
 					}
 
 body: START ';' stmt_list  END ';'
 
-decl_list: /* '' */ 
-	| decl_list decl_stmt ';' { $$ = DecList(); } 
+decl_list: /* '' */ {$$ = NULL;} |
+	 decl_list decl_stmt ';' {
+				    DecList* a = new DecList();
+				    if($1 != NULL){
+					a = $1;
+				    }
+				    if($2 != nullptr){
+					a->push_back($2);
+				    }
+		                    
+				    $$ = a; } 
 	| decl_list DECLARE error ';'
 	;
 
-decl_stmt: DECLARE '(' id_list ')' data_type
+decl_stmt: DECLARE '(' id_list ')' data_type { VarDec* vd = new VarDec();
+						vd->ids.push_back($3);
+						Type* ty = new Type();
+						if($5 == SimpleType::ST_INT)
+							ty->type = SimpleType::ST_INT;
+						if($5 == SimpleType::ST_FLOAT)
+							ty->type = SimpleType::ST_FLOAT;
+						if($5 == SimpleType::ST_FLOAT)
+							ty->type = SimpleType::ST_FLOAT;
+						vd->type.push_back(ty);
+						$$ = vd;}
 	;
 
 proc_decl_list: /* '' */ 
@@ -81,9 +112,9 @@ proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDEN
 	| IDENTIFIER error ';' stmt_list END IDENTIFIER
 	;
 
-data_type: INT_TYPE 
-	| FLOAT_TYPE 
-	| CHAR_TYPE 
+data_type: INT_TYPE  {$$ = SimpleType::ST_INT;} 
+	| FLOAT_TYPE {$$ = SimpleType::ST_FLOAT;}
+	| CHAR_TYPE  {$$ = SimpleType::ST_CHAR;}
 	| array_nont;
 
 array_nont: ARRAY '[' expr ']' OF data_type;
@@ -91,7 +122,8 @@ array_nont: ARRAY '[' expr ']' OF data_type;
 super_id_list: /* '' */ 
 	| id_list;
 
-id_list: IDENTIFIER
+id_list: IDENTIFIER { std::string* s = new std::string(yytext);
+       		     $$ = s; }
 	| id_list ',' IDENTIFIER;
 
 stmt_list: /* '' */ 

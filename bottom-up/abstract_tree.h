@@ -3,10 +3,9 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 
 enum class  SimpleType {ST_INT, ST_FLOAT, ST_CHAR};
-
-
 
 struct Type{
 	SimpleType type;
@@ -15,12 +14,28 @@ struct Type{
 };
 
 struct Node {
-	int name;
+	std::string*  name;
+	void print(){
+		std::cout << *(name) << " ";	
+	};
 };
 
 struct VarDec : Node {
-	std::vector<std::string> ids;
-	std::vector<Type> type;
+	VarDec(){
+		name = new std::string( "VarDec");
+	}
+	void print(){
+		std::cout << "{\"" << *(name) << "\":[";	
+			for(int i = 0; i < ids.size(); i++){
+				std::cout<< "\"" << *(ids[i]) << "\"";
+				if(i != ids.size() -1){
+					std::cout<<", ";
+				}
+			}
+			std::cout << "]}";
+	};
+	std::vector<std::string*> ids;
+	std::vector<Type*> type;
 };
 
 struct Stmt : Node {
@@ -34,9 +49,12 @@ struct ProDec : Node {
 };
 
 struct Program : Node {
-	std::vector<VarDec> var_dec;
-	std::vector<ProDec> pro_dec;
-	std::vector<Stmt> stmts;
+	Program(){
+		name =  new std::string("Program");
+	}
+	std::vector<VarDec*>* var_dec;
+	std::vector<ProDec*>* pro_dec;
+	std::vector<Stmt*>* stmts;
 };
 
 struct Expr : Node {
@@ -73,7 +91,7 @@ struct Literal : Expr {
 	SimpleType type;
 };
 
-using DecList = std::vector<VarDec>;
+using DecList = std::vector<VarDec*>;
 using ProList = std::vector<ProDec>;
 using StmtList = std::vector<Stmt>;
 
