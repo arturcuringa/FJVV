@@ -3,11 +3,14 @@
 %option noinput
 
 %{
+#include <string.h>
 #include "abstract_tree.h"
 #include "lalr.tab.h"
 
 unsigned int line = 1;
 unsigned int col = 1;
+std::string id;
+
 void update_cursor();
 %}
 
@@ -76,6 +79,7 @@ char 			\'(.|"\n")\'
 	if ((size_t)yyleng > 16)
 		printf("Identifier %s with more than 16 characters (len %lu, line %u, col %u) \n", yytext, (size_t)yyleng, line, col);
 	update_cursor();
+	id = yytext;
 	return IDENTIFIER; 
 }
 \n {line++; col=1;}

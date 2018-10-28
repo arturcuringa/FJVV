@@ -20,5 +20,29 @@ void Expr::print(){
 		std::cout << "{\"val\":";
 		std::cout << l->i << "}";
 	}
+	if(nameStar == "UnOp"){
+		UnOp* u = (UnOp*) this;
+		std::cout << "{";
+		std::cout << "\"op\": \'" << u->op << "\'";
+		std::cout << ", ";
+		std::cout << "\"expr\": ";
+	        u->expr->print();
+		std::cout<< "}";	
+	}
+	if(nameStar == "Access"){
+		Access* a = (Access*) this;
+		std::cout << "{ \"id\": \"" << *(a->id) << "\"";
+		if(!a->indexes.empty()){
+			std::cout << ", \"indexes\": [";
+			for(auto i = 0; i < a->indexes.size(); i++){
+				a->indexes[i]->print();
+				if(i != a->indexes.size() -1){
+					std::cout << ", "; 
+				}
+			}
+			std::cout << "]";
+		}
+		std::cout << "}";
+	}
 	std::cout << "}";
 }

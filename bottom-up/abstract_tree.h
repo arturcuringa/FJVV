@@ -16,7 +16,7 @@ struct Type{
 struct Node {
 	std::string*  name;
 	void print(){
-		std::cout << *(name) << " ";	
+		std::cout << "{ \"" << *(name) << "\":{ ";	
 	};
 };
 
@@ -52,6 +52,9 @@ struct Program : Node {
 	Program(){
 		name =  new std::string("Program");
 	}
+	~Program(){
+	
+	}
 	std::vector<VarDec*>* var_dec;
 	std::vector<ProDec*>* pro_dec;
 	std::vector<Stmt*>* stmts;
@@ -61,6 +64,9 @@ struct Expr : Node {
 	Expr(){
 		name = new std::string("Expr");
 	}
+	~Expr(){
+		delete name;
+	}
 	void print();
 	Type type;
 };
@@ -68,6 +74,9 @@ struct Expr : Node {
 struct BinOp : Expr {
 	BinOp(){
 		name = new std::string("BinOp");
+	}
+	~BinOp(){
+		delete name;
 	}
 	char op;
 	Expr* lhs;
@@ -81,18 +90,33 @@ struct AttrStmt : Stmt {
 
 
 struct UnOp : Expr {
+	UnOp(){
+		name = new std::string("UnOp");
+	}
+	~UnOp(){
+		delete name;
+	}
 	int op;
-	Expr expr;
+	Expr* expr;
 };
 
 struct Access : Expr {
-	std::string id;
-	std::vector<int> indexes;
+	Access(){
+		name = new std::string("Access");
+	}
+	~Access(){
+		delete name;
+	}
+	std::string* id;
+	std::vector<Expr*> indexes;
 };
 
 struct Literal : Expr {
 	Literal(){
 		name = new std::string("Literal");
+	}
+	~Literal(){
+		delete name;
 	}
 	union{
 		int i;

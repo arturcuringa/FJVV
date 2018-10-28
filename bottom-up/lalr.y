@@ -11,6 +11,7 @@
 extern unsigned int line;
 extern unsigned int col;
 extern char* yytext; 
+extern std::string id;
 
 int yydebug = 1;
 void yyerror(const char *str){
@@ -21,7 +22,7 @@ Program root;
 
 %}
 
-%union {Node vdc; VarDec* var;DecList* dec_list; ProList* pro_list; StmtList* stmt_list; std::string* sg; SimpleType st;Expr* expr; int i; Literal* lit; }
+%union {Node vdc; VarDec* var;DecList* dec_list; ProList* pro_list; StmtList* stmt_list; std::string* sg; SimpleType st;Expr* expr; int i; Literal* lit; std::vector<Expr*>* exprs; }
 %type <dec_list> decl_list
 %type <var> decl_stmt
 %type <sg> id_list
@@ -31,6 +32,7 @@ Program root;
 %type <expr> expr
 %type <lit> literal
 %type <i> INTEGER
+%type <exprs> array_access
 %token START
 %token END
 %token DECLARE
@@ -126,7 +128,7 @@ array_nont: ARRAY '[' expr ']' OF data_type;
 super_id_list: /* '' */ 
 	| id_list;
 
-id_list: IDENTIFIER { std::string* s = new std::string(yytext);
+id_list: IDENTIFIER { std::string* s = new std::string(id);
        		     $$ = s; }
 	| id_list ',' IDENTIFIER;
 
@@ -195,69 +197,105 @@ literal: INTEGER {Literal* lit = new Literal();
 	| FLOAT {Literal* lit = new Literal();
        		 lit->f = {std::stof(yytext)};
 		 $$ = lit;}
-	| CHAR;
+	| CHAR {Literal* lit = new Literal();
+       		 lit->c = {yytext[0]};
+		 $$ = lit;};
 
-expr: expr '+' expr {BinOp* plus = new BinOp();
-    	             plus->op = '+';
-		     plus->lhs = $1;
-		     plus->rhs = $3;
-		     $$ = plus;}
-    | expr '-' expr {BinOp* plus = new BinOp();
-    	             plus->op = '-';
-		     plus->lhs = $1;
-		     plus->rhs = $3;
-		     $$ = plus;}
-    | expr '*' expr {BinOp* plus = new BinOp();
-    	             plus->op = '*';
-		     plus->lhs = $1;
-		     plus->rhs = $3;
-		     $$ = plus;}
-    | expr '%' expr {BinOp* plus = new BinOp();
-    	             plus->op = '%';
-		     plus->lhs = $1;
-		     plus->rhs = $3;
-		     $$ = plus;}
-    | expr '/' expr {BinOp* plus = new BinOp();
-    	             plus->op = '/';
-		     plus->lhs = $1;
-		     plus->rhs = $3;
-		     $$ = plus;}
-    | expr '<' expr {BinOp* plus = new BinOp();
-    	             plus->op = '<';
-		     plus->lhs = $1;
-		     plus->rhs = $3;
-		     $$ = plus;}
-    | expr '>' expr {BinOp* plus = new BinOp();
-    	             plus->op = '>';
-		     plus->lhs = $1;
-		     plus->rhs = $3;
-		     $$ = plus;}
-    | expr '=' expr {BinOp* plus = new BinOp();
-    	             plus->op = '=';
-		     plus->lhs = $1;
-		     plus->rhs = $3;
-		     $$ = plus;}
-    | expr DIFF_SIGN expr 
-    | expr GREATER_EQ_SIGN expr 
-    | expr LESS_EQ_SIGN expr 
-    | expr '&' expr  {BinOp* plus = new BinOp();
-    	             plus->op = '&';
-		     plus->lhs = $1;
-		     plus->rhs = $3;
-		     $$ = plus;}
-    | expr '|' expr {BinOp* plus = new BinOp();
-    	             plus->op = '|';
-		     plus->lhs = $1;
-		     plus->rhs = $3;
-		     $$ = plus;}
-    | '(' expr ')' 
-    | '!' expr 
-    | '-' expr %prec UMINUS 
-    | IDENTIFIER array_access 
+expr: expr '+' expr {BinOp* operation = new BinOp();
+    	             operation->op = '+';
+		     operation->lhs = $1;
+		     operation->rhs = $3;
+		     $$ = operation;}
+    | expr '-' expr {BinOp* operation = new BinOp();
+    	             operation->op = '-';
+		     operation->lhs = $1;
+		     operation->rhs = $3;
+		     $$ = operation;}
+    | expr '*' expr {BinOp* operation = new BinOp();
+    	             operation->op = '*';
+		     operation->lhs = $1;
+		     operation->rhs = $3;
+		     $$ = operation;}
+    | expr '%' expr {BinOp* operation = new BinOp();
+    	             operation->op = '%';
+		     operation->lhs = $1;
+		     operation->rhs = $3;
+		     $$ = operation;}
+    | expr '/' expr {BinOp* operation = new BinOp();
+    	             operation->op = '/';
+		     operation->lhs = $1;
+		     operation->rhs = $3;
+		     $$ = operation;}
+    | expr '<' expr {BinOp* operation = new BinOp();
+    	             operation->op = '<';
+		     operation->lhs = $1;
+		     operation->rhs = $3;
+		     $$ = operation;}
+    | expr '>' expr {BinOp* operation = new BinOp();
+    	             operation->op = '>';
+		     operation->lhs = $1;
+		     operation->rhs = $3;
+		     $$ = operation;}
+    | expr '=' expr {BinOp* operation = new BinOp();
+    	             operation->op = '=';
+		     operation->lhs = $1;
+		     operation->rhs = $3;
+		     $$ = operation;}
+    | expr DIFF_SIGN expr {BinOp* operation = new BinOp();
+    	             operation->op = '!';
+		     operation->lhs = $1;
+		     operation->rhs = $3;
+		     $$ = operation;}
+    | expr GREATER_EQ_SIGN expr {BinOp* operation = new BinOp();
+    	             operation->op = 'g';
+		     operation->lhs = $1;
+		     operation->rhs = $3;
+		     $$ = operation;}
+    | expr LESS_EQ_SIGN expr  {BinOp* operation = new BinOp();
+    	             operation->op = 'l';
+		     operation->lhs = $1;
+		     operation->rhs = $3;
+		     $$ = operation;}
+    | expr '&' expr  {BinOp* operation = new BinOp();
+    	             operation->op = '&';
+		     operation->lhs = $1;
+		     operation->rhs = $3;
+		     $$ = operation;}
+    | expr '|' expr {BinOp* operation = new BinOp();
+    	             operation->op = '|';
+		     operation->lhs = $1;
+		     operation->rhs = $3;
+		     $$ = operation;}
+    | '(' expr ')' {UnOp* operation = new UnOp();
+		operation->op = 'p';
+		operation->expr = $2;
+		$$ = operation;}
+    | '!' expr {UnOp* operation = new UnOp();
+		operation->op = '!';
+		operation->expr = $2;
+		$$ = operation;}
+    | '-' expr %prec UMINUS {UnOp* operation = new UnOp();
+		operation->op = '-';
+		operation->expr = $2;
+		$$ = operation;}
+    | IDENTIFIER array_access {Access* acc = new Access();
+				acc->id = new std::string(id);
+				if($2 != NULL){
+					acc->indexes = *($2);	
+				}
+				$$ = acc;
+				}
     | literal { $$ = $1; } ;
 
-array_access: /* '' */
-	| '[' expr ']' array_access;
+array_access: /* '' */ {$$ = NULL;}
+	| '[' expr ']' array_access { std::vector<Expr*>* indexes;
+				      if($4 != NULL)
+					indexes	 = $4;
+				      else indexes = new std::vector<Expr*>();
+				      indexes->push_back($2);
+				      $$ = indexes;
+					}
+;
 %%
 
 int main() {
