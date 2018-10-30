@@ -22,10 +22,10 @@ Program root;
 
 %}
 
-%union {Node vdc; VarDec* var;DecList* dec_list; ProList* pro_list; StmtList* stmt_list; std::string* sg; SimpleType st;Expr* expr; int i; Literal* lit; std::vector<Expr*>* exprs; AttrStmt* att; Post_Labelless_Stmt* post; }
+%union {Node vdc; VarDec* var;DecList* dec_list; ProList* pro_list; StmtList* stmt_list; std::string* sg; SimpleType st;Expr* expr; int i; Literal* lit; std::vector<Expr*>* exprs; AttrStmt* att; Post_Labelless_Stmt* post; std::vector<std::string*>* vsg; }
 %type <dec_list> decl_list
 %type <var> decl_stmt
-%type <sg> id_list
+%type <vsg> id_list
 %type <st> data_type
 %type <sg> IDENTIFIER 
 %type <stmt_list> stmt_list
@@ -93,7 +93,7 @@ decl_list: /* '' */ {$$ = NULL;} |
 	;
 
 decl_stmt: DECLARE '(' id_list ')' data_type { VarDec* vd = new VarDec();
-						vd->ids.push_back($3);
+						vd->ids = $3;
 						Type* ty = new Type();
 						if($5 == SimpleType::ST_INT)
 							ty->type = SimpleType::ST_INT;
@@ -123,9 +123,12 @@ array_nont: ARRAY '[' expr ']' OF data_type;
 super_id_list: /* '' */ 
 	| id_list;
 
-id_list: IDENTIFIER { std::string* s = new std::string(id);
+id_list: IDENTIFIER { std::vector<std::string*>* s = new std::vector<std::string*>();
+       		     s->push_back(new std::string(id));
        		     $$ = s; }
-	| id_list ',' IDENTIFIER;
+	| id_list ',' IDENTIFIER {std::vector<std::string*>* s = $1;
+				 s->push_back(new std::string(id));
+       		     		 $$ = s; };
 
 stmt_list: /* '' */ {$$ = NULL;}
 	| super_stmt ';' stmt_list
@@ -145,8 +148,7 @@ post_label_stmt: ':' stmt
 stmt: labelless_stmt | idless_stmt ;
 
 labelless_stmt: IDENTIFIER post_labelless_stmt {Post_Labelless_Stmt* p = $2;
-	      					std::cout <<"sdhuashdasdzn";
-						p->label = $1;
+						p->label = new std::string(id);
 						p->print();};
 
 post_labelless_stmt: attr_stmt {$$ = $1;}

@@ -84,7 +84,7 @@ extern int yydebug;
 union YYSTYPE
 {
 #line 25 "lalr.y" /* yacc.c:1909  */
-Node vdc; VarDec* var;DecList* dec_list; ProList* pro_list; StmtList* stmt_list; std::string* sg; SimpleType st;Expr* expr; int i; Literal* lit; std::vector<Expr*>* exprs; AttrStmt* att; Post_Labelless_Stmt* post; 
+Node vdc; VarDec* var;DecList* dec_list; ProList* pro_list; StmtList* stmt_list; std::string* sg; SimpleType st;Expr* expr; int i; Literal* lit; std::vector<Expr*>* exprs; AttrStmt* att; Post_Labelless_Stmt* post; std::vector<std::string*>* vsg; 
 
 #line 90 "lalr.tab.h" /* yacc.c:1909  */
 };

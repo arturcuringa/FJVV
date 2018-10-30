@@ -26,15 +26,15 @@ struct VarDec : Node {
 	}
 	void print(){
 		std::cout << "{\"" << *(name) << "\":[";	
-			for(int i = 0; i < ids.size(); i++){
-				std::cout<< "\"" << *(ids[i]) << "\"";
-				if(i != ids.size() -1){
+			for(int i = 0; i < ids->size(); i++){
+				std::cout<< "\"" << *(ids->operator[](i)) << "\"";
+				if(i != ids->size() -1){
 					std::cout<<", ";
 				}
 			}
 			std::cout << "]}";
 	};
-	std::vector<std::string*> ids;
+	std::vector<std::string*>* ids;
 	std::vector<Type*> type;
 };
 
@@ -117,9 +117,9 @@ struct AttrStmt : Post_Labelless_Stmt {
 		delete name;
 	}
 	void print(){
-		std::cout << "{ \"" << *(this->name) << "\": {";
-		std::cout << "\"lhs\":" << "\"" << this->label << "\"";
-		std::cout << "[";
+		std::cout << "{ \"" << *(name) << "\": {";
+		std::cout << "\"lhs\":" << "\"" << *(label) << "\", ";
+		std::cout << "\"indexes\": [";
 	        if(lhs != nullptr){
 			for(auto i = 0; i < lhs->size(); i++){
 				lhs->operator[](i)->print();
