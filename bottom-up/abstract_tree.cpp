@@ -46,3 +46,12 @@ void Expr::print(){
 	}
 	std::cout << "}";
 }
+
+void Post_Labelless_Stmt::print(){
+
+	std::string nameStar = *(name);
+	if(nameStar == "AttrStmt"){
+		AttrStmt* att = (AttrStmt*) this;
+		att->print();
+	}
+}

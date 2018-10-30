@@ -159,7 +159,7 @@ extern int yydebug;
 union YYSTYPE
 {
 #line 25 "lalr.y" /* yacc.c:355  */
-Node vdc; VarDec* var;DecList* dec_list; ProList* pro_list; StmtList* stmt_list; std::string* sg; SimpleType st;Expr* expr; int i; Literal* lit; std::vector<Expr*>* exprs; 
+Node vdc; VarDec* var;DecList* dec_list; ProList* pro_list; StmtList* stmt_list; std::string* sg; SimpleType st;Expr* expr; int i; Literal* lit; std::vector<Expr*>* exprs; AttrStmt* att; Post_Labelless_Stmt* post; 
 
 #line 165 "lalr.tab.c" /* yacc.c:355  */
 };
@@ -478,15 +478,15 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    73,    73,    84,    86,    87,    97,   100,   113,   114,
-     117,   118,   121,   122,   123,   124,   126,   128,   129,   131,
-     133,   135,   136,   137,   140,   141,   144,   146,   147,   148,
-     150,   150,   152,   154,   155,   157,   159,   160,   161,   163,
-     164,   165,   166,   168,   170,   171,   173,   175,   177,   179,
-     181,   182,   184,   185,   187,   189,   190,   192,   193,   194,
-     197,   200,   204,   209,   214,   219,   224,   229,   234,   239,
-     244,   249,   254,   259,   264,   269,   273,   277,   281,   288,
-     290,   291
+       0,    75,    75,    79,    81,    82,    92,    95,   108,   109,
+     112,   113,   116,   117,   118,   119,   121,   123,   124,   126,
+     128,   130,   131,   132,   135,   136,   139,   141,   142,   143,
+     145,   145,   147,   152,   153,   155,   161,   162,   163,   165,
+     166,   167,   168,   170,   172,   173,   175,   177,   179,   181,
+     183,   184,   186,   187,   189,   191,   192,   194,   195,   196,
+     199,   202,   206,   211,   216,   221,   226,   231,   236,   241,
+     246,   251,   256,   261,   266,   271,   275,   279,   283,   290,
+     292,   293
 };
 #endif
 
@@ -1400,28 +1400,21 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 73 "lalr.y" /* yacc.c:1646  */
-    {
-      					 root = Program();
-					 root.var_dec = (yyvsp[-2].dec_list); 
+#line 75 "lalr.y" /* yacc.c:1646  */
+    { root.var_dec = (yyvsp[-2].dec_list); 
 					 root.print();
-					 if(root.var_dec != NULL){
-						for(auto i : *(root.var_dec)){
-							i->print();
-						}	
-					 }
 					}
-#line 1415 "lalr.tab.c" /* yacc.c:1646  */
+#line 1408 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 86 "lalr.y" /* yacc.c:1646  */
+#line 81 "lalr.y" /* yacc.c:1646  */
     {(yyval.dec_list) = NULL;}
-#line 1421 "lalr.tab.c" /* yacc.c:1646  */
+#line 1414 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 87 "lalr.y" /* yacc.c:1646  */
+#line 82 "lalr.y" /* yacc.c:1646  */
     {
 				    DecList* a = new DecList();
 				    if((yyvsp[-2].dec_list) != NULL){
@@ -1432,11 +1425,11 @@ yyreduce:
 				    }
 		                    
 				    (yyval.dec_list) = a; }
-#line 1436 "lalr.tab.c" /* yacc.c:1646  */
+#line 1429 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 100 "lalr.y" /* yacc.c:1646  */
+#line 95 "lalr.y" /* yacc.c:1646  */
     { VarDec* vd = new VarDec();
 						vd->ids.push_back((yyvsp[-2].sg));
 						Type* ty = new Type();
@@ -1448,229 +1441,248 @@ yyreduce:
 							ty->type = SimpleType::ST_FLOAT;
 						vd->type.push_back(ty);
 						(yyval.var) = vd;}
-#line 1452 "lalr.tab.c" /* yacc.c:1646  */
+#line 1445 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 121 "lalr.y" /* yacc.c:1646  */
+#line 116 "lalr.y" /* yacc.c:1646  */
     {(yyval.st) = SimpleType::ST_INT;}
-#line 1458 "lalr.tab.c" /* yacc.c:1646  */
+#line 1451 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 122 "lalr.y" /* yacc.c:1646  */
+#line 117 "lalr.y" /* yacc.c:1646  */
     {(yyval.st) = SimpleType::ST_FLOAT;}
-#line 1464 "lalr.tab.c" /* yacc.c:1646  */
+#line 1457 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 123 "lalr.y" /* yacc.c:1646  */
+#line 118 "lalr.y" /* yacc.c:1646  */
     {(yyval.st) = SimpleType::ST_CHAR;}
-#line 1470 "lalr.tab.c" /* yacc.c:1646  */
+#line 1463 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 131 "lalr.y" /* yacc.c:1646  */
+#line 126 "lalr.y" /* yacc.c:1646  */
     { std::string* s = new std::string(id);
        		     (yyval.sg) = s; }
-#line 1477 "lalr.tab.c" /* yacc.c:1646  */
+#line 1470 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 135 "lalr.y" /* yacc.c:1646  */
+#line 130 "lalr.y" /* yacc.c:1646  */
     {(yyval.stmt_list) = NULL;}
-#line 1483 "lalr.tab.c" /* yacc.c:1646  */
+#line 1476 "lalr.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 32:
+#line 147 "lalr.y" /* yacc.c:1646  */
+    {Post_Labelless_Stmt* p = (yyvsp[0].post);
+	      					std::cout <<"sdhuashdasdzn";
+						p->label = (yyvsp[-1].sg);
+						p->print();}
+#line 1485 "lalr.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 33:
+#line 152 "lalr.y" /* yacc.c:1646  */
+    {(yyval.post) = (yyvsp[0].att);}
+#line 1491 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 157 "lalr.y" /* yacc.c:1646  */
-    {(yyvsp[0].expr)->print();}
-#line 1489 "lalr.tab.c" /* yacc.c:1646  */
+#line 155 "lalr.y" /* yacc.c:1646  */
+    {AttrStmt* attr = new AttrStmt();
+	 				attr->lhs = (yyvsp[-2].exprs);
+					attr->rhs = (yyvsp[0].expr);
+					(yyval.att) = attr;
+					}
+#line 1501 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 194 "lalr.y" /* yacc.c:1646  */
+#line 196 "lalr.y" /* yacc.c:1646  */
     {Literal* lit = new Literal();
        		 lit->i = {std::stoi(yytext)};
 		 (yyval.lit) = lit;}
-#line 1497 "lalr.tab.c" /* yacc.c:1646  */
+#line 1509 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 197 "lalr.y" /* yacc.c:1646  */
+#line 199 "lalr.y" /* yacc.c:1646  */
     {Literal* lit = new Literal();
        		 lit->f = {std::stof(yytext)};
 		 (yyval.lit) = lit;}
-#line 1505 "lalr.tab.c" /* yacc.c:1646  */
+#line 1517 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 200 "lalr.y" /* yacc.c:1646  */
+#line 202 "lalr.y" /* yacc.c:1646  */
     {Literal* lit = new Literal();
        		 lit->c = {yytext[0]};
 		 (yyval.lit) = lit;}
-#line 1513 "lalr.tab.c" /* yacc.c:1646  */
+#line 1525 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 204 "lalr.y" /* yacc.c:1646  */
+#line 206 "lalr.y" /* yacc.c:1646  */
     {BinOp* operation = new BinOp();
     	             operation->op = '+';
 		     operation->lhs = (yyvsp[-2].expr);
 		     operation->rhs = (yyvsp[0].expr);
 		     (yyval.expr) = operation;}
-#line 1523 "lalr.tab.c" /* yacc.c:1646  */
+#line 1535 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 209 "lalr.y" /* yacc.c:1646  */
+#line 211 "lalr.y" /* yacc.c:1646  */
     {BinOp* operation = new BinOp();
     	             operation->op = '-';
 		     operation->lhs = (yyvsp[-2].expr);
 		     operation->rhs = (yyvsp[0].expr);
 		     (yyval.expr) = operation;}
-#line 1533 "lalr.tab.c" /* yacc.c:1646  */
+#line 1545 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 214 "lalr.y" /* yacc.c:1646  */
+#line 216 "lalr.y" /* yacc.c:1646  */
     {BinOp* operation = new BinOp();
     	             operation->op = '*';
 		     operation->lhs = (yyvsp[-2].expr);
 		     operation->rhs = (yyvsp[0].expr);
 		     (yyval.expr) = operation;}
-#line 1543 "lalr.tab.c" /* yacc.c:1646  */
+#line 1555 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 219 "lalr.y" /* yacc.c:1646  */
+#line 221 "lalr.y" /* yacc.c:1646  */
     {BinOp* operation = new BinOp();
     	             operation->op = '%';
 		     operation->lhs = (yyvsp[-2].expr);
 		     operation->rhs = (yyvsp[0].expr);
 		     (yyval.expr) = operation;}
-#line 1553 "lalr.tab.c" /* yacc.c:1646  */
+#line 1565 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 224 "lalr.y" /* yacc.c:1646  */
+#line 226 "lalr.y" /* yacc.c:1646  */
     {BinOp* operation = new BinOp();
     	             operation->op = '/';
 		     operation->lhs = (yyvsp[-2].expr);
 		     operation->rhs = (yyvsp[0].expr);
 		     (yyval.expr) = operation;}
-#line 1563 "lalr.tab.c" /* yacc.c:1646  */
+#line 1575 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 229 "lalr.y" /* yacc.c:1646  */
+#line 231 "lalr.y" /* yacc.c:1646  */
     {BinOp* operation = new BinOp();
     	             operation->op = '<';
 		     operation->lhs = (yyvsp[-2].expr);
 		     operation->rhs = (yyvsp[0].expr);
 		     (yyval.expr) = operation;}
-#line 1573 "lalr.tab.c" /* yacc.c:1646  */
+#line 1585 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 234 "lalr.y" /* yacc.c:1646  */
+#line 236 "lalr.y" /* yacc.c:1646  */
     {BinOp* operation = new BinOp();
     	             operation->op = '>';
 		     operation->lhs = (yyvsp[-2].expr);
 		     operation->rhs = (yyvsp[0].expr);
 		     (yyval.expr) = operation;}
-#line 1583 "lalr.tab.c" /* yacc.c:1646  */
+#line 1595 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 239 "lalr.y" /* yacc.c:1646  */
+#line 241 "lalr.y" /* yacc.c:1646  */
     {BinOp* operation = new BinOp();
     	             operation->op = '=';
 		     operation->lhs = (yyvsp[-2].expr);
 		     operation->rhs = (yyvsp[0].expr);
 		     (yyval.expr) = operation;}
-#line 1593 "lalr.tab.c" /* yacc.c:1646  */
+#line 1605 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 244 "lalr.y" /* yacc.c:1646  */
+#line 246 "lalr.y" /* yacc.c:1646  */
     {BinOp* operation = new BinOp();
     	             operation->op = '!';
 		     operation->lhs = (yyvsp[-2].expr);
 		     operation->rhs = (yyvsp[0].expr);
 		     (yyval.expr) = operation;}
-#line 1603 "lalr.tab.c" /* yacc.c:1646  */
+#line 1615 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 249 "lalr.y" /* yacc.c:1646  */
+#line 251 "lalr.y" /* yacc.c:1646  */
     {BinOp* operation = new BinOp();
     	             operation->op = 'g';
 		     operation->lhs = (yyvsp[-2].expr);
 		     operation->rhs = (yyvsp[0].expr);
 		     (yyval.expr) = operation;}
-#line 1613 "lalr.tab.c" /* yacc.c:1646  */
+#line 1625 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 254 "lalr.y" /* yacc.c:1646  */
+#line 256 "lalr.y" /* yacc.c:1646  */
     {BinOp* operation = new BinOp();
     	             operation->op = 'l';
 		     operation->lhs = (yyvsp[-2].expr);
 		     operation->rhs = (yyvsp[0].expr);
 		     (yyval.expr) = operation;}
-#line 1623 "lalr.tab.c" /* yacc.c:1646  */
+#line 1635 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 259 "lalr.y" /* yacc.c:1646  */
+#line 261 "lalr.y" /* yacc.c:1646  */
     {BinOp* operation = new BinOp();
     	             operation->op = '&';
 		     operation->lhs = (yyvsp[-2].expr);
 		     operation->rhs = (yyvsp[0].expr);
 		     (yyval.expr) = operation;}
-#line 1633 "lalr.tab.c" /* yacc.c:1646  */
+#line 1645 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 264 "lalr.y" /* yacc.c:1646  */
+#line 266 "lalr.y" /* yacc.c:1646  */
     {BinOp* operation = new BinOp();
     	             operation->op = '|';
 		     operation->lhs = (yyvsp[-2].expr);
 		     operation->rhs = (yyvsp[0].expr);
 		     (yyval.expr) = operation;}
-#line 1643 "lalr.tab.c" /* yacc.c:1646  */
+#line 1655 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 269 "lalr.y" /* yacc.c:1646  */
+#line 271 "lalr.y" /* yacc.c:1646  */
     {UnOp* operation = new UnOp();
 		operation->op = 'p';
 		operation->expr = (yyvsp[-1].expr);
 		(yyval.expr) = operation;}
-#line 1652 "lalr.tab.c" /* yacc.c:1646  */
+#line 1664 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 273 "lalr.y" /* yacc.c:1646  */
+#line 275 "lalr.y" /* yacc.c:1646  */
     {UnOp* operation = new UnOp();
 		operation->op = '!';
 		operation->expr = (yyvsp[0].expr);
 		(yyval.expr) = operation;}
-#line 1661 "lalr.tab.c" /* yacc.c:1646  */
+#line 1673 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 277 "lalr.y" /* yacc.c:1646  */
+#line 279 "lalr.y" /* yacc.c:1646  */
     {UnOp* operation = new UnOp();
 		operation->op = '-';
 		operation->expr = (yyvsp[0].expr);
 		(yyval.expr) = operation;}
-#line 1670 "lalr.tab.c" /* yacc.c:1646  */
+#line 1682 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
   case 78:
-#line 281 "lalr.y" /* yacc.c:1646  */
+#line 283 "lalr.y" /* yacc.c:1646  */
     {Access* acc = new Access();
 				acc->id = new std::string(id);
 				if((yyvsp[0].exprs) != NULL){
@@ -1678,23 +1690,23 @@ yyreduce:
 				}
 				(yyval.expr) = acc;
 				}
-#line 1682 "lalr.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 79:
-#line 288 "lalr.y" /* yacc.c:1646  */
-    { (yyval.expr) = (yyvsp[0].lit); }
-#line 1688 "lalr.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 80:
-#line 290 "lalr.y" /* yacc.c:1646  */
-    {(yyval.exprs) = NULL;}
 #line 1694 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
+  case 79:
+#line 290 "lalr.y" /* yacc.c:1646  */
+    { (yyval.expr) = (yyvsp[0].lit); }
+#line 1700 "lalr.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 80:
+#line 292 "lalr.y" /* yacc.c:1646  */
+    {(yyval.exprs) = NULL;}
+#line 1706 "lalr.tab.c" /* yacc.c:1646  */
+    break;
+
   case 81:
-#line 291 "lalr.y" /* yacc.c:1646  */
+#line 293 "lalr.y" /* yacc.c:1646  */
     { std::vector<Expr*>* indexes;
 				      if((yyvsp[0].exprs) != NULL)
 					indexes	 = (yyvsp[0].exprs);
@@ -1702,11 +1714,11 @@ yyreduce:
 				      indexes->push_back((yyvsp[-2].expr));
 				      (yyval.exprs) = indexes;
 					}
-#line 1706 "lalr.tab.c" /* yacc.c:1646  */
+#line 1718 "lalr.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1710 "lalr.tab.c" /* yacc.c:1646  */
+#line 1722 "lalr.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1934,7 +1946,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 299 "lalr.y" /* yacc.c:1906  */
+#line 301 "lalr.y" /* yacc.c:1906  */
 
 
 int main() {

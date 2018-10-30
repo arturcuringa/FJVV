@@ -22,7 +22,7 @@ Program root;
 
 %}
 
-%union {Node vdc; VarDec* var;DecList* dec_list; ProList* pro_list; StmtList* stmt_list; std::string* sg; SimpleType st;Expr* expr; int i; Literal* lit; std::vector<Expr*>* exprs; }
+%union {Node vdc; VarDec* var;DecList* dec_list; ProList* pro_list; StmtList* stmt_list; std::string* sg; SimpleType st;Expr* expr; int i; Literal* lit; std::vector<Expr*>* exprs; AttrStmt* att; Post_Labelless_Stmt* post; }
 %type <dec_list> decl_list
 %type <var> decl_stmt
 %type <sg> id_list
@@ -33,6 +33,8 @@ Program root;
 %type <lit> literal
 %type <i> INTEGER
 %type <exprs> array_access
+%type <att> attr_stmt
+%type <post> post_labelless_stmt
 %token START
 %token END
 %token DECLARE
@@ -70,15 +72,8 @@ Program root;
 %right UMINUS
 
 %%
-program: decl_list proc_decl_list body {
-      					 root = Program();
-					 root.var_dec = $1; 
+program: decl_list proc_decl_list body { root.var_dec = $1; 
 					 root.print();
-					 if(root.var_dec != NULL){
-						for(auto i : *(root.var_dec)){
-							i->print();
-						}	
-					 }
 					}
 
 body: START ';' stmt_list  END ';'
@@ -111,7 +106,7 @@ decl_stmt: DECLARE '(' id_list ')' data_type { VarDec* vd = new VarDec();
 	;
 
 proc_decl_list: /* '' */ 
-	| proc_decl_list proc_decl ';'
+	| proc_decl_list proc_decl ';' 
 	;
 
 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER
@@ -149,12 +144,19 @@ post_label_stmt: ':' stmt
 
 stmt: labelless_stmt | idless_stmt ;
 
-labelless_stmt: IDENTIFIER post_labelless_stmt;
+labelless_stmt: IDENTIFIER post_labelless_stmt {Post_Labelless_Stmt* p = $2;
+	      					std::cout <<"sdhuashdasdzn";
+						p->label = $1;
+						p->print();};
 
-post_labelless_stmt: attr_stmt
+post_labelless_stmt: attr_stmt {$$ = $1;}
 	| proc_stmt ;
 
-attr_stmt: array_access ATTR_SIGN expr {$3->print();};
+attr_stmt: array_access ATTR_SIGN expr {AttrStmt* attr = new AttrStmt();
+	 				attr->lhs = $1;
+					attr->rhs = $3;
+					$$ = attr;
+					};
 
 idless_stmt: stop_stmt 
 	| io_stmt

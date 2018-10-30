@@ -53,7 +53,21 @@ struct Program : Node {
 		name =  new std::string("Program");
 	}
 	~Program(){
+		delete name;
+	}
+	void print(){
 	
+		std::cout << "{ \"" << *(name) << "\": [";
+		if(this->var_dec != nullptr){
+                       for(auto i = 0; i < this->var_dec->size(); i++){
+                               this->var_dec->operator[](i)->print();
+			       if(i != this->var_dec->size() -1)
+				       std::cout << ", ";
+                       }
+                }
+		std::cout << "]}";
+
+
 	}
 	std::vector<VarDec*>* var_dec;
 	std::vector<ProDec*>* pro_dec;
@@ -83,9 +97,43 @@ struct BinOp : Expr {
 	Expr* rhs;
 };
 
-struct AttrStmt : Stmt {
-	std::string lhs;
-	Expr rhs;
+struct Post_Labelless_Stmt : Node {
+	Post_Labelless_Stmt(){
+		name = new std::string("Post_Labelless_Stmt");
+	}
+	~Post_Labelless_Stmt(){
+		delete name;
+	}
+	void print();
+	std::string* label;
+
+};
+
+struct AttrStmt : Post_Labelless_Stmt {
+	AttrStmt(){
+		name = new std::string("AttrStmt");
+	}
+	~AttrStmt(){
+		delete name;
+	}
+	void print(){
+		std::cout << "{ \"" << *(this->name) << "\": {";
+		std::cout << "\"lhs\":" << "\"" << this->label << "\"";
+		std::cout << "[";
+	        if(lhs != nullptr){
+			for(auto i = 0; i < lhs->size(); i++){
+				lhs->operator[](i)->print();
+				if(i != lhs->size() - 1)
+					std::cout << ", ";
+			}
+		}
+		std::cout << "], \"rhs\": ";
+	       	if(rhs != nullptr){
+			rhs->print();
+		}
+	}
+	std::vector<Expr*>* lhs;
+	Expr* rhs;
 };
 
 
@@ -125,6 +173,7 @@ struct Literal : Expr {
 	};
 	SimpleType type;
 };
+
 
 using DecList = std::vector<VarDec*>;
 using ProList = std::vector<ProDec>;
