@@ -5,37 +5,27 @@
 #include <string>
 #include <iostream>
 
-enum class  SimpleType {ST_INT, ST_FLOAT, ST_CHAR};
+enum struct  SimpleType {ST_INT, ST_FLOAT, ST_CHAR};
 
-struct Type{
+struct Type {
 	SimpleType type;
 	std::vector<int> sizes;
-	
 };
 
 struct Node {
+	Node() : name("") {}
+	Node(std::string _n) : name(_n) {}
+
 	std::string name;
-	void print(){
-		std::cout << "{ \"" << name << "\":{ ";	
-	};
+	friend std::ostream& operator<<(std::ostream& out, const Node& n);
 };
 
 struct VarDec : Node {
-	VarDec(){
-		name = std::string("VarDec");
-	}
-	void print(){
-		std::cout << "{\"" << name << "\":[";	
-			for(int i = 0; i < ids.size(); i++){
-				std::cout<< "\"" << ids.operator[](i) << "\"";
-				if(i != ids.size() -1){
-					std::cout<<", ";
-				}
-			}
-			std::cout << "]}";
-	};
+	VarDec() : Node("VarDec") {}
+
 	std::vector<std::string> ids;
 	std::vector<Type> type;
+	friend std::ostream& operator<<(std::ostream& out, const VarDec& vd);
 };
 
 struct Stmt : Node {
@@ -49,113 +39,69 @@ struct ProDec : Node {
 };
 
 struct Program : Node {
-	Program(){
-		name = std::string("Program");
-	}
-	~Program(){
-	}
-	void print(){
-		std::cout << "{ \"" << name << "\": [";
-       	for (auto i = 0; i < this->var_dec.size(); i++){
-           	this->var_dec.operator[](i).print();
-	       	if (i != this->var_dec.size() -1) {
-		    	std::cout << ", ";
-	       	}
-        }
-		std::cout << "]}";
-	}
+	Program() : Node("Program") {}
 
 	std::vector<VarDec> var_dec;
 	std::vector<ProDec> pro_dec;
 	std::vector<Stmt> stmts;
+	friend std::ostream& operator<<(std::ostream& out, const Program& p);
 };
 
 struct Expr : Node {
-	Expr(){
-		name = std::string("Expr");
-	}
-	~Expr(){
-	}
-	void print();
+	Expr() : Node("Expr") {}
+	Expr(std::string _n) : Node(_n) {}
+
 	Type type;
+	friend std::ostream& operator<<(std::ostream& out, const Expr& e);
 };
 
 struct BinOp : Expr {
-	BinOp(){
-		name = std::string("BinOp");
-	}
-	~BinOp(){
-	}
+	BinOp() : Expr("BinOp") {}
+
 	char op;
 	Expr lhs;
 	Expr rhs;
 };
 
 struct Post_Labelless_Stmt : Node {
-	Post_Labelless_Stmt(){
-		name = std::string("Post_Labelless_Stmt");
-	}
-	~Post_Labelless_Stmt(){
-	}
-	void print();
-	std::string label;
+	Post_Labelless_Stmt() : Node("PostLabellessStmt") {}
+	Post_Labelless_Stmt(std::string _n) : Node(_n) {}
 
+	std::string label;
+	friend std::ostream& operator<<(std::ostream& out, const Post_Labelless_Stmt& pls);
 };
 
 struct AttrStmt : Post_Labelless_Stmt {
-	AttrStmt(){
-		name = std::string("AttrStmt");
-	}
-	~AttrStmt(){
-	}
-	void print(){
-		std::cout << "{ \"" << name << "\": {";
-		std::cout << "\"lhs\":" << "\"" << label << "\", ";
-		std::cout << "\"indexes\": [";
-		for (auto i = 0; i < lhs.size(); i++){
-			lhs.operator[](i).print();
-			if(i != lhs.size() - 1)
-				std::cout << ", ";
-		}
-		std::cout << "], \"rhs\": ";
-		rhs.print();
-	}
+	AttrStmt() : Post_Labelless_Stmt("AttrStmt") {}
+
 	std::vector<Expr> lhs;
 	Expr rhs;
+	friend std::ostream& operator<<(std::ostream& out, const AttrStmt& as);
 };
 
 
 struct UnOp : Expr {
-	UnOp(){
-		name = std::string("UnOp");
-	}
-	~UnOp(){
-	}
+	UnOp() : Expr("UnOp") {}
+
 	int op;
 	Expr expr;
 };
 
 struct Access : Expr {
-	Access(){
-		name = std::string("Access");
-	}
-	~Access(){
-	}
+	Access() : Expr("Access") {}
+
 	std::string id;
 	std::vector<Expr> indexes;
 };
 
 struct Literal : Expr {
-	Literal(){
-		name = std::string("Literal");
-	}
-	~Literal(){
-	}
+	Literal() : Expr("Literal") {}
 	union{
 		int i;
 		float f;
 		char c;
 	};
+
 	SimpleType type;
 };
 
