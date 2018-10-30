@@ -2,7 +2,7 @@
 %defines "lalr.hxx"
 
 %skeleton "lalr1.cc"
-%require "3.1"
+%require "3.0"
 
 %parse-param {yy::scanner* scanner}
 
@@ -87,7 +87,7 @@
 %right UMINUS
 
 %%
-program: decl_list proc_decl_list body { root.var_dec = $1; root.print(); }
+program: decl_list proc_decl_list body { root.var_dec = $1; std::cout << root << std::endl; }
 
 body: START ';' stmt_list END ';'
 
