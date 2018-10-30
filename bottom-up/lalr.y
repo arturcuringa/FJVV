@@ -160,7 +160,6 @@ stmt: labelless_stmt | idless_stmt ;
 labelless_stmt: IDENTIFIER post_labelless_stmt {
     Post_Labelless_Stmt p = $2;
     p.label = $1;
-    p.print();
 };
 
 post_labelless_stmt: attr_stmt {$$ = $1;}
