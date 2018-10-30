@@ -1,9 +1,10 @@
 #include "abstract_tree.h"
 
-void Expr::print(){
+void Expr::print() {
 	std::string nameStar = *(name);
 	std::cout << "{\"" << nameStar << "\":";
-	if(nameStar == "BinOp"){
+	
+	if(nameStar == "BinOp") {
 	        BinOp* b = (BinOp*) this;
 		std::cout << "{";
 		std::cout << "\"op\": \'" <<  b->op << "\'";
@@ -15,12 +16,14 @@ void Expr::print(){
 		b->rhs->print();
 		std::cout << "}";
 	}
-	if(nameStar == "Literal"){
+	
+	if(nameStar == "Literal") {
 		Literal* l = (Literal*) this;
 		std::cout << "{\"val\":";
 		std::cout << l->i << "}";
 	}
-	if(nameStar == "UnOp"){
+
+	if(nameStar == "UnOp") {
 		UnOp* u = (UnOp*) this;
 		std::cout << "{";
 		std::cout << "\"op\": \'" << u->op << "\'";
@@ -29,14 +32,15 @@ void Expr::print(){
 	        u->expr->print();
 		std::cout<< "}";	
 	}
-	if(nameStar == "Access"){
+
+	if(nameStar == "Access") {
 		Access* a = (Access*) this;
 		std::cout << "{ \"id\": \"" << *(a->id) << "\"";
-		if(!a->indexes.empty()){
+		if(!a->indexes.empty()) {
 			std::cout << ", \"indexes\": [";
-			for(auto i = 0; i < a->indexes.size(); i++){
+			for(auto i = 0; i < a->indexes.size(); i++) {
 				a->indexes[i]->print();
-				if(i != a->indexes.size() -1){
+				if(i != a->indexes.size() -1) {
 					std::cout << ", "; 
 				}
 			}
@@ -47,10 +51,9 @@ void Expr::print(){
 	std::cout << "}";
 }
 
-void Post_Labelless_Stmt::print(){
-
+void Post_Labelless_Stmt::print() {
 	std::string nameStar = *(name);
-	if(nameStar == "AttrStmt"){
+	if(nameStar == "AttrStmt") {
 		AttrStmt* att = (AttrStmt*) this;
 		att->print();
 	}

@@ -1,0 +1,5 @@
+DECLARE (a) INTEGER;
+
+START;
+    a := 3 + 9;
+END;

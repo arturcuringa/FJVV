@@ -22,13 +22,17 @@ Program root;
 
 %}
 
-%union {Node vdc; VarDec* var;DecList* dec_list; ProList* pro_list; StmtList* stmt_list; std::string* sg; SimpleType st;Expr* expr; int i; Literal* lit; std::vector<Expr*>* exprs; AttrStmt* att; Post_Labelless_Stmt* post; std::vector<std::string*>* vsg; }
+%union {Node vdc; VarDec* var;DecList* dec_list; ProList* pro_list; StmtList* stmt_list; std::string* sg; SimpleType st;Expr* expr; int i; Literal* lit; std::vector<Expr*>* exprs; AttrStmt* att; Post_Labelless_Stmt* post; std::vector<std::string*>* vsg; Stmt* stmt;}
 %type <dec_list> decl_list
 %type <var> decl_stmt
 %type <vsg> id_list
 %type <st> data_type
 %type <sg> IDENTIFIER 
 %type <stmt_list> stmt_list
+%type <stmt> super_stmt
+%type <stmt> label_stmt
+%type <stmt> post_label_stmt
+%type <stmt> labelless_stmt
 %type <expr> expr
 %type <lit> literal
 %type <i> INTEGER
@@ -80,29 +84,35 @@ body: START ';' stmt_list  END ';'
 
 decl_list: /* '' */ {$$ = NULL;} |
 	 decl_list decl_stmt ';' {
-				    DecList* a = new DecList();
-				    if($1 != NULL){
-					a = $1;
-				    }
+				    DecList* a;
+				    
+					if($1 != NULL){
+						a = $1;
+				    } else {
+						a = new DecList();
+					}
+
 				    if($2 != nullptr){
-					a->push_back($2);
+						a->push_back($2);
 				    }
 		                    
 				    $$ = a; } 
 	| decl_list DECLARE error ';'
 	;
 
-decl_stmt: DECLARE '(' id_list ')' data_type { VarDec* vd = new VarDec();
-						vd->ids = $3;
-						Type* ty = new Type();
-						if($5 == SimpleType::ST_INT)
-							ty->type = SimpleType::ST_INT;
-						if($5 == SimpleType::ST_FLOAT)
-							ty->type = SimpleType::ST_FLOAT;
-						if($5 == SimpleType::ST_FLOAT)
-							ty->type = SimpleType::ST_FLOAT;
-						vd->type.push_back(ty);
-						$$ = vd;}
+decl_stmt: DECLARE '(' id_list ')' data_type {
+		VarDec* vd = new VarDec();
+		vd->ids = $3;
+		Type* ty = new Type();
+		if($5 == SimpleType::ST_INT)
+			ty->type = SimpleType::ST_INT;
+		if($5 == SimpleType::ST_FLOAT)
+			ty->type = SimpleType::ST_FLOAT;
+		if($5 == SimpleType::ST_FLOAT)
+			ty->type = SimpleType::ST_FLOAT;
+		vd->type.push_back(ty);
+		$$ = vd;
+	}
 	;
 
 proc_decl_list: /* '' */ 
@@ -131,21 +141,27 @@ id_list: IDENTIFIER { std::vector<std::string*>* s = new std::vector<std::string
        		     		 $$ = s; };
 
 stmt_list: /* '' */ {$$ = NULL;}
-	| super_stmt ';' stmt_list
-	| error ';' stmt_list 
+	| stmt_list super_stmt ';' { 
+		StmtList* a = $1;
+		if (a == NULL)
+			a = new StmtList();
+		a->push_back($2);
+		$$ = a;
+		}
+	| stmt_list error ';'
 	;
 
-super_stmt: label_stmt 
-	| idless_stmt
+super_stmt: label_stmt
+	| stmt
 	;
 
-label_stmt: IDENTIFIER post_label_stmt;
+label_stmt: IDENTIFIER ':' stmt {
+	Stmt* a = $3;
+	a->label = $1;
+	$$ = a;
+};
 
-post_label_stmt: ':' stmt 
-	| attr_stmt 
-	| proc_stmt ;
-
-stmt: labelless_stmt | idless_stmt ;
+stmt: idless_stmt	| attr_stmt | proc_stmt ;
 
 labelless_stmt: IDENTIFIER post_labelless_stmt {Post_Labelless_Stmt* p = $2;
 						p->label = new std::string(id);
@@ -154,7 +170,7 @@ labelless_stmt: IDENTIFIER post_labelless_stmt {Post_Labelless_Stmt* p = $2;
 post_labelless_stmt: attr_stmt {$$ = $1;}
 	| proc_stmt ;
 
-attr_stmt: array_access ATTR_SIGN expr {AttrStmt* attr = new AttrStmt();
+attr_stmt: IDENTIFIER array_access ATTR_SIGN expr {AttrStmt* attr = new AttrStmt();
 	 				attr->lhs = $1;
 					attr->rhs = $3;
 					$$ = attr;
@@ -188,7 +204,7 @@ io_stmt: GET '(' id_list ')'
 skip_stmt: SKIP 
 	| /* '' */;
 
-proc_stmt: '(' expr_list ')';
+proc_stmt: IDENTIFIER '(' expr_list ')';
 
 expr_list: /* '' */
 	   | expr expr_list_tail ;

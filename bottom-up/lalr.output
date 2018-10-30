@@ -32,8 +32,8 @@ Grammar
    19        | id_list ',' IDENTIFIER
 
    20 stmt_list: %empty
-   21          | super_stmt ';' stmt_list
-   22          | error ';' stmt_list
+   21          | stmt_list super_stmt ';'
+   22          | stmt_list error ';'
 
    23 super_stmt: label_stmt
    24           | idless_stmt
@@ -393,43 +393,23 @@ State 17
 
     2 body: START ';' . stmt_list END ';'
 
-    error       shift, and go to state 23
-    IDENTIFIER  shift, and go to state 24
-    IF          shift, and go to state 25
-    GOTO        shift, and go to state 26
-    LOOP        shift, and go to state 27
-    EXITWHEN    shift, and go to state 28
-    STOP        shift, and go to state 29
-    GET         shift, and go to state 30
-    PUT         shift, and go to state 31
+    $default  reduce using rule 20 (stmt_list)
 
-    END  reduce using rule 20 (stmt_list)
-
-    stmt_list     go to state 32
-    super_stmt    go to state 33
-    label_stmt    go to state 34
-    idless_stmt   go to state 35
-    control_stmt  go to state 36
-    if_stmt       go to state 37
-    goto_stmt     go to state 38
-    loop_stmt     go to state 39
-    exit_stmt     go to state 40
-    stop_stmt     go to state 41
-    io_stmt       go to state 42
+    stmt_list  go to state 23
 
 
 State 18
 
    10 proc_decl: IDENTIFIER error . ';' stmt_list END IDENTIFIER
 
-    ';'  shift, and go to state 43
+    ';'  shift, and go to state 24
 
 
 State 19
 
     9 proc_decl: IDENTIFIER ':' . PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER
 
-    PROCEDURE  shift, and go to state 44
+    PROCEDURE  shift, and go to state 25
 
 
 State 20
@@ -443,486 +423,534 @@ State 21
 
     6 decl_stmt: DECLARE '(' id_list ')' . data_type
 
-    INT_TYPE    shift, and go to state 45
-    FLOAT_TYPE  shift, and go to state 46
-    CHAR_TYPE   shift, and go to state 47
-    ARRAY       shift, and go to state 48
+    INT_TYPE    shift, and go to state 26
+    FLOAT_TYPE  shift, and go to state 27
+    CHAR_TYPE   shift, and go to state 28
+    ARRAY       shift, and go to state 29
 
-    data_type   go to state 49
-    array_nont  go to state 50
+    data_type   go to state 30
+    array_nont  go to state 31
 
 
 State 22
 
    19 id_list: id_list ',' . IDENTIFIER
 
-    IDENTIFIER  shift, and go to state 51
+    IDENTIFIER  shift, and go to state 32
 
 
 State 23
 
-   22 stmt_list: error . ';' stmt_list
+    2 body: START ';' stmt_list . END ';'
+   21 stmt_list: stmt_list . super_stmt ';'
+   22          | stmt_list . error ';'
 
-    ';'  shift, and go to state 52
+    error       shift, and go to state 33
+    END         shift, and go to state 34
+    IDENTIFIER  shift, and go to state 35
+    IF          shift, and go to state 36
+    GOTO        shift, and go to state 37
+    LOOP        shift, and go to state 38
+    EXITWHEN    shift, and go to state 39
+    STOP        shift, and go to state 40
+    GET         shift, and go to state 41
+    PUT         shift, and go to state 42
+
+    super_stmt    go to state 43
+    label_stmt    go to state 44
+    idless_stmt   go to state 45
+    control_stmt  go to state 46
+    if_stmt       go to state 47
+    goto_stmt     go to state 48
+    loop_stmt     go to state 49
+    exit_stmt     go to state 50
+    stop_stmt     go to state 51
+    io_stmt       go to state 52
 
 
 State 24
 
-   25 label_stmt: IDENTIFIER . post_label_stmt
+   10 proc_decl: IDENTIFIER error ';' . stmt_list END IDENTIFIER
 
-    '('  shift, and go to state 53
-    ':'  shift, and go to state 54
-    '['  shift, and go to state 55
+    $default  reduce using rule 20 (stmt_list)
 
-    $default  reduce using rule 79 (array_access)
-
-    post_label_stmt  go to state 56
-    attr_stmt        go to state 57
-    proc_stmt        go to state 58
-    array_access     go to state 59
+    stmt_list  go to state 53
 
 
 State 25
 
-   42 if_stmt: IF . expr THEN stmt_list else_stmt ENDIF
+    9 proc_decl: IDENTIFIER ':' PROCEDURE . '(' super_id_list ')' ';' stmt_list END IDENTIFIER
 
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
-
-    literal  go to state 67
-    expr     go to state 68
+    '('  shift, and go to state 54
 
 
 State 26
-
-   45 goto_stmt: GOTO . IDENTIFIER
-
-    IDENTIFIER  shift, and go to state 69
-
-
-State 27
-
-   46 loop_stmt: LOOP . ';' stmt_list ENDLOOP
-
-    ';'  shift, and go to state 70
-
-
-State 28
-
-   47 exit_stmt: EXITWHEN . expr
-
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
-
-    literal  go to state 67
-    expr     go to state 71
-
-
-State 29
-
-   48 stop_stmt: STOP .
-
-    $default  reduce using rule 48 (stop_stmt)
-
-
-State 30
-
-   49 io_stmt: GET . '(' id_list ')'
-
-    '('  shift, and go to state 72
-
-
-State 31
-
-   50 io_stmt: PUT . skip_stmt '(' expr_list ')'
-
-    SKIP  shift, and go to state 73
-
-    $default  reduce using rule 52 (skip_stmt)
-
-    skip_stmt  go to state 74
-
-
-State 32
-
-    2 body: START ';' stmt_list . END ';'
-
-    END  shift, and go to state 75
-
-
-State 33
-
-   21 stmt_list: super_stmt . ';' stmt_list
-
-    ';'  shift, and go to state 76
-
-
-State 34
-
-   23 super_stmt: label_stmt .
-
-    $default  reduce using rule 23 (super_stmt)
-
-
-State 35
-
-   24 super_stmt: idless_stmt .
-
-    $default  reduce using rule 24 (super_stmt)
-
-
-State 36
-
-   37 idless_stmt: control_stmt .
-
-    $default  reduce using rule 37 (idless_stmt)
-
-
-State 37
-
-   38 control_stmt: if_stmt .
-
-    $default  reduce using rule 38 (control_stmt)
-
-
-State 38
-
-   39 control_stmt: goto_stmt .
-
-    $default  reduce using rule 39 (control_stmt)
-
-
-State 39
-
-   40 control_stmt: loop_stmt .
-
-    $default  reduce using rule 40 (control_stmt)
-
-
-State 40
-
-   41 control_stmt: exit_stmt .
-
-    $default  reduce using rule 41 (control_stmt)
-
-
-State 41
-
-   35 idless_stmt: stop_stmt .
-
-    $default  reduce using rule 35 (idless_stmt)
-
-
-State 42
-
-   36 idless_stmt: io_stmt .
-
-    $default  reduce using rule 36 (idless_stmt)
-
-
-State 43
-
-   10 proc_decl: IDENTIFIER error ';' . stmt_list END IDENTIFIER
-
-    error       shift, and go to state 23
-    IDENTIFIER  shift, and go to state 24
-    IF          shift, and go to state 25
-    GOTO        shift, and go to state 26
-    LOOP        shift, and go to state 27
-    EXITWHEN    shift, and go to state 28
-    STOP        shift, and go to state 29
-    GET         shift, and go to state 30
-    PUT         shift, and go to state 31
-
-    END  reduce using rule 20 (stmt_list)
-
-    stmt_list     go to state 77
-    super_stmt    go to state 33
-    label_stmt    go to state 34
-    idless_stmt   go to state 35
-    control_stmt  go to state 36
-    if_stmt       go to state 37
-    goto_stmt     go to state 38
-    loop_stmt     go to state 39
-    exit_stmt     go to state 40
-    stop_stmt     go to state 41
-    io_stmt       go to state 42
-
-
-State 44
-
-    9 proc_decl: IDENTIFIER ':' PROCEDURE . '(' super_id_list ')' ';' stmt_list END IDENTIFIER
-
-    '('  shift, and go to state 78
-
-
-State 45
 
    11 data_type: INT_TYPE .
 
     $default  reduce using rule 11 (data_type)
 
 
-State 46
+State 27
 
    12 data_type: FLOAT_TYPE .
 
     $default  reduce using rule 12 (data_type)
 
 
-State 47
+State 28
 
    13 data_type: CHAR_TYPE .
 
     $default  reduce using rule 13 (data_type)
 
 
-State 48
+State 29
 
    15 array_nont: ARRAY . '[' expr ']' OF data_type
 
-    '['  shift, and go to state 79
+    '['  shift, and go to state 55
 
 
-State 49
+State 30
 
     6 decl_stmt: DECLARE '(' id_list ')' data_type .
 
     $default  reduce using rule 6 (decl_stmt)
 
 
-State 50
+State 31
 
    14 data_type: array_nont .
 
     $default  reduce using rule 14 (data_type)
 
 
-State 51
+State 32
 
    19 id_list: id_list ',' IDENTIFIER .
 
     $default  reduce using rule 19 (id_list)
 
 
+State 33
+
+   22 stmt_list: stmt_list error . ';'
+
+    ';'  shift, and go to state 56
+
+
+State 34
+
+    2 body: START ';' stmt_list END . ';'
+
+    ';'  shift, and go to state 57
+
+
+State 35
+
+   25 label_stmt: IDENTIFIER . post_label_stmt
+
+    '('  shift, and go to state 58
+    ':'  shift, and go to state 59
+    '['  shift, and go to state 60
+
+    $default  reduce using rule 79 (array_access)
+
+    post_label_stmt  go to state 61
+    attr_stmt        go to state 62
+    proc_stmt        go to state 63
+    array_access     go to state 64
+
+
+State 36
+
+   42 if_stmt: IF . expr THEN stmt_list else_stmt ENDIF
+
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
+
+    literal  go to state 72
+    expr     go to state 73
+
+
+State 37
+
+   45 goto_stmt: GOTO . IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 74
+
+
+State 38
+
+   46 loop_stmt: LOOP . ';' stmt_list ENDLOOP
+
+    ';'  shift, and go to state 75
+
+
+State 39
+
+   47 exit_stmt: EXITWHEN . expr
+
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
+
+    literal  go to state 72
+    expr     go to state 76
+
+
+State 40
+
+   48 stop_stmt: STOP .
+
+    $default  reduce using rule 48 (stop_stmt)
+
+
+State 41
+
+   49 io_stmt: GET . '(' id_list ')'
+
+    '('  shift, and go to state 77
+
+
+State 42
+
+   50 io_stmt: PUT . skip_stmt '(' expr_list ')'
+
+    SKIP  shift, and go to state 78
+
+    $default  reduce using rule 52 (skip_stmt)
+
+    skip_stmt  go to state 79
+
+
+State 43
+
+   21 stmt_list: stmt_list super_stmt . ';'
+
+    ';'  shift, and go to state 80
+
+
+State 44
+
+   23 super_stmt: label_stmt .
+
+    $default  reduce using rule 23 (super_stmt)
+
+
+State 45
+
+   24 super_stmt: idless_stmt .
+
+    $default  reduce using rule 24 (super_stmt)
+
+
+State 46
+
+   37 idless_stmt: control_stmt .
+
+    $default  reduce using rule 37 (idless_stmt)
+
+
+State 47
+
+   38 control_stmt: if_stmt .
+
+    $default  reduce using rule 38 (control_stmt)
+
+
+State 48
+
+   39 control_stmt: goto_stmt .
+
+    $default  reduce using rule 39 (control_stmt)
+
+
+State 49
+
+   40 control_stmt: loop_stmt .
+
+    $default  reduce using rule 40 (control_stmt)
+
+
+State 50
+
+   41 control_stmt: exit_stmt .
+
+    $default  reduce using rule 41 (control_stmt)
+
+
+State 51
+
+   35 idless_stmt: stop_stmt .
+
+    $default  reduce using rule 35 (idless_stmt)
+
+
 State 52
 
-   22 stmt_list: error ';' . stmt_list
+   36 idless_stmt: io_stmt .
 
-    error       shift, and go to state 23
-    IDENTIFIER  shift, and go to state 24
-    IF          shift, and go to state 25
-    GOTO        shift, and go to state 26
-    LOOP        shift, and go to state 27
-    EXITWHEN    shift, and go to state 28
-    STOP        shift, and go to state 29
-    GET         shift, and go to state 30
-    PUT         shift, and go to state 31
-
-    END      reduce using rule 20 (stmt_list)
-    ENDIF    reduce using rule 20 (stmt_list)
-    ELSE     reduce using rule 20 (stmt_list)
-    ENDLOOP  reduce using rule 20 (stmt_list)
-
-    stmt_list     go to state 80
-    super_stmt    go to state 33
-    label_stmt    go to state 34
-    idless_stmt   go to state 35
-    control_stmt  go to state 36
-    if_stmt       go to state 37
-    goto_stmt     go to state 38
-    loop_stmt     go to state 39
-    exit_stmt     go to state 40
-    stop_stmt     go to state 41
-    io_stmt       go to state 42
+    $default  reduce using rule 36 (idless_stmt)
 
 
 State 53
 
-   53 proc_stmt: '(' . expr_list ')'
+   10 proc_decl: IDENTIFIER error ';' stmt_list . END IDENTIFIER
+   21 stmt_list: stmt_list . super_stmt ';'
+   22          | stmt_list . error ';'
 
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
+    error       shift, and go to state 33
+    END         shift, and go to state 81
+    IDENTIFIER  shift, and go to state 35
+    IF          shift, and go to state 36
+    GOTO        shift, and go to state 37
+    LOOP        shift, and go to state 38
+    EXITWHEN    shift, and go to state 39
+    STOP        shift, and go to state 40
+    GET         shift, and go to state 41
+    PUT         shift, and go to state 42
 
-    $default  reduce using rule 54 (expr_list)
-
-    expr_list  go to state 81
-    literal    go to state 67
-    expr       go to state 82
+    super_stmt    go to state 43
+    label_stmt    go to state 44
+    idless_stmt   go to state 45
+    control_stmt  go to state 46
+    if_stmt       go to state 47
+    goto_stmt     go to state 48
+    loop_stmt     go to state 49
+    exit_stmt     go to state 50
+    stop_stmt     go to state 51
+    io_stmt       go to state 52
 
 
 State 54
 
-   26 post_label_stmt: ':' . stmt
+    9 proc_decl: IDENTIFIER ':' PROCEDURE '(' . super_id_list ')' ';' stmt_list END IDENTIFIER
 
-    IDENTIFIER  shift, and go to state 83
-    IF          shift, and go to state 25
-    GOTO        shift, and go to state 26
-    LOOP        shift, and go to state 27
-    EXITWHEN    shift, and go to state 28
-    STOP        shift, and go to state 29
-    GET         shift, and go to state 30
-    PUT         shift, and go to state 31
+    IDENTIFIER  shift, and go to state 15
 
-    stmt            go to state 84
-    labelless_stmt  go to state 85
-    idless_stmt     go to state 86
-    control_stmt    go to state 36
-    if_stmt         go to state 37
-    goto_stmt       go to state 38
-    loop_stmt       go to state 39
-    exit_stmt       go to state 40
-    stop_stmt       go to state 41
-    io_stmt         go to state 42
+    $default  reduce using rule 16 (super_id_list)
+
+    super_id_list  go to state 82
+    id_list        go to state 83
 
 
 State 55
 
-   80 array_access: '[' . expr ']' array_access
+   15 array_nont: ARRAY '[' . expr ']' OF data_type
 
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
 
-    literal  go to state 67
-    expr     go to state 87
+    literal  go to state 72
+    expr     go to state 84
 
 
 State 56
+
+   22 stmt_list: stmt_list error ';' .
+
+    $default  reduce using rule 22 (stmt_list)
+
+
+State 57
+
+    2 body: START ';' stmt_list END ';' .
+
+    $default  reduce using rule 2 (body)
+
+
+State 58
+
+   53 proc_stmt: '(' . expr_list ')'
+
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
+
+    $default  reduce using rule 54 (expr_list)
+
+    expr_list  go to state 85
+    literal    go to state 72
+    expr       go to state 86
+
+
+State 59
+
+   26 post_label_stmt: ':' . stmt
+
+    IDENTIFIER  shift, and go to state 87
+    IF          shift, and go to state 36
+    GOTO        shift, and go to state 37
+    LOOP        shift, and go to state 38
+    EXITWHEN    shift, and go to state 39
+    STOP        shift, and go to state 40
+    GET         shift, and go to state 41
+    PUT         shift, and go to state 42
+
+    stmt            go to state 88
+    labelless_stmt  go to state 89
+    idless_stmt     go to state 90
+    control_stmt    go to state 46
+    if_stmt         go to state 47
+    goto_stmt       go to state 48
+    loop_stmt       go to state 49
+    exit_stmt       go to state 50
+    stop_stmt       go to state 51
+    io_stmt         go to state 52
+
+
+State 60
+
+   80 array_access: '[' . expr ']' array_access
+
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
+
+    literal  go to state 72
+    expr     go to state 91
+
+
+State 61
 
    25 label_stmt: IDENTIFIER post_label_stmt .
 
     $default  reduce using rule 25 (label_stmt)
 
 
-State 57
+State 62
 
    27 post_label_stmt: attr_stmt .
 
     $default  reduce using rule 27 (post_label_stmt)
 
 
-State 58
+State 63
 
    28 post_label_stmt: proc_stmt .
 
     $default  reduce using rule 28 (post_label_stmt)
 
 
-State 59
+State 64
 
    34 attr_stmt: array_access . ATTR_SIGN expr
 
-    ATTR_SIGN  shift, and go to state 88
+    ATTR_SIGN  shift, and go to state 92
 
 
-State 60
+State 65
 
    77 expr: IDENTIFIER . array_access
 
-    '['  shift, and go to state 55
+    '['  shift, and go to state 60
 
     $default  reduce using rule 79 (array_access)
 
-    array_access  go to state 89
+    array_access  go to state 93
 
 
-State 61
+State 66
 
    58 literal: INTEGER .
 
     $default  reduce using rule 58 (literal)
 
 
-State 62
+State 67
 
    59 literal: FLOAT .
 
     $default  reduce using rule 59 (literal)
 
 
-State 63
+State 68
 
    60 literal: CHAR .
 
     $default  reduce using rule 60 (literal)
 
 
-State 64
+State 69
 
    76 expr: '-' . expr
 
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
 
-    literal  go to state 67
-    expr     go to state 90
+    literal  go to state 72
+    expr     go to state 94
 
 
-State 65
+State 70
 
    75 expr: '!' . expr
 
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
 
-    literal  go to state 67
-    expr     go to state 91
+    literal  go to state 72
+    expr     go to state 95
 
 
-State 66
+State 71
 
    74 expr: '(' . expr ')'
 
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
 
-    literal  go to state 67
-    expr     go to state 92
+    literal  go to state 72
+    expr     go to state 96
 
 
-State 67
+State 72
 
    78 expr: literal .
 
     $default  reduce using rule 78 (expr)
 
 
-State 68
+State 73
 
    42 if_stmt: IF expr . THEN stmt_list else_stmt ENDIF
    61 expr: expr . '+' expr
@@ -939,59 +967,39 @@ State 68
    72     | expr . '&' expr
    73     | expr . '|' expr
 
-    THEN             shift, and go to state 93
-    DIFF_SIGN        shift, and go to state 94
-    GREATER_EQ_SIGN  shift, and go to state 95
-    LESS_EQ_SIGN     shift, and go to state 96
-    '&'              shift, and go to state 97
-    '|'              shift, and go to state 98
-    '>'              shift, and go to state 99
-    '<'              shift, and go to state 100
-    '='              shift, and go to state 101
-    '+'              shift, and go to state 102
-    '-'              shift, and go to state 103
-    '*'              shift, and go to state 104
-    '/'              shift, and go to state 105
-    '%'              shift, and go to state 106
+    THEN             shift, and go to state 97
+    DIFF_SIGN        shift, and go to state 98
+    GREATER_EQ_SIGN  shift, and go to state 99
+    LESS_EQ_SIGN     shift, and go to state 100
+    '&'              shift, and go to state 101
+    '|'              shift, and go to state 102
+    '>'              shift, and go to state 103
+    '<'              shift, and go to state 104
+    '='              shift, and go to state 105
+    '+'              shift, and go to state 106
+    '-'              shift, and go to state 107
+    '*'              shift, and go to state 108
+    '/'              shift, and go to state 109
+    '%'              shift, and go to state 110
 
 
-State 69
+State 74
 
    45 goto_stmt: GOTO IDENTIFIER .
 
     $default  reduce using rule 45 (goto_stmt)
 
 
-State 70
+State 75
 
    46 loop_stmt: LOOP ';' . stmt_list ENDLOOP
 
-    error       shift, and go to state 23
-    IDENTIFIER  shift, and go to state 24
-    IF          shift, and go to state 25
-    GOTO        shift, and go to state 26
-    LOOP        shift, and go to state 27
-    EXITWHEN    shift, and go to state 28
-    STOP        shift, and go to state 29
-    GET         shift, and go to state 30
-    PUT         shift, and go to state 31
+    $default  reduce using rule 20 (stmt_list)
 
-    ENDLOOP  reduce using rule 20 (stmt_list)
-
-    stmt_list     go to state 107
-    super_stmt    go to state 33
-    label_stmt    go to state 34
-    idless_stmt   go to state 35
-    control_stmt  go to state 36
-    if_stmt       go to state 37
-    goto_stmt     go to state 38
-    loop_stmt     go to state 39
-    exit_stmt     go to state 40
-    stop_stmt     go to state 41
-    io_stmt       go to state 42
+    stmt_list  go to state 111
 
 
-State 71
+State 76
 
    47 exit_stmt: EXITWHEN expr .
    61 expr: expr . '+' expr
@@ -1008,135 +1016,118 @@ State 71
    72     | expr . '&' expr
    73     | expr . '|' expr
 
-    DIFF_SIGN        shift, and go to state 94
-    GREATER_EQ_SIGN  shift, and go to state 95
-    LESS_EQ_SIGN     shift, and go to state 96
-    '&'              shift, and go to state 97
-    '|'              shift, and go to state 98
-    '>'              shift, and go to state 99
-    '<'              shift, and go to state 100
-    '='              shift, and go to state 101
-    '+'              shift, and go to state 102
-    '-'              shift, and go to state 103
-    '*'              shift, and go to state 104
-    '/'              shift, and go to state 105
-    '%'              shift, and go to state 106
+    DIFF_SIGN        shift, and go to state 98
+    GREATER_EQ_SIGN  shift, and go to state 99
+    LESS_EQ_SIGN     shift, and go to state 100
+    '&'              shift, and go to state 101
+    '|'              shift, and go to state 102
+    '>'              shift, and go to state 103
+    '<'              shift, and go to state 104
+    '='              shift, and go to state 105
+    '+'              shift, and go to state 106
+    '-'              shift, and go to state 107
+    '*'              shift, and go to state 108
+    '/'              shift, and go to state 109
+    '%'              shift, and go to state 110
 
     $default  reduce using rule 47 (exit_stmt)
 
 
-State 72
+State 77
 
    49 io_stmt: GET '(' . id_list ')'
 
     IDENTIFIER  shift, and go to state 15
 
-    id_list  go to state 108
+    id_list  go to state 112
 
 
-State 73
+State 78
 
    51 skip_stmt: SKIP .
 
     $default  reduce using rule 51 (skip_stmt)
 
 
-State 74
+State 79
 
    50 io_stmt: PUT skip_stmt . '(' expr_list ')'
 
-    '('  shift, and go to state 109
-
-
-State 75
-
-    2 body: START ';' stmt_list END . ';'
-
-    ';'  shift, and go to state 110
-
-
-State 76
-
-   21 stmt_list: super_stmt ';' . stmt_list
-
-    error       shift, and go to state 23
-    IDENTIFIER  shift, and go to state 24
-    IF          shift, and go to state 25
-    GOTO        shift, and go to state 26
-    LOOP        shift, and go to state 27
-    EXITWHEN    shift, and go to state 28
-    STOP        shift, and go to state 29
-    GET         shift, and go to state 30
-    PUT         shift, and go to state 31
-
-    END      reduce using rule 20 (stmt_list)
-    ENDIF    reduce using rule 20 (stmt_list)
-    ELSE     reduce using rule 20 (stmt_list)
-    ENDLOOP  reduce using rule 20 (stmt_list)
-
-    stmt_list     go to state 111
-    super_stmt    go to state 33
-    label_stmt    go to state 34
-    idless_stmt   go to state 35
-    control_stmt  go to state 36
-    if_stmt       go to state 37
-    goto_stmt     go to state 38
-    loop_stmt     go to state 39
-    exit_stmt     go to state 40
-    stop_stmt     go to state 41
-    io_stmt       go to state 42
-
-
-State 77
-
-   10 proc_decl: IDENTIFIER error ';' stmt_list . END IDENTIFIER
-
-    END  shift, and go to state 112
-
-
-State 78
-
-    9 proc_decl: IDENTIFIER ':' PROCEDURE '(' . super_id_list ')' ';' stmt_list END IDENTIFIER
-
-    IDENTIFIER  shift, and go to state 15
-
-    $default  reduce using rule 16 (super_id_list)
-
-    super_id_list  go to state 113
-    id_list        go to state 114
-
-
-State 79
-
-   15 array_nont: ARRAY '[' . expr ']' OF data_type
-
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
-
-    literal  go to state 67
-    expr     go to state 115
+    '('  shift, and go to state 113
 
 
 State 80
 
-   22 stmt_list: error ';' stmt_list .
+   21 stmt_list: stmt_list super_stmt ';' .
 
-    $default  reduce using rule 22 (stmt_list)
+    $default  reduce using rule 21 (stmt_list)
 
 
 State 81
 
-   53 proc_stmt: '(' expr_list . ')'
+   10 proc_decl: IDENTIFIER error ';' stmt_list END . IDENTIFIER
 
-    ')'  shift, and go to state 116
+    IDENTIFIER  shift, and go to state 114
 
 
 State 82
+
+    9 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list . ')' ';' stmt_list END IDENTIFIER
+
+    ')'  shift, and go to state 115
+
+
+State 83
+
+   17 super_id_list: id_list .
+   19 id_list: id_list . ',' IDENTIFIER
+
+    ','  shift, and go to state 22
+
+    $default  reduce using rule 17 (super_id_list)
+
+
+State 84
+
+   15 array_nont: ARRAY '[' expr . ']' OF data_type
+   61 expr: expr . '+' expr
+   62     | expr . '-' expr
+   63     | expr . '*' expr
+   64     | expr . '%' expr
+   65     | expr . '/' expr
+   66     | expr . '<' expr
+   67     | expr . '>' expr
+   68     | expr . '=' expr
+   69     | expr . DIFF_SIGN expr
+   70     | expr . GREATER_EQ_SIGN expr
+   71     | expr . LESS_EQ_SIGN expr
+   72     | expr . '&' expr
+   73     | expr . '|' expr
+
+    DIFF_SIGN        shift, and go to state 98
+    GREATER_EQ_SIGN  shift, and go to state 99
+    LESS_EQ_SIGN     shift, and go to state 100
+    '&'              shift, and go to state 101
+    '|'              shift, and go to state 102
+    '>'              shift, and go to state 103
+    '<'              shift, and go to state 104
+    '='              shift, and go to state 105
+    '+'              shift, and go to state 106
+    '-'              shift, and go to state 107
+    '*'              shift, and go to state 108
+    '/'              shift, and go to state 109
+    '%'              shift, and go to state 110
+    ']'              shift, and go to state 116
+
+
+State 85
+
+   53 proc_stmt: '(' expr_list . ')'
+
+    ')'  shift, and go to state 117
+
+
+State 86
 
    55 expr_list: expr . expr_list_tail
    61 expr: expr . '+' expr
@@ -1153,63 +1144,63 @@ State 82
    72     | expr . '&' expr
    73     | expr . '|' expr
 
-    DIFF_SIGN        shift, and go to state 94
-    GREATER_EQ_SIGN  shift, and go to state 95
-    LESS_EQ_SIGN     shift, and go to state 96
-    '&'              shift, and go to state 97
-    '|'              shift, and go to state 98
-    '>'              shift, and go to state 99
-    '<'              shift, and go to state 100
-    '='              shift, and go to state 101
-    '+'              shift, and go to state 102
-    '-'              shift, and go to state 103
-    '*'              shift, and go to state 104
-    '/'              shift, and go to state 105
-    '%'              shift, and go to state 106
-    ','              shift, and go to state 117
+    DIFF_SIGN        shift, and go to state 98
+    GREATER_EQ_SIGN  shift, and go to state 99
+    LESS_EQ_SIGN     shift, and go to state 100
+    '&'              shift, and go to state 101
+    '|'              shift, and go to state 102
+    '>'              shift, and go to state 103
+    '<'              shift, and go to state 104
+    '='              shift, and go to state 105
+    '+'              shift, and go to state 106
+    '-'              shift, and go to state 107
+    '*'              shift, and go to state 108
+    '/'              shift, and go to state 109
+    '%'              shift, and go to state 110
+    ','              shift, and go to state 118
 
     $default  reduce using rule 57 (expr_list_tail)
 
-    expr_list_tail  go to state 118
+    expr_list_tail  go to state 119
 
 
-State 83
+State 87
 
    31 labelless_stmt: IDENTIFIER . post_labelless_stmt
 
-    '('  shift, and go to state 53
-    '['  shift, and go to state 55
+    '('  shift, and go to state 58
+    '['  shift, and go to state 60
 
     $default  reduce using rule 79 (array_access)
 
-    post_labelless_stmt  go to state 119
-    attr_stmt            go to state 120
-    proc_stmt            go to state 121
-    array_access         go to state 59
+    post_labelless_stmt  go to state 120
+    attr_stmt            go to state 121
+    proc_stmt            go to state 122
+    array_access         go to state 64
 
 
-State 84
+State 88
 
    26 post_label_stmt: ':' stmt .
 
     $default  reduce using rule 26 (post_label_stmt)
 
 
-State 85
+State 89
 
    29 stmt: labelless_stmt .
 
     $default  reduce using rule 29 (stmt)
 
 
-State 86
+State 90
 
    30 stmt: idless_stmt .
 
     $default  reduce using rule 30 (stmt)
 
 
-State 87
+State 91
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -1226,46 +1217,46 @@ State 87
    73     | expr . '|' expr
    80 array_access: '[' expr . ']' array_access
 
-    DIFF_SIGN        shift, and go to state 94
-    GREATER_EQ_SIGN  shift, and go to state 95
-    LESS_EQ_SIGN     shift, and go to state 96
-    '&'              shift, and go to state 97
-    '|'              shift, and go to state 98
-    '>'              shift, and go to state 99
-    '<'              shift, and go to state 100
-    '='              shift, and go to state 101
-    '+'              shift, and go to state 102
-    '-'              shift, and go to state 103
-    '*'              shift, and go to state 104
-    '/'              shift, and go to state 105
-    '%'              shift, and go to state 106
-    ']'              shift, and go to state 122
+    DIFF_SIGN        shift, and go to state 98
+    GREATER_EQ_SIGN  shift, and go to state 99
+    LESS_EQ_SIGN     shift, and go to state 100
+    '&'              shift, and go to state 101
+    '|'              shift, and go to state 102
+    '>'              shift, and go to state 103
+    '<'              shift, and go to state 104
+    '='              shift, and go to state 105
+    '+'              shift, and go to state 106
+    '-'              shift, and go to state 107
+    '*'              shift, and go to state 108
+    '/'              shift, and go to state 109
+    '%'              shift, and go to state 110
+    ']'              shift, and go to state 123
 
 
-State 88
+State 92
 
    34 attr_stmt: array_access ATTR_SIGN . expr
 
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
 
-    literal  go to state 67
-    expr     go to state 123
+    literal  go to state 72
+    expr     go to state 124
 
 
-State 89
+State 93
 
    77 expr: IDENTIFIER array_access .
 
     $default  reduce using rule 77 (expr)
 
 
-State 90
+State 94
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -1285,7 +1276,7 @@ State 90
     $default  reduce using rule 76 (expr)
 
 
-State 91
+State 95
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -1305,7 +1296,7 @@ State 91
     $default  reduce using rule 75 (expr)
 
 
-State 92
+State 96
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -1322,429 +1313,380 @@ State 92
    73     | expr . '|' expr
    74     | '(' expr . ')'
 
-    DIFF_SIGN        shift, and go to state 94
-    GREATER_EQ_SIGN  shift, and go to state 95
-    LESS_EQ_SIGN     shift, and go to state 96
-    '&'              shift, and go to state 97
-    '|'              shift, and go to state 98
-    '>'              shift, and go to state 99
-    '<'              shift, and go to state 100
-    '='              shift, and go to state 101
-    '+'              shift, and go to state 102
-    '-'              shift, and go to state 103
-    '*'              shift, and go to state 104
-    '/'              shift, and go to state 105
-    '%'              shift, and go to state 106
-    ')'              shift, and go to state 124
-
-
-State 93
-
-   42 if_stmt: IF expr THEN . stmt_list else_stmt ENDIF
-
-    error       shift, and go to state 23
-    IDENTIFIER  shift, and go to state 24
-    IF          shift, and go to state 25
-    GOTO        shift, and go to state 26
-    LOOP        shift, and go to state 27
-    EXITWHEN    shift, and go to state 28
-    STOP        shift, and go to state 29
-    GET         shift, and go to state 30
-    PUT         shift, and go to state 31
-
-    ENDIF  reduce using rule 20 (stmt_list)
-    ELSE   reduce using rule 20 (stmt_list)
-
-    stmt_list     go to state 125
-    super_stmt    go to state 33
-    label_stmt    go to state 34
-    idless_stmt   go to state 35
-    control_stmt  go to state 36
-    if_stmt       go to state 37
-    goto_stmt     go to state 38
-    loop_stmt     go to state 39
-    exit_stmt     go to state 40
-    stop_stmt     go to state 41
-    io_stmt       go to state 42
-
-
-State 94
-
-   69 expr: expr DIFF_SIGN . expr
-
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
-
-    literal  go to state 67
-    expr     go to state 126
-
-
-State 95
-
-   70 expr: expr GREATER_EQ_SIGN . expr
-
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
-
-    literal  go to state 67
-    expr     go to state 127
-
-
-State 96
-
-   71 expr: expr LESS_EQ_SIGN . expr
-
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
-
-    literal  go to state 67
-    expr     go to state 128
+    DIFF_SIGN        shift, and go to state 98
+    GREATER_EQ_SIGN  shift, and go to state 99
+    LESS_EQ_SIGN     shift, and go to state 100
+    '&'              shift, and go to state 101
+    '|'              shift, and go to state 102
+    '>'              shift, and go to state 103
+    '<'              shift, and go to state 104
+    '='              shift, and go to state 105
+    '+'              shift, and go to state 106
+    '-'              shift, and go to state 107
+    '*'              shift, and go to state 108
+    '/'              shift, and go to state 109
+    '%'              shift, and go to state 110
+    ')'              shift, and go to state 125
 
 
 State 97
 
-   72 expr: expr '&' . expr
+   42 if_stmt: IF expr THEN . stmt_list else_stmt ENDIF
 
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
+    $default  reduce using rule 20 (stmt_list)
 
-    literal  go to state 67
-    expr     go to state 129
+    stmt_list  go to state 126
 
 
 State 98
 
-   73 expr: expr '|' . expr
+   69 expr: expr DIFF_SIGN . expr
 
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
 
-    literal  go to state 67
-    expr     go to state 130
+    literal  go to state 72
+    expr     go to state 127
 
 
 State 99
 
-   67 expr: expr '>' . expr
+   70 expr: expr GREATER_EQ_SIGN . expr
 
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
 
-    literal  go to state 67
-    expr     go to state 131
+    literal  go to state 72
+    expr     go to state 128
 
 
 State 100
 
-   66 expr: expr '<' . expr
+   71 expr: expr LESS_EQ_SIGN . expr
 
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
 
-    literal  go to state 67
-    expr     go to state 132
+    literal  go to state 72
+    expr     go to state 129
 
 
 State 101
 
-   68 expr: expr '=' . expr
+   72 expr: expr '&' . expr
 
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
 
-    literal  go to state 67
-    expr     go to state 133
+    literal  go to state 72
+    expr     go to state 130
 
 
 State 102
 
-   61 expr: expr '+' . expr
+   73 expr: expr '|' . expr
 
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
 
-    literal  go to state 67
-    expr     go to state 134
+    literal  go to state 72
+    expr     go to state 131
 
 
 State 103
 
-   62 expr: expr '-' . expr
+   67 expr: expr '>' . expr
 
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
 
-    literal  go to state 67
-    expr     go to state 135
+    literal  go to state 72
+    expr     go to state 132
 
 
 State 104
 
-   63 expr: expr '*' . expr
+   66 expr: expr '<' . expr
 
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
 
-    literal  go to state 67
-    expr     go to state 136
+    literal  go to state 72
+    expr     go to state 133
 
 
 State 105
 
-   65 expr: expr '/' . expr
+   68 expr: expr '=' . expr
 
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
 
-    literal  go to state 67
-    expr     go to state 137
+    literal  go to state 72
+    expr     go to state 134
 
 
 State 106
 
-   64 expr: expr '%' . expr
+   61 expr: expr '+' . expr
 
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
 
-    literal  go to state 67
-    expr     go to state 138
+    literal  go to state 72
+    expr     go to state 135
 
 
 State 107
 
-   46 loop_stmt: LOOP ';' stmt_list . ENDLOOP
+   62 expr: expr '-' . expr
 
-    ENDLOOP  shift, and go to state 139
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
+
+    literal  go to state 72
+    expr     go to state 136
 
 
 State 108
 
-   19 id_list: id_list . ',' IDENTIFIER
-   49 io_stmt: GET '(' id_list . ')'
+   63 expr: expr '*' . expr
 
-    ')'  shift, and go to state 140
-    ','  shift, and go to state 22
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
+
+    literal  go to state 72
+    expr     go to state 137
 
 
 State 109
 
-   50 io_stmt: PUT skip_stmt '(' . expr_list ')'
+   65 expr: expr '/' . expr
 
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
 
-    $default  reduce using rule 54 (expr_list)
-
-    expr_list  go to state 141
-    literal    go to state 67
-    expr       go to state 82
+    literal  go to state 72
+    expr     go to state 138
 
 
 State 110
 
-    2 body: START ';' stmt_list END ';' .
+   64 expr: expr '%' . expr
 
-    $default  reduce using rule 2 (body)
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
+
+    literal  go to state 72
+    expr     go to state 139
 
 
 State 111
 
-   21 stmt_list: super_stmt ';' stmt_list .
+   21 stmt_list: stmt_list . super_stmt ';'
+   22          | stmt_list . error ';'
+   46 loop_stmt: LOOP ';' stmt_list . ENDLOOP
 
-    $default  reduce using rule 21 (stmt_list)
+    error       shift, and go to state 33
+    IDENTIFIER  shift, and go to state 35
+    IF          shift, and go to state 36
+    GOTO        shift, and go to state 37
+    LOOP        shift, and go to state 38
+    ENDLOOP     shift, and go to state 140
+    EXITWHEN    shift, and go to state 39
+    STOP        shift, and go to state 40
+    GET         shift, and go to state 41
+    PUT         shift, and go to state 42
+
+    super_stmt    go to state 43
+    label_stmt    go to state 44
+    idless_stmt   go to state 45
+    control_stmt  go to state 46
+    if_stmt       go to state 47
+    goto_stmt     go to state 48
+    loop_stmt     go to state 49
+    exit_stmt     go to state 50
+    stop_stmt     go to state 51
+    io_stmt       go to state 52
 
 
 State 112
 
-   10 proc_decl: IDENTIFIER error ';' stmt_list END . IDENTIFIER
+   19 id_list: id_list . ',' IDENTIFIER
+   49 io_stmt: GET '(' id_list . ')'
 
-    IDENTIFIER  shift, and go to state 142
+    ')'  shift, and go to state 141
+    ','  shift, and go to state 22
 
 
 State 113
 
-    9 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list . ')' ';' stmt_list END IDENTIFIER
+   50 io_stmt: PUT skip_stmt '(' . expr_list ')'
 
-    ')'  shift, and go to state 143
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
+
+    $default  reduce using rule 54 (expr_list)
+
+    expr_list  go to state 142
+    literal    go to state 72
+    expr       go to state 86
 
 
 State 114
 
-   17 super_id_list: id_list .
-   19 id_list: id_list . ',' IDENTIFIER
+   10 proc_decl: IDENTIFIER error ';' stmt_list END IDENTIFIER .
 
-    ','  shift, and go to state 22
-
-    $default  reduce using rule 17 (super_id_list)
+    $default  reduce using rule 10 (proc_decl)
 
 
 State 115
 
-   15 array_nont: ARRAY '[' expr . ']' OF data_type
-   61 expr: expr . '+' expr
-   62     | expr . '-' expr
-   63     | expr . '*' expr
-   64     | expr . '%' expr
-   65     | expr . '/' expr
-   66     | expr . '<' expr
-   67     | expr . '>' expr
-   68     | expr . '=' expr
-   69     | expr . DIFF_SIGN expr
-   70     | expr . GREATER_EQ_SIGN expr
-   71     | expr . LESS_EQ_SIGN expr
-   72     | expr . '&' expr
-   73     | expr . '|' expr
+    9 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' . ';' stmt_list END IDENTIFIER
 
-    DIFF_SIGN        shift, and go to state 94
-    GREATER_EQ_SIGN  shift, and go to state 95
-    LESS_EQ_SIGN     shift, and go to state 96
-    '&'              shift, and go to state 97
-    '|'              shift, and go to state 98
-    '>'              shift, and go to state 99
-    '<'              shift, and go to state 100
-    '='              shift, and go to state 101
-    '+'              shift, and go to state 102
-    '-'              shift, and go to state 103
-    '*'              shift, and go to state 104
-    '/'              shift, and go to state 105
-    '%'              shift, and go to state 106
-    ']'              shift, and go to state 144
+    ';'  shift, and go to state 143
 
 
 State 116
+
+   15 array_nont: ARRAY '[' expr ']' . OF data_type
+
+    OF  shift, and go to state 144
+
+
+State 117
 
    53 proc_stmt: '(' expr_list ')' .
 
     $default  reduce using rule 53 (proc_stmt)
 
 
-State 117
+State 118
 
    56 expr_list_tail: ',' . expr expr_list_tail
 
-    IDENTIFIER  shift, and go to state 60
-    INTEGER     shift, and go to state 61
-    FLOAT       shift, and go to state 62
-    CHAR        shift, and go to state 63
-    '-'         shift, and go to state 64
-    '!'         shift, and go to state 65
-    '('         shift, and go to state 66
+    IDENTIFIER  shift, and go to state 65
+    INTEGER     shift, and go to state 66
+    FLOAT       shift, and go to state 67
+    CHAR        shift, and go to state 68
+    '-'         shift, and go to state 69
+    '!'         shift, and go to state 70
+    '('         shift, and go to state 71
 
-    literal  go to state 67
+    literal  go to state 72
     expr     go to state 145
 
 
-State 118
+State 119
 
    55 expr_list: expr expr_list_tail .
 
     $default  reduce using rule 55 (expr_list)
 
 
-State 119
+State 120
 
    31 labelless_stmt: IDENTIFIER post_labelless_stmt .
 
     $default  reduce using rule 31 (labelless_stmt)
 
 
-State 120
+State 121
 
    32 post_labelless_stmt: attr_stmt .
 
     $default  reduce using rule 32 (post_labelless_stmt)
 
 
-State 121
+State 122
 
    33 post_labelless_stmt: proc_stmt .
 
     $default  reduce using rule 33 (post_labelless_stmt)
 
 
-State 122
+State 123
 
    80 array_access: '[' expr ']' . array_access
 
-    '['  shift, and go to state 55
+    '['  shift, and go to state 60
 
     $default  reduce using rule 79 (array_access)
 
     array_access  go to state 146
 
 
-State 123
+State 124
 
    34 attr_stmt: array_access ATTR_SIGN expr .
    61 expr: expr . '+' expr
@@ -1761,42 +1703,63 @@ State 123
    72     | expr . '&' expr
    73     | expr . '|' expr
 
-    DIFF_SIGN        shift, and go to state 94
-    GREATER_EQ_SIGN  shift, and go to state 95
-    LESS_EQ_SIGN     shift, and go to state 96
-    '&'              shift, and go to state 97
-    '|'              shift, and go to state 98
-    '>'              shift, and go to state 99
-    '<'              shift, and go to state 100
-    '='              shift, and go to state 101
-    '+'              shift, and go to state 102
-    '-'              shift, and go to state 103
-    '*'              shift, and go to state 104
-    '/'              shift, and go to state 105
-    '%'              shift, and go to state 106
+    DIFF_SIGN        shift, and go to state 98
+    GREATER_EQ_SIGN  shift, and go to state 99
+    LESS_EQ_SIGN     shift, and go to state 100
+    '&'              shift, and go to state 101
+    '|'              shift, and go to state 102
+    '>'              shift, and go to state 103
+    '<'              shift, and go to state 104
+    '='              shift, and go to state 105
+    '+'              shift, and go to state 106
+    '-'              shift, and go to state 107
+    '*'              shift, and go to state 108
+    '/'              shift, and go to state 109
+    '%'              shift, and go to state 110
 
     $default  reduce using rule 34 (attr_stmt)
 
 
-State 124
+State 125
 
    74 expr: '(' expr ')' .
 
     $default  reduce using rule 74 (expr)
 
 
-State 125
+State 126
 
+   21 stmt_list: stmt_list . super_stmt ';'
+   22          | stmt_list . error ';'
    42 if_stmt: IF expr THEN stmt_list . else_stmt ENDIF
 
-    ELSE  shift, and go to state 147
+    error       shift, and go to state 33
+    IDENTIFIER  shift, and go to state 35
+    IF          shift, and go to state 36
+    ELSE        shift, and go to state 147
+    GOTO        shift, and go to state 37
+    LOOP        shift, and go to state 38
+    EXITWHEN    shift, and go to state 39
+    STOP        shift, and go to state 40
+    GET         shift, and go to state 41
+    PUT         shift, and go to state 42
 
-    $default  reduce using rule 44 (else_stmt)
+    ENDIF  reduce using rule 44 (else_stmt)
 
-    else_stmt  go to state 148
+    super_stmt    go to state 43
+    label_stmt    go to state 44
+    idless_stmt   go to state 45
+    control_stmt  go to state 46
+    if_stmt       go to state 47
+    else_stmt     go to state 148
+    goto_stmt     go to state 48
+    loop_stmt     go to state 49
+    exit_stmt     go to state 50
+    stop_stmt     go to state 51
+    io_stmt       go to state 52
 
 
-State 126
+State 127
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -1813,16 +1776,16 @@ State 126
    72     | expr . '&' expr
    73     | expr . '|' expr
 
-    '+'  shift, and go to state 102
-    '-'  shift, and go to state 103
-    '*'  shift, and go to state 104
-    '/'  shift, and go to state 105
-    '%'  shift, and go to state 106
+    '+'  shift, and go to state 106
+    '-'  shift, and go to state 107
+    '*'  shift, and go to state 108
+    '/'  shift, and go to state 109
+    '%'  shift, and go to state 110
 
     $default  reduce using rule 69 (expr)
 
 
-State 127
+State 128
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -1839,16 +1802,16 @@ State 127
    72     | expr . '&' expr
    73     | expr . '|' expr
 
-    '+'  shift, and go to state 102
-    '-'  shift, and go to state 103
-    '*'  shift, and go to state 104
-    '/'  shift, and go to state 105
-    '%'  shift, and go to state 106
+    '+'  shift, and go to state 106
+    '-'  shift, and go to state 107
+    '*'  shift, and go to state 108
+    '/'  shift, and go to state 109
+    '%'  shift, and go to state 110
 
     $default  reduce using rule 70 (expr)
 
 
-State 128
+State 129
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -1865,45 +1828,13 @@ State 128
    72     | expr . '&' expr
    73     | expr . '|' expr
 
-    '+'  shift, and go to state 102
-    '-'  shift, and go to state 103
-    '*'  shift, and go to state 104
-    '/'  shift, and go to state 105
-    '%'  shift, and go to state 106
+    '+'  shift, and go to state 106
+    '-'  shift, and go to state 107
+    '*'  shift, and go to state 108
+    '/'  shift, and go to state 109
+    '%'  shift, and go to state 110
 
     $default  reduce using rule 71 (expr)
-
-
-State 129
-
-   61 expr: expr . '+' expr
-   62     | expr . '-' expr
-   63     | expr . '*' expr
-   64     | expr . '%' expr
-   65     | expr . '/' expr
-   66     | expr . '<' expr
-   67     | expr . '>' expr
-   68     | expr . '=' expr
-   69     | expr . DIFF_SIGN expr
-   70     | expr . GREATER_EQ_SIGN expr
-   71     | expr . LESS_EQ_SIGN expr
-   72     | expr . '&' expr
-   72     | expr '&' expr .
-   73     | expr . '|' expr
-
-    DIFF_SIGN        shift, and go to state 94
-    GREATER_EQ_SIGN  shift, and go to state 95
-    LESS_EQ_SIGN     shift, and go to state 96
-    '>'              shift, and go to state 99
-    '<'              shift, and go to state 100
-    '='              shift, and go to state 101
-    '+'              shift, and go to state 102
-    '-'              shift, and go to state 103
-    '*'              shift, and go to state 104
-    '/'              shift, and go to state 105
-    '%'              shift, and go to state 106
-
-    $default  reduce using rule 72 (expr)
 
 
 State 130
@@ -1920,25 +1851,57 @@ State 130
    70     | expr . GREATER_EQ_SIGN expr
    71     | expr . LESS_EQ_SIGN expr
    72     | expr . '&' expr
+   72     | expr '&' expr .
+   73     | expr . '|' expr
+
+    DIFF_SIGN        shift, and go to state 98
+    GREATER_EQ_SIGN  shift, and go to state 99
+    LESS_EQ_SIGN     shift, and go to state 100
+    '>'              shift, and go to state 103
+    '<'              shift, and go to state 104
+    '='              shift, and go to state 105
+    '+'              shift, and go to state 106
+    '-'              shift, and go to state 107
+    '*'              shift, and go to state 108
+    '/'              shift, and go to state 109
+    '%'              shift, and go to state 110
+
+    $default  reduce using rule 72 (expr)
+
+
+State 131
+
+   61 expr: expr . '+' expr
+   62     | expr . '-' expr
+   63     | expr . '*' expr
+   64     | expr . '%' expr
+   65     | expr . '/' expr
+   66     | expr . '<' expr
+   67     | expr . '>' expr
+   68     | expr . '=' expr
+   69     | expr . DIFF_SIGN expr
+   70     | expr . GREATER_EQ_SIGN expr
+   71     | expr . LESS_EQ_SIGN expr
+   72     | expr . '&' expr
    73     | expr . '|' expr
    73     | expr '|' expr .
 
-    DIFF_SIGN        shift, and go to state 94
-    GREATER_EQ_SIGN  shift, and go to state 95
-    LESS_EQ_SIGN     shift, and go to state 96
-    '>'              shift, and go to state 99
-    '<'              shift, and go to state 100
-    '='              shift, and go to state 101
-    '+'              shift, and go to state 102
-    '-'              shift, and go to state 103
-    '*'              shift, and go to state 104
-    '/'              shift, and go to state 105
-    '%'              shift, and go to state 106
+    DIFF_SIGN        shift, and go to state 98
+    GREATER_EQ_SIGN  shift, and go to state 99
+    LESS_EQ_SIGN     shift, and go to state 100
+    '>'              shift, and go to state 103
+    '<'              shift, and go to state 104
+    '='              shift, and go to state 105
+    '+'              shift, and go to state 106
+    '-'              shift, and go to state 107
+    '*'              shift, and go to state 108
+    '/'              shift, and go to state 109
+    '%'              shift, and go to state 110
 
     $default  reduce using rule 73 (expr)
 
 
-State 131
+State 132
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -1955,16 +1918,16 @@ State 131
    72     | expr . '&' expr
    73     | expr . '|' expr
 
-    '+'  shift, and go to state 102
-    '-'  shift, and go to state 103
-    '*'  shift, and go to state 104
-    '/'  shift, and go to state 105
-    '%'  shift, and go to state 106
+    '+'  shift, and go to state 106
+    '-'  shift, and go to state 107
+    '*'  shift, and go to state 108
+    '/'  shift, and go to state 109
+    '%'  shift, and go to state 110
 
     $default  reduce using rule 67 (expr)
 
 
-State 132
+State 133
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -1981,16 +1944,16 @@ State 132
    72     | expr . '&' expr
    73     | expr . '|' expr
 
-    '+'  shift, and go to state 102
-    '-'  shift, and go to state 103
-    '*'  shift, and go to state 104
-    '/'  shift, and go to state 105
-    '%'  shift, and go to state 106
+    '+'  shift, and go to state 106
+    '-'  shift, and go to state 107
+    '*'  shift, and go to state 108
+    '/'  shift, and go to state 109
+    '%'  shift, and go to state 110
 
     $default  reduce using rule 66 (expr)
 
 
-State 133
+State 134
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -2007,16 +1970,16 @@ State 133
    72     | expr . '&' expr
    73     | expr . '|' expr
 
-    '+'  shift, and go to state 102
-    '-'  shift, and go to state 103
-    '*'  shift, and go to state 104
-    '/'  shift, and go to state 105
-    '%'  shift, and go to state 106
+    '+'  shift, and go to state 106
+    '-'  shift, and go to state 107
+    '*'  shift, and go to state 108
+    '/'  shift, and go to state 109
+    '%'  shift, and go to state 110
 
     $default  reduce using rule 68 (expr)
 
 
-State 134
+State 135
 
    61 expr: expr . '+' expr
    61     | expr '+' expr .
@@ -2033,14 +1996,14 @@ State 134
    72     | expr . '&' expr
    73     | expr . '|' expr
 
-    '*'  shift, and go to state 104
-    '/'  shift, and go to state 105
-    '%'  shift, and go to state 106
+    '*'  shift, and go to state 108
+    '/'  shift, and go to state 109
+    '%'  shift, and go to state 110
 
     $default  reduce using rule 61 (expr)
 
 
-State 135
+State 136
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -2057,14 +2020,14 @@ State 135
    72     | expr . '&' expr
    73     | expr . '|' expr
 
-    '*'  shift, and go to state 104
-    '/'  shift, and go to state 105
-    '%'  shift, and go to state 106
+    '*'  shift, and go to state 108
+    '/'  shift, and go to state 109
+    '%'  shift, and go to state 110
 
     $default  reduce using rule 62 (expr)
 
 
-State 136
+State 137
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -2084,7 +2047,7 @@ State 136
     $default  reduce using rule 63 (expr)
 
 
-State 137
+State 138
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -2104,7 +2067,7 @@ State 137
     $default  reduce using rule 65 (expr)
 
 
-State 138
+State 139
 
    61 expr: expr . '+' expr
    62     | expr . '-' expr
@@ -2124,46 +2087,47 @@ State 138
     $default  reduce using rule 64 (expr)
 
 
-State 139
+State 140
 
    46 loop_stmt: LOOP ';' stmt_list ENDLOOP .
 
     $default  reduce using rule 46 (loop_stmt)
 
 
-State 140
+State 141
 
    49 io_stmt: GET '(' id_list ')' .
 
     $default  reduce using rule 49 (io_stmt)
 
 
-State 141
+State 142
 
    50 io_stmt: PUT skip_stmt '(' expr_list . ')'
 
     ')'  shift, and go to state 149
 
 
-State 142
-
-   10 proc_decl: IDENTIFIER error ';' stmt_list END IDENTIFIER .
-
-    $default  reduce using rule 10 (proc_decl)
-
-
 State 143
 
-    9 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' . ';' stmt_list END IDENTIFIER
+    9 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' . stmt_list END IDENTIFIER
 
-    ';'  shift, and go to state 150
+    $default  reduce using rule 20 (stmt_list)
+
+    stmt_list  go to state 150
 
 
 State 144
 
-   15 array_nont: ARRAY '[' expr ']' . OF data_type
+   15 array_nont: ARRAY '[' expr ']' OF . data_type
 
-    OF  shift, and go to state 151
+    INT_TYPE    shift, and go to state 26
+    FLOAT_TYPE  shift, and go to state 27
+    CHAR_TYPE   shift, and go to state 28
+    ARRAY       shift, and go to state 29
+
+    data_type   go to state 151
+    array_nont  go to state 31
 
 
 State 145
@@ -2183,20 +2147,20 @@ State 145
    72     | expr . '&' expr
    73     | expr . '|' expr
 
-    DIFF_SIGN        shift, and go to state 94
-    GREATER_EQ_SIGN  shift, and go to state 95
-    LESS_EQ_SIGN     shift, and go to state 96
-    '&'              shift, and go to state 97
-    '|'              shift, and go to state 98
-    '>'              shift, and go to state 99
-    '<'              shift, and go to state 100
-    '='              shift, and go to state 101
-    '+'              shift, and go to state 102
-    '-'              shift, and go to state 103
-    '*'              shift, and go to state 104
-    '/'              shift, and go to state 105
-    '%'              shift, and go to state 106
-    ','              shift, and go to state 117
+    DIFF_SIGN        shift, and go to state 98
+    GREATER_EQ_SIGN  shift, and go to state 99
+    LESS_EQ_SIGN     shift, and go to state 100
+    '&'              shift, and go to state 101
+    '|'              shift, and go to state 102
+    '>'              shift, and go to state 103
+    '<'              shift, and go to state 104
+    '='              shift, and go to state 105
+    '+'              shift, and go to state 106
+    '-'              shift, and go to state 107
+    '*'              shift, and go to state 108
+    '/'              shift, and go to state 109
+    '%'              shift, and go to state 110
+    ','              shift, and go to state 118
 
     $default  reduce using rule 57 (expr_list_tail)
 
@@ -2214,29 +2178,9 @@ State 147
 
    43 else_stmt: ELSE . stmt_list
 
-    error       shift, and go to state 23
-    IDENTIFIER  shift, and go to state 24
-    IF          shift, and go to state 25
-    GOTO        shift, and go to state 26
-    LOOP        shift, and go to state 27
-    EXITWHEN    shift, and go to state 28
-    STOP        shift, and go to state 29
-    GET         shift, and go to state 30
-    PUT         shift, and go to state 31
+    $default  reduce using rule 20 (stmt_list)
 
-    ENDIF  reduce using rule 20 (stmt_list)
-
-    stmt_list     go to state 153
-    super_stmt    go to state 33
-    label_stmt    go to state 34
-    idless_stmt   go to state 35
-    control_stmt  go to state 36
-    if_stmt       go to state 37
-    goto_stmt     go to state 38
-    loop_stmt     go to state 39
-    exit_stmt     go to state 40
-    stop_stmt     go to state 41
-    io_stmt       go to state 42
+    stmt_list  go to state 153
 
 
 State 148
@@ -2255,44 +2199,38 @@ State 149
 
 State 150
 
-    9 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' . stmt_list END IDENTIFIER
+    9 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list . END IDENTIFIER
+   21 stmt_list: stmt_list . super_stmt ';'
+   22          | stmt_list . error ';'
 
-    error       shift, and go to state 23
-    IDENTIFIER  shift, and go to state 24
-    IF          shift, and go to state 25
-    GOTO        shift, and go to state 26
-    LOOP        shift, and go to state 27
-    EXITWHEN    shift, and go to state 28
-    STOP        shift, and go to state 29
-    GET         shift, and go to state 30
-    PUT         shift, and go to state 31
+    error       shift, and go to state 33
+    END         shift, and go to state 155
+    IDENTIFIER  shift, and go to state 35
+    IF          shift, and go to state 36
+    GOTO        shift, and go to state 37
+    LOOP        shift, and go to state 38
+    EXITWHEN    shift, and go to state 39
+    STOP        shift, and go to state 40
+    GET         shift, and go to state 41
+    PUT         shift, and go to state 42
 
-    END  reduce using rule 20 (stmt_list)
-
-    stmt_list     go to state 155
-    super_stmt    go to state 33
-    label_stmt    go to state 34
-    idless_stmt   go to state 35
-    control_stmt  go to state 36
-    if_stmt       go to state 37
-    goto_stmt     go to state 38
-    loop_stmt     go to state 39
-    exit_stmt     go to state 40
-    stop_stmt     go to state 41
-    io_stmt       go to state 42
+    super_stmt    go to state 43
+    label_stmt    go to state 44
+    idless_stmt   go to state 45
+    control_stmt  go to state 46
+    if_stmt       go to state 47
+    goto_stmt     go to state 48
+    loop_stmt     go to state 49
+    exit_stmt     go to state 50
+    stop_stmt     go to state 51
+    io_stmt       go to state 52
 
 
 State 151
 
-   15 array_nont: ARRAY '[' expr ']' OF . data_type
+   15 array_nont: ARRAY '[' expr ']' OF data_type .
 
-    INT_TYPE    shift, and go to state 45
-    FLOAT_TYPE  shift, and go to state 46
-    CHAR_TYPE   shift, and go to state 47
-    ARRAY       shift, and go to state 48
-
-    data_type   go to state 156
-    array_nont  go to state 50
+    $default  reduce using rule 15 (array_nont)
 
 
 State 152
@@ -2304,9 +2242,32 @@ State 152
 
 State 153
 
+   21 stmt_list: stmt_list . super_stmt ';'
+   22          | stmt_list . error ';'
    43 else_stmt: ELSE stmt_list .
 
-    $default  reduce using rule 43 (else_stmt)
+    error       shift, and go to state 33
+    IDENTIFIER  shift, and go to state 35
+    IF          shift, and go to state 36
+    GOTO        shift, and go to state 37
+    LOOP        shift, and go to state 38
+    EXITWHEN    shift, and go to state 39
+    STOP        shift, and go to state 40
+    GET         shift, and go to state 41
+    PUT         shift, and go to state 42
+
+    ENDIF  reduce using rule 43 (else_stmt)
+
+    super_stmt    go to state 43
+    label_stmt    go to state 44
+    idless_stmt   go to state 45
+    control_stmt  go to state 46
+    if_stmt       go to state 47
+    goto_stmt     go to state 48
+    loop_stmt     go to state 49
+    exit_stmt     go to state 50
+    stop_stmt     go to state 51
+    io_stmt       go to state 52
 
 
 State 154
@@ -2318,26 +2279,12 @@ State 154
 
 State 155
 
-    9 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list . END IDENTIFIER
+    9 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END . IDENTIFIER
 
-    END  shift, and go to state 157
+    IDENTIFIER  shift, and go to state 156
 
 
 State 156
-
-   15 array_nont: ARRAY '[' expr ']' OF data_type .
-
-    $default  reduce using rule 15 (array_nont)
-
-
-State 157
-
-    9 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END . IDENTIFIER
-
-    IDENTIFIER  shift, and go to state 158
-
-
-State 158
 
     9 proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER .
 

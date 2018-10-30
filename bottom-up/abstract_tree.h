@@ -14,17 +14,19 @@ struct Type{
 };
 
 struct Node {
-	std::string*  name;
-	void print(){
+	std::string *name;
+	
+	void print() {
 		std::cout << "{ \"" << *(name) << "\":{ ";	
 	};
 };
 
 struct VarDec : Node {
-	VarDec(){
-		name = new std::string( "VarDec");
+	VarDec() {
+		name = new std::string("VarDec");
 	}
-	void print(){
+
+	void print() {
 		std::cout << "{\"" << *(name) << "\":[";	
 			for(int i = 0; i < ids->size(); i++){
 				std::cout<< "\"" << *(ids->operator[](i)) << "\"";
@@ -34,12 +36,13 @@ struct VarDec : Node {
 			}
 			std::cout << "]}";
 	};
-	std::vector<std::string*>* ids;
+
+	std::vector<std::string*> *ids;
 	std::vector<Type*> type;
 };
 
 struct Stmt : Node {
-	std::string label;	
+	std::string *label;	
 };
 
 struct ProDec : Node {
@@ -52,11 +55,12 @@ struct Program : Node {
 	Program(){
 		name =  new std::string("Program");
 	}
+
 	~Program(){
 		delete name;
 	}
-	void print(){
 	
+	void print(){
 		std::cout << "{ \"" << *(name) << "\": [";
 		if(this->var_dec != nullptr){
                        for(auto i = 0; i < this->var_dec->size(); i++){
@@ -66,56 +70,63 @@ struct Program : Node {
                        }
                 }
 		std::cout << "]}";
-
-
 	}
-	std::vector<VarDec*>* var_dec;
-	std::vector<ProDec*>* pro_dec;
-	std::vector<Stmt*>* stmts;
+
+	std::vector<VarDec*> *var_dec;
+	std::vector<ProDec*> *pro_dec;
+	std::vector<Stmt*> *stmts;
 };
 
 struct Expr : Node {
-	Expr(){
+	Expr() {
 		name = new std::string("Expr");
 	}
-	~Expr(){
+
+	~Expr() {
 		delete name;
 	}
+
 	void print();
 	Type type;
 };
 
 struct BinOp : Expr {
-	BinOp(){
+	BinOp() {
 		name = new std::string("BinOp");
 	}
-	~BinOp(){
+
+	~BinOp() {
 		delete name;
 	}
+
 	char op;
 	Expr* lhs;
 	Expr* rhs;
 };
 
 struct Post_Labelless_Stmt : Node {
-	Post_Labelless_Stmt(){
+	Post_Labelless_Stmt() {
 		name = new std::string("Post_Labelless_Stmt");
 	}
-	~Post_Labelless_Stmt(){
+
+	~Post_Labelless_Stmt() {
 		delete name;
 	}
+
 	void print();
 	std::string* label;
 
 };
 
 struct AttrStmt : Post_Labelless_Stmt {
-	AttrStmt(){
+	AttrStmt() {
 		name = new std::string("AttrStmt");
 	}
+
 	~AttrStmt(){
 		delete name;
 	}
+
 	void print(){
 		std::cout << "{ \"" << *(name) << "\": {";
 		std::cout << "\"lhs\":" << "\"" << *(label) << "\", ";
@@ -132,51 +143,58 @@ struct AttrStmt : Post_Labelless_Stmt {
 			rhs->print();
 		}
 	}
+	
 	std::vector<Expr*>* lhs;
 	Expr* rhs;
 };
 
 
 struct UnOp : Expr {
-	UnOp(){
+	UnOp() {
 		name = new std::string("UnOp");
 	}
-	~UnOp(){
+
+	~UnOp() {
 		delete name;
 	}
+
 	int op;
 	Expr* expr;
 };
 
 struct Access : Expr {
-	Access(){
+	Access() {
 		name = new std::string("Access");
 	}
-	~Access(){
+
+	~Access() {
 		delete name;
 	}
+
 	std::string* id;
 	std::vector<Expr*> indexes;
 };
 
 struct Literal : Expr {
-	Literal(){
+	Literal() {
 		name = new std::string("Literal");
 	}
-	~Literal(){
+
+	~Literal() {
 		delete name;
 	}
-	union{
+
+	union {
 		int i;
 		float f;
 		char c;
 	};
+
 	SimpleType type;
 };
 
-
 using DecList = std::vector<VarDec*>;
-using ProList = std::vector<ProDec>;
-using StmtList = std::vector<Stmt>;
+using ProList = std::vector<ProDec*>;
+using StmtList = std::vector<Stmt*>;
 
 #endif
