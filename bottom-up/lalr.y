@@ -128,7 +128,7 @@ proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDEN
 data_type: INT_TYPE  {$$ = SimpleType::ST_INT;} 
     | FLOAT_TYPE {$$ = SimpleType::ST_FLOAT;}
     | CHAR_TYPE  {$$ = SimpleType::ST_CHAR;}
-    | array_nont;
+    | array_nont {};
 
 array_nont: ARRAY '[' expr ']' OF data_type;
 

@@ -62,16 +62,6 @@ std::ostream& operator<<(std::ostream& out, const Expr& e) {
     return out;
 }
 
-std::ostream& operator<<(std::ostream& out, const PostLabellessStmt& pls) {
-    if (pls.name == "AttrStmt") {
-        auto att = static_cast<const AttrStmt&>(pls);
-        out << att;
-    } else {
-        out << "";
-    }
-    return out;
-}
-
 std::ostream& operator<<(std::ostream& out, const AttrStmt& as) {
     out << "{ \"" << as.name << "\": {";
     out << "\"lhs\":" << "\"" << as.label << "\", ";
