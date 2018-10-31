@@ -45,11 +45,13 @@
 %type <std::vector<std::string>> id_list
 %type <SimpleType> data_type
 %type <StmtList> stmt_list
+%type <Stmt> super_stmt
+%type <Stmt> label_stmt
+%type <Stmt> stmt
+%type <AttrStmt> attr_stmt
 %type <Expr> expr
 %type <Literal> literal
 %type <std::vector<Expr>> array_access
-%type <AttrStmt> attr_stmt
-%type <PostLabellessStmt> post_labelless_stmt
 %token START
 %token END
 %token DECLARE
@@ -140,30 +142,23 @@ id_list: IDENTIFIER { std::vector<std::string> s;
                  s.push_back($3);
                          $$ = s; };
 
-stmt_list: %empty {}
-    | super_stmt ';' stmt_list
-    | error ';' stmt_list
-    ;
+stmt_list: %empty { $$ = StmtList(); }
+	| stmt_list super_stmt ';' { 
+		StmtList a = $1;
+		a.push_back($2);
+		$$ = a;
+    }
+	| stmt_list error ';'
+	
+super_stmt: label_stmt | stmt;
 
-super_stmt: label_stmt 
-    | idless_stmt
-    ;
-
-label_stmt: IDENTIFIER post_label_stmt;
-
-post_label_stmt: ':' stmt 
-    | attr_stmt 
-    | proc_stmt ;
-
-stmt: labelless_stmt | idless_stmt ;
-
-labelless_stmt: IDENTIFIER post_labelless_stmt {
-    PostLabellessStmt p = $2;
-    p.label = $1;
+label_stmt: IDENTIFIER ':' stmt {
+	Stmt a = $3;
+	a.label = $1;
+	$$ = a;
 };
 
-post_labelless_stmt: attr_stmt {$$ = $1;}
-    | proc_stmt ;
+stmt: attr_stmt | proc_stmt | stop_stmt | io_stmt | control_stmt ;
 
 attr_stmt: array_access ATTR_SIGN expr {
     AttrStmt attr;
@@ -171,10 +166,6 @@ attr_stmt: array_access ATTR_SIGN expr {
     attr.rhs = $3;
     $$ = attr;
 };
-
-idless_stmt: stop_stmt 
-    | io_stmt
-    | control_stmt ;
 
 control_stmt: if_stmt 
     | goto_stmt
@@ -207,6 +198,7 @@ expr_list: %empty {}
 
 expr_list_tail: ',' expr expr_list_tail
         | %empty {};
+
 literal: INTEGER {auto lit = Literal(); lit.i = $1; $$ = lit;}
     | FLOAT {auto lit = Literal(); lit.f = $1; $$ = lit;}
     | CHAR {auto lit = Literal(); lit.c = $1; $$ = lit;};
