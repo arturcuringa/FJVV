@@ -5,12 +5,7 @@
 #include <string>
 #include <iostream>
 
-enum struct  SimpleType {ST_INT, ST_FLOAT, ST_CHAR};
-
-struct Type {
-	SimpleType type;
-	std::vector<int> sizes;
-};
+enum struct SimpleType {ST_INT, ST_FLOAT, ST_CHAR};
 
 struct Node {
 	Node() : name("") {}
@@ -20,11 +15,25 @@ struct Node {
 	friend std::ostream& operator<<(std::ostream& out, const Node& n);
 };
 
+struct Expr : Node {
+	Expr() : Node("Expr") {}
+	Expr(std::string _n) : Node(_n) {}
+
+	SimpleType type;
+	friend std::ostream& operator<<(std::ostream& out, const Expr& e);
+};
+
+struct Type {
+	SimpleType type;
+	std::vector<Expr> dimensions;
+	friend std::ostream& operator<<(std::ostream& out, const Type& t);
+};
+
 struct VarDec : Node {
 	VarDec() : Node("VarDec") {}
 
 	std::vector<std::string> ids;
-	std::vector<Type> type;
+	Type type;
 	friend std::ostream& operator<<(std::ostream& out, const VarDec& vd);
 };
 
@@ -45,14 +54,6 @@ struct Program : Node {
 	std::vector<ProDec> pro_dec;
 	std::vector<Stmt> stmts;
 	friend std::ostream& operator<<(std::ostream& out, const Program& p);
-};
-
-struct Expr : Node {
-	Expr() : Node("Expr") {}
-	Expr(std::string _n) : Node(_n) {}
-
-	Type type;
-	friend std::ostream& operator<<(std::ostream& out, const Expr& e);
 };
 
 struct BinOp : Expr {

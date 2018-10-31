@@ -43,7 +43,8 @@
 %type <DecList> decl_list
 %type <VarDec> decl_stmt
 %type <std::vector<std::string>> id_list
-%type <SimpleType> data_type
+%type <Type> data_type
+%type <Type> array_nont
 %type <StmtList> stmt_list
 %type <Expr> expr
 %type <Literal> literal
@@ -104,14 +105,7 @@ decl_list: %empty {} |
 decl_stmt: DECLARE '(' id_list ')' data_type {
     auto vd = VarDec();
     vd.ids = $3;
-    auto ty = Type();
-    if($5 == SimpleType::ST_INT)
-        ty.type = SimpleType::ST_INT;
-    if($5 == SimpleType::ST_FLOAT)
-        ty.type = SimpleType::ST_FLOAT;
-    if($5 == SimpleType::ST_FLOAT)
-        ty.type = SimpleType::ST_FLOAT;
-    vd.type.push_back(ty);
+    vd.type = $5;
     $$ = vd;
 };
 
@@ -123,12 +117,35 @@ proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDEN
     | IDENTIFIER error ';' stmt_list END IDENTIFIER
     ;
 
-data_type: INT_TYPE  {$$ = SimpleType::ST_INT;} 
-    | FLOAT_TYPE {$$ = SimpleType::ST_FLOAT;}
-    | CHAR_TYPE  {$$ = SimpleType::ST_CHAR;}
-    | array_nont {};
+data_type: INT_TYPE  {
+        Type type;
+        type.type = SimpleType::ST_INT;
+        $$ = type;
+    } 
+    | FLOAT_TYPE {
+        Type type;
+        type.type = SimpleType::ST_FLOAT;
+        $$ = type;
+    }
+    | CHAR_TYPE  {
+        Type type;
+        type.type = SimpleType::ST_CHAR;
+        $$ = type;
+    }
+    | array_nont {
+        $$ = $1;
+    }
+;
 
-array_nont: ARRAY '[' expr ']' OF data_type;
+array_nont: ARRAY '[' expr ']' OF data_type {
+    Type type;
+    type.type = $6.type;
+    type.dimensions = $6.dimensions;
+    Expr e($3);
+    std::cout << e << std::endl;
+    type.dimensions.push_back(e);
+    $$ = type;
+};
 
 super_id_list: %empty {} 
     | id_list;
@@ -207,9 +224,25 @@ expr_list: %empty {}
 
 expr_list_tail: ',' expr expr_list_tail
         | %empty {};
-literal: INTEGER {auto lit = Literal(); lit.i = $1; $$ = lit;}
-    | FLOAT {auto lit = Literal(); lit.f = $1; $$ = lit;}
-    | CHAR {auto lit = Literal(); lit.c = $1; $$ = lit;};
+literal: INTEGER {
+        Literal lit;
+        lit.i = $1;
+        lit.type = SimpleType::ST_INT;
+        $$ = lit;
+    }
+    | FLOAT {
+        Literal lit;
+        lit.f = $1;
+        lit.type = SimpleType::ST_FLOAT;
+        $$ = lit;
+    }
+    | CHAR {
+        Literal lit;
+        lit.c = $1;
+        lit.type = SimpleType::ST_CHAR;
+        $$ = lit;
+    }
+;
 
 expr: expr '+' expr {auto operation = BinOp();
                      operation.op = '+';
@@ -292,7 +325,7 @@ expr: expr '+' expr {auto operation = BinOp();
                 acc.id = $1;
                 $$ = acc;
                 }
-    | literal { $$ = $1; } ;
+    | literal { $$ = $1;} ;
 
 array_access: %empty {}
     | '[' expr ']' array_access { 

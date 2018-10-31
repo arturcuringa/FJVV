@@ -1,14 +1,41 @@
 #include "abstract_tree.h"
 
 std::ostream& operator<<(std::ostream& out, const Node& n) {
-    out << "{ \"" << n.name << "\":{ ";
+    out << "\"" << n.name << "\":{ ";
+    return out;
+}
+
+std::ostream& operator<<(std::ostream& out, const SimpleType& st) {
+    out << "\"Simple Type\": ";
+    if (st == SimpleType::ST_INT)
+        out << "\"INT\"";
+    else if (st == SimpleType::ST_FLOAT)
+        out << "\"FLOAT\"";
+    else if (st == SimpleType::ST_CHAR)
+        out << "\"CHAR\"";
+    else
+        out << "\"\"";
+    return out;
+}
+
+std::ostream& operator<<(std::ostream& out, const Type& t) {
+    out << "\"Type\": {";
+    out << t.type;
+
+    out << ", \"Dimensions\": [";
+    for (auto i = 0; i < t.dimensions.size(); i++) {
+        out << "{" << t.dimensions[i] << "}";
+        if (i != t.dimensions.size() - 1)
+            out << ", ";
+    }
+    out << "]}";
     return out;
 }
 
 std::ostream& operator<<(std::ostream& out, const Program& p) {
-    out << "{ \"" << p.name << "\": [";
+    out << "{\"" << p.name << "\": [";
     for (auto i = 0; i < p.var_dec.size(); i++) {
-        out << p.var_dec[i];
+        out << "{" << p.var_dec[i] << "}";
         if (i != p.var_dec.size() - 1)
             out << ", ";
     }
@@ -17,7 +44,7 @@ std::ostream& operator<<(std::ostream& out, const Program& p) {
 }
 
 std::ostream& operator<<(std::ostream& out, const Expr& e) {
-    out << "{\"" << e.name << "\":";
+    out << "\"" << e.name << "\":";
     if (e.name == "BinOp") {
         auto b = static_cast<const BinOp&>(e);
         out << "{";
@@ -32,8 +59,10 @@ std::ostream& operator<<(std::ostream& out, const Expr& e) {
     }
     if (e.name == "Literal"){
         auto l = static_cast<const Literal&>(e);
-        out << "{\"val\":";
-        out << l.i << "}";
+        out << "{\"Val\":";
+        out << l.i << ", ";
+        out << l.type;
+        out << "}";
     }
     if (e.name == "UnOp"){
         auto u = static_cast<const UnOp&>(e);
@@ -58,7 +87,6 @@ std::ostream& operator<<(std::ostream& out, const Expr& e) {
         }
         out << "}";
     }
-    out << "}";
     return out;
 }
 
@@ -73,7 +101,7 @@ std::ostream& operator<<(std::ostream& out, const PostLabellessStmt& pls) {
 }
 
 std::ostream& operator<<(std::ostream& out, const AttrStmt& as) {
-    out << "{ \"" << as.name << "\": {";
+    out << "\"" << as.name << "\": {";
     out << "\"lhs\":" << "\"" << as.label << "\", ";
     out << "\"indexes\": [";
     for (auto i = 0; i < as.lhs.size(); i++) {
@@ -87,12 +115,14 @@ std::ostream& operator<<(std::ostream& out, const AttrStmt& as) {
 }
 
 std::ostream& operator<<(std::ostream& out, const VarDec& vd) {
-    out << "{\"" << vd.name << "\":[";  
+    out << "\"" << vd.name << "\": {\"Ids\": [";  
     for (int i = 0; i < vd.ids.size(); i++) {
         out<< "\"" << vd.ids[i] << "\"";
         if (i != vd.ids.size() - 1)
             out << ", ";
     }
-    out << "]}";
+    out << "], ";
+    out << vd.type;
+    out << "}";
     return out;
 }
