@@ -38,6 +38,9 @@ struct VarDec : Node {
 };
 
 struct Stmt : Node {
+	Stmt() : Node("Stmt") {}
+	Stmt(std::string _n) : Node(_n) {}
+
 	std::string label;	
 };
 
@@ -64,16 +67,8 @@ struct BinOp : Expr {
 	Expr rhs;
 };
 
-struct PostLabellessStmt : Node {
-	PostLabellessStmt() : Node("PostLabellessStmt") {}
-	PostLabellessStmt(std::string _n) : Node(_n) {}
-
-	std::string label;
-	friend std::ostream& operator<<(std::ostream& out, const PostLabellessStmt& pls);
-};
-
-struct AttrStmt : PostLabellessStmt {
-	AttrStmt() : PostLabellessStmt("AttrStmt") {}
+struct AttrStmt : Stmt {
+	AttrStmt() : Stmt("AttrStmt") {}
 
 	std::vector<Expr> lhs;
 	Expr rhs;
