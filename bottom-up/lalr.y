@@ -126,7 +126,7 @@ proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDEN
 data_type: INT_TYPE  {$$ = SimpleType::ST_INT;} 
     | FLOAT_TYPE {$$ = SimpleType::ST_FLOAT;}
     | CHAR_TYPE  {$$ = SimpleType::ST_CHAR;}
-    | array_nont;
+    | array_nont {};
 
 array_nont: ARRAY '[' expr ']' OF data_type;
 
@@ -141,8 +141,8 @@ id_list: IDENTIFIER { std::vector<std::string> s;
                          $$ = s; };
 
 stmt_list: %empty {}
-    | super_stmt ';' stmt_list
-    | error ';' stmt_list
+    | super_stmt ';' stmt_list {}
+    | error ';' stmt_list {}
     ;
 
 super_stmt: label_stmt 
@@ -163,7 +163,7 @@ labelless_stmt: IDENTIFIER post_labelless_stmt {
 };
 
 post_labelless_stmt: attr_stmt {$$ = $1;}
-    | proc_stmt ;
+    | proc_stmt {};
 
 attr_stmt: array_access ATTR_SIGN expr {
     AttrStmt attr;
