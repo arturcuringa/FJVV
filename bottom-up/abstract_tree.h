@@ -63,16 +63,16 @@ struct BinOp : Expr {
 	Expr rhs;
 };
 
-struct Post_Labelless_Stmt : Node {
-	Post_Labelless_Stmt() : Node("PostLabellessStmt") {}
-	Post_Labelless_Stmt(std::string _n) : Node(_n) {}
+struct PostLabellessStmt : Node {
+	PostLabellessStmt() : Node("PostLabellessStmt") {}
+	PostLabellessStmt(std::string _n) : Node(_n) {}
 
 	std::string label;
-	friend std::ostream& operator<<(std::ostream& out, const Post_Labelless_Stmt& pls);
+	friend std::ostream& operator<<(std::ostream& out, const PostLabellessStmt& pls);
 };
 
-struct AttrStmt : Post_Labelless_Stmt {
-	AttrStmt() : Post_Labelless_Stmt("AttrStmt") {}
+struct AttrStmt : PostLabellessStmt {
+	AttrStmt() : PostLabellessStmt("AttrStmt") {}
 
 	std::vector<Expr> lhs;
 	Expr rhs;

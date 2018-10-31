@@ -62,7 +62,7 @@ std::ostream& operator<<(std::ostream& out, const Expr& e) {
     return out;
 }
 
-std::ostream& operator<<(std::ostream& out, const Post_Labelless_Stmt& pls) {
+std::ostream& operator<<(std::ostream& out, const PostLabellessStmt& pls) {
     if (pls.name == "AttrStmt") {
         auto att = static_cast<const AttrStmt&>(pls);
         out << att;

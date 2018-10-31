@@ -49,7 +49,7 @@
 %type <Literal> literal
 %type <std::vector<Expr>> array_access
 %type <AttrStmt> attr_stmt
-%type <Post_Labelless_Stmt> post_labelless_stmt
+%type <PostLabellessStmt> post_labelless_stmt
 %token START
 %token END
 %token DECLARE
@@ -158,7 +158,7 @@ post_label_stmt: ':' stmt
 stmt: labelless_stmt | idless_stmt ;
 
 labelless_stmt: IDENTIFIER post_labelless_stmt {
-    Post_Labelless_Stmt p = $2;
+    PostLabellessStmt p = $2;
     p.label = $1;
 };
 
