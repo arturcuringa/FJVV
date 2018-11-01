@@ -76,6 +76,13 @@ struct AttrStmt : Stmt {
 	friend std::ostream& operator<<(std::ostream& out, const AttrStmt& as);
 };
 
+struct ProcStmt : Stmt {
+	ProcStmt() : Stmt("AttrStmt") {}
+
+	std::string id;
+	std::vector<std::shared_ptr<Expr>> args;
+	friend std::ostream& operator<<(std::ostream& out, const ProcStmt& as);
+};
 
 struct UnOp : Expr {
 	UnOp() : Expr("UnOp") {}
@@ -102,9 +109,9 @@ struct Literal : Expr {
 	SimpleType type;
 };
 
-
 using DecList = std::vector<VarDec>;
 using ProList = std::vector<ProDec>;
 using StmtList = std::vector<Stmt>;
+using ExprList = std::vector<std::shared_ptr<Expr>>;
 
 #endif

@@ -49,9 +49,15 @@
 %type <Stmt> label_stmt
 %type <Stmt> stmt
 %type <AttrStmt> attr_stmt
+%type <ProcStmt> proc_stmt
+%type <Stmt> stop_stmt
+%type <Stmt> io_stmt
+%type <Stmt> control_stmt
 %type <std::shared_ptr<Expr>> expr
 %type <Literal> literal
 %type <std::vector<Expr>> array_access
+%type <ExprList> expr_list
+%type <ExprList> expr_list_tail
 %token START
 %token END
 %token DECLARE
@@ -198,7 +204,7 @@ loop_stmt: LOOP ';' stmt_list ENDLOOP;
 
 exit_stmt: EXITWHEN expr;
 
-stop_stmt: STOP;
+stop_stmt: STOP { $$ = Stmt("Stop"); };
 
 io_stmt: GET '(' id_list ')'
     | PUT skip_stmt '(' expr_list ')';
@@ -206,13 +212,26 @@ io_stmt: GET '(' id_list ')'
 skip_stmt: SKIP 
     | %empty {};
 
-proc_stmt: '(' expr_list ')';
+proc_stmt: IDENTIFIER '(' expr_list ')' {
+    ProcStmt ps;
+    ps.id = $1;
+    ps.args = $3;
+    $$ = ps;
+};
 
-expr_list: %empty {}
-       | expr expr_list_tail ;
+expr_list: %empty { $$ = ExprList(); }
+       | expr_list_tail ;
 
-expr_list_tail: ',' expr expr_list_tail
-        | %empty {};
+expr_list_tail: expr_list_tail ',' expr {
+            ExprList el = $1;
+            el.push_back($3);
+            $$ = el;
+        }
+        | expr {
+            ExprList el;
+            el.push_back($1);
+            $$ = el;
+        };
 
 literal: INTEGER {
         Literal lit;

@@ -110,6 +110,11 @@ std::ostream& operator<<(std::ostream& out, const AttrStmt& as) {
     return out;
 }
 
+// todo
+std::ostream& operator<<(std::ostream& out, const ProcStmt& ps) {
+    return out;
+}
+
 std::ostream& operator<<(std::ostream& out, const VarDec& vd) {
     out << "\"" << vd.name << "\": {\"Ids\": [";  
     for (int i = 0; i < vd.ids.size(); i++) {
