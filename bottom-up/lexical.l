@@ -48,7 +48,7 @@ char 			\'(.|"\n")\'
 (?i:of) 	{return token::OF;}
 {integer} 	{yylval->build<int>(std::atoi(yytext)); return token::INTEGER;}
 {float} 	{yylval->build<double>(std::stod(yytext)); return token::FLOAT;}
-{char} 		{yylval->build<char>(yytext[0]); return token::CHAR;}
+{char} 		{yylval->build<char>(yytext[1]); return token::CHAR;}
 (?i:if) 	{return token::IF;}
 (?i:then) 	{return token::THEN;}
 (?i:endif) 	{return token::ENDIF;}
