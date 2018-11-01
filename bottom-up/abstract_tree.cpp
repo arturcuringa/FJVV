@@ -60,9 +60,15 @@ std::ostream& operator<<(std::ostream& out, const Expr& e) {
     if (e.name == "Literal"){
         auto l = static_cast<const Literal&>(e);
         out << "{\"Val\":";
-        out << l.i << ", ";
-        out << l.type;
-        out << "}";
+        if (l.type == SimpleType::ST_INT)
+            out << l.i;
+        else if (l.type == SimpleType::ST_FLOAT)
+            out << l.f;
+        else if (l.type == SimpleType::ST_CHAR)
+            out << "\"" << l.c << "\"";
+        else
+            out << "\"\"";
+        out << ", " << l.type << "}";
     }
     if (e.name == "UnOp"){
         auto u = static_cast<const UnOp&>(e);
