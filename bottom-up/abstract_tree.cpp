@@ -24,7 +24,7 @@ std::ostream& operator<<(std::ostream& out, const Type& t) {
 
     out << ", \"Dimensions\": [";
     for (auto i = 0; i < t.dimensions.size(); i++) {
-        out << "{" << t.dimensions[i] << "}";
+        out << "{" << *t.dimensions[i] << "}";
         if (i != t.dimensions.size() - 1)
             out << ", ";
     }

@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <memory>
 
 enum struct SimpleType {ST_INT, ST_FLOAT, ST_CHAR};
 
@@ -25,7 +26,7 @@ struct Expr : Node {
 
 struct Type {
 	SimpleType type;
-	std::vector<Expr> dimensions;
+	std::vector<std::shared_ptr<Expr>> dimensions;
 	friend std::ostream& operator<<(std::ostream& out, const Type& t);
 };
 
