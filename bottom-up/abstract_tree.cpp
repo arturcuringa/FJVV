@@ -1,46 +1,66 @@
 #include "abstract_tree.h"
 
 std::ostream& operator<<(std::ostream& out, const Node& n) {
-    out << "\"" << n.name << "\":{ ";
+    out << "{"
+            << "\"name\":\"" << n.name << "\""
+        << "}";
     return out;
 }
 
 std::ostream& operator<<(std::ostream& out, const SimpleType& st) {
-    out << "\"Simple Type\": ";
-    if (st == SimpleType::ST_INT)
-        out << "\"INT\"";
-    else if (st == SimpleType::ST_FLOAT)
-        out << "\"FLOAT\"";
-    else if (st == SimpleType::ST_CHAR)
-        out << "\"CHAR\"";
-    else
-        out << "\"\"";
+    out << "{"
+        << "\"Simple Type\": ";
+        if (st == SimpleType::ST_INT)
+            out << "\"INT\"";
+        else if (st == SimpleType::ST_FLOAT)
+            out << "\"FLOAT\"";
+        else if (st == SimpleType::ST_CHAR)
+            out << "\"CHAR\"";
+        else
+            out << "\"\"";
+    out << "}";
     return out;
 }
 
 std::ostream& operator<<(std::ostream& out, const Type& t) {
-    out << "\"Type\": {";
-    out << t.type;
-
-    out << ", \"Dimensions\": [";
-    for (auto i = 0; i < t.dimensions.size(); i++) {
-        out << "{" << *t.dimensions[i] << "}";
-        if (i != t.dimensions.size() - 1)
-            out << ", ";
-    }
-    out << "]}";
+    out << "{"
+        << "\"Type\": " << t.type << ", "
+        << "\"Dimensions\": [";
+        for (auto i = 0; i < t.dimensions.size(); i++) {
+            out << *t.dimensions[i];
+            if (i != t.dimensions.size() - 1)
+                out << ", ";
+        }
+        out << "]";
+    out << "}";
     return out;
 }
 
-//todo
 std::ostream& operator<<(std::ostream& out, const Program& p) {
-    out << "{\"" << p.name << "\": [";
-    for (auto i = 0; i < p.var_dec.size(); i++) {
-        out << "{" << p.var_dec[i] << "}";
-        if (i != p.var_dec.size() - 1)
-            out << ", ";
-    }
-    out << "]}";
+    out << "{"
+        << "\"name\": \"" << p.name << "\","
+        << "\"var_dec\": [";
+        for (auto i = 0; i < p.var_dec.size(); i++) {
+            out << p.var_dec[i];
+            if (i != p.var_dec.size() - 1)
+                out << ", ";
+        }
+        out << "],";
+        out << "\"pro_dec\": [";
+        for (auto i = 0; i < p.pro_dec.size(); i++) {
+            out << p.pro_dec[i];
+            if (i != p.pro_dec.size() - 1)
+                out << ", ";
+        }
+        out << "],";
+        out << "\"stmts\": [";
+        for (auto i = 0; i < p.stmts.size(); i++) {
+            out << *p.stmts[i];
+            if (i != p.stmts.size() - 1)
+                out << ", ";
+        }
+        out << "]";
+    out << "}";
     return out;
 }
 

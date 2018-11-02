@@ -52,7 +52,7 @@ struct ProDec : Node {
 
 	std::string id;
 	std::vector<std::string> params;
-	std::vector<Stmt> stmts;
+	std::vector<std::shared_ptr<Stmt>> stmts;
 	friend std::ostream& operator<<(std::ostream& out, const ProDec& vd);
 };
 
@@ -79,7 +79,6 @@ struct AttrStmt : Stmt {
 	std::string id;
 	std::vector<std::shared_ptr<Expr>> lhsIndexes;
 	std::shared_ptr<Expr> rhs;
-	friend std::ostream& operator<<(std::ostream& out, const AttrStmt& as);
 };
 
 struct ProcStmt : Stmt {
@@ -87,7 +86,6 @@ struct ProcStmt : Stmt {
 
 	std::string id;
 	std::vector<std::shared_ptr<Expr>> args;
-	friend std::ostream& operator<<(std::ostream& out, const ProcStmt& as);
 };
 
 struct IfStmt : Stmt {
@@ -96,7 +94,37 @@ struct IfStmt : Stmt {
 	std::shared_ptr<Expr> expr;
 	std::vector<std::shared_ptr<Stmt>> trueBlock;
 	std::vector<std::shared_ptr<Stmt>> falseBlock;
-	friend std::ostream& operator<<(std::ostream& out, const IfStmt& vd);
+};
+
+struct GotoStmt : Stmt {
+	GotoStmt() : Stmt("GotoStmt") {}
+
+	std::string id;
+};
+
+struct LoopStmt : Stmt {
+	LoopStmt() : Stmt("LoopStmt") {}
+
+	std::vector<std::shared_ptr<Stmt>> block;
+};
+
+struct ExitStmt : Stmt {
+	ExitStmt() : Stmt("ExitStmt") {}
+
+	std::shared_ptr<Expr> expr;
+};
+
+struct GetStmt : Stmt {
+	GetStmt() : Stmt("GetStmt") {}
+
+	std::vector<std::string> ids;
+};
+
+struct PutStmt : Stmt {
+	PutStmt() : Stmt("PutStmt") {}
+
+	bool skip;
+	std::vector<std::shared_ptr<Expr>> exprs;
 };
 
 struct UnOp : Expr {

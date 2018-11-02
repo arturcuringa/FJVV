@@ -57,8 +57,12 @@
 %type <StmtPtr> stop_stmt
 %type <StmtPtr> io_stmt
 %type <StmtPtr> control_stmt
+%type <StmtPtr> goto_stmt
+%type <StmtPtr> loop_stmt
+%type <StmtPtr> exit_stmt
 %type <ExprPtr> expr
 %type <ProList> proc_decl_list
+%type <ProDec> proc_decl
 %type <Literal> literal
 %type <ExprList> array_access
 %type <ExprList> expr_list
@@ -129,12 +133,24 @@ decl_stmt: DECLARE '(' id_list ')' data_type {
     $$ = vd;
 };
 
-proc_decl_list: %empty
-    | proc_decl_list proc_decl ';' 
+proc_decl_list: %empty { $$ = ProList(); }
+    | proc_decl_list proc_decl ';' {
+        ProList pl = $1;
+        pl.push_back($2);
+        $$ = $1;
+    }
 ;
 
-proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER
-    | IDENTIFIER error ';' stmt_list END IDENTIFIER
+proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER {
+    ProDec pd;
+    pd.id = $1;
+    pd.params = $5;
+    pd.stmts = $8;
+    $$ = pd;
+}
+    | IDENTIFIER error ';' stmt_list END IDENTIFIER {
+        $$ = ProDec();
+    }
     ;
 
 data_type: INT_TYPE  {
@@ -222,16 +238,37 @@ if_stmt: IF expr THEN stmt_list else_stmt ENDIF {
 else_stmt: ELSE stmt_list { $$ = $2; }
          | %empty { $$ = StmtList(); };
 
-goto_stmt: GOTO IDENTIFIER;
+goto_stmt: GOTO IDENTIFIER {
+    GotoStmt gs;
+    gs.id = $2;
+    $$ = std::make_shared<Stmt>(gs);
+};
 
-loop_stmt: LOOP ';' stmt_list ENDLOOP;
+loop_stmt: LOOP ';' stmt_list ENDLOOP {
+    LoopStmt ls;
+    ls.block = $3;
+    $$ = std::make_shared<Stmt>(ls);
+};
 
-exit_stmt: EXITWHEN expr;
+exit_stmt: EXITWHEN expr {
+    ExitStmt es;
+    es.expr = $2;
+    $$ = std::make_shared<Stmt>(es);
+};
 
 stop_stmt: STOP { $$ = std::make_shared<Stmt>(Stmt("Stop")); };
 
-io_stmt: GET '(' id_list ')'
-    | PUT skip_stmt '(' expr_list ')';
+io_stmt: GET '(' id_list ')' {
+        GetStmt gs;
+        gs.ids = $3;
+        $$ = std::make_shared<Stmt>(gs);
+    }
+    | PUT skip_stmt '(' expr_list ')' {
+        PutStmt ps;
+        ps.skip = $2;
+        ps.exprs = $4;
+        $$ = std::make_shared<Stmt>(ps);
+    };
 
 skip_stmt: SKIP { $$ = true; }
     | %empty { $$ = false; };
