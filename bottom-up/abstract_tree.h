@@ -82,7 +82,7 @@ struct AttrStmt : Stmt {
 };
 
 struct ProcStmt : Stmt {
-	ProcStmt() : Stmt("AttrStmt") {}
+	ProcStmt() : Stmt("ProcStmt") {}
 
 	std::string id;
 	std::vector<std::shared_ptr<Expr>> args;
@@ -139,7 +139,6 @@ struct Access : Expr {
 
 	std::string id;
 	std::vector<Expr> indexes;
-	friend std::ostream& operator<<(std::ostream& out, const VarDec& vd);
 };
 
 struct Literal : Expr {
@@ -152,6 +151,8 @@ struct Literal : Expr {
 
 	SimpleType type;
 };
+
+std::ostream& operator<<(std::ostream& out, const SimpleType& st);
 
 using ExprPtr = std::shared_ptr<Expr>;
 using StmtPtr = std::shared_ptr<Stmt>;

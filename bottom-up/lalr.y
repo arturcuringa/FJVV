@@ -182,7 +182,7 @@ array_nont: ARRAY '[' expr ']' OF data_type {
 };
 
 super_id_list: %empty {$$ = std::vector<std::string>(); } 
-    | id_list;
+    | id_list {$$ = $1;};
 
 id_list: IDENTIFIER {
         std::vector<std::string> s;
@@ -203,7 +203,7 @@ stmt_list: %empty { $$ = StmtList(); }
     }
 	| stmt_list error ';'
 	
-super_stmt: label_stmt | stmt;
+super_stmt: label_stmt {$$ = $1;} | stmt {$$ = $1;} ;
 
 label_stmt: IDENTIFIER ':' stmt {
 	StmtPtr a = $3;
@@ -211,21 +211,20 @@ label_stmt: IDENTIFIER ':' stmt {
 	$$ = a;
 };
 
-stmt: attr_stmt | proc_stmt | stop_stmt | io_stmt | control_stmt ;
+stmt: attr_stmt {$$ = $1;} | proc_stmt {$$ = $1;} | stop_stmt {$$ = $1;} | io_stmt {$$ = $1;} | control_stmt {$$ = $1;} ;
 
 attr_stmt: IDENTIFIER array_access ATTR_SIGN expr {
     AttrStmt attr;
-    ExprList arrAcc = $2;
     attr.id = $1;
-    attr.lhsIndexes = arrAcc;
+    attr.lhsIndexes = $2;
     attr.rhs = $4;
     $$ = std::make_shared<Stmt>(attr);
 };
 
-control_stmt: if_stmt 
-    | goto_stmt
-    | loop_stmt 
-    | exit_stmt;
+control_stmt: if_stmt {$$ = $1;}
+    | goto_stmt {$$ = $1;}
+    | loop_stmt {$$ = $1;}
+    | exit_stmt {$$ = $1;};
 
 if_stmt: IF expr THEN stmt_list else_stmt ENDIF {
     IfStmt is;
