@@ -148,8 +148,7 @@ array_nont: ARRAY '[' expr ']' OF data_type {
     Type type;
     type.type = $6.type;
     type.dimensions = $6.dimensions;
-    std::cout << *$3 << std::endl;
-    type.dimensions.push_back($3);
+    type.dimensions.push_front($3);
     $$ = type;
 };
 
@@ -334,7 +333,8 @@ expr: expr '+' expr {auto operation = BinOp();
                 acc.id = $1;
                 $$ = std::make_shared<Access>(acc);
                 }
-    | literal { $$ = std::make_shared<Literal>($1); std::cout << $1 << std::endl;} ;
+    | literal { $$ = std::make_shared<Literal>($1); }
+;
 
 array_access: %empty {}
     | '[' expr ']' array_access { 

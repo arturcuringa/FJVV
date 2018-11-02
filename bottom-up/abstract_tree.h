@@ -2,6 +2,7 @@
 #define __ABS_TREE__
 
 #include <vector>
+#include <deque>
 #include <string>
 #include <iostream>
 #include <memory>
@@ -26,7 +27,7 @@ struct Expr : Node {
 
 struct Type {
 	SimpleType type;
-	std::vector<std::shared_ptr<Expr>> dimensions;
+	std::deque<std::shared_ptr<Expr>> dimensions;
 	friend std::ostream& operator<<(std::ostream& out, const Type& t);
 };
 
