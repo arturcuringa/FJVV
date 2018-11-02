@@ -164,7 +164,7 @@ std::ostream& operator<<(std::ostream& out, const ProDec& vd) {
 
 std::ostream& operator<<(std::ostream& out, const Program& p) {
     out << "{"
-        << "\"name\": \"" << p.name << "\",";
+        << "\"name\": \"" << p.name << "\","
         << "\"var_dec\": [";
         for (auto i = 0; i < p.var_dec.size(); i++) {
             out << p.var_dec[i];
