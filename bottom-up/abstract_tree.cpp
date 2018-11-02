@@ -32,6 +32,7 @@ std::ostream& operator<<(std::ostream& out, const Type& t) {
     return out;
 }
 
+//todo
 std::ostream& operator<<(std::ostream& out, const Program& p) {
     out << "{\"" << p.name << "\": [";
     for (auto i = 0; i < p.var_dec.size(); i++) {
@@ -98,11 +99,11 @@ std::ostream& operator<<(std::ostream& out, const Expr& e) {
 
 std::ostream& operator<<(std::ostream& out, const AttrStmt& as) {
     out << "\"" << as.name << "\": {";
-    out << "\"lhs\":" << "\"" << as.label << "\", ";
+    out << "\"lhs\":" << "\"" << as.id << "\", ";
     out << "\"indexes\": [";
-    for (auto i = 0; i < as.lhs.size(); i++) {
-        out << as.lhs[i];
-        if (i != as.lhs.size() - 1)
+    for (auto i = 0; i < as.lhsIndexes.size(); i++) {
+        out << as.lhsIndexes[i];
+        if (i != as.lhsIndexes.size() - 1)
             out << ", ";
     }
     out << "], \"rhs\": ";

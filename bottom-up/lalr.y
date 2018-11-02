@@ -41,23 +41,29 @@
 
 %type <DecList> decl_list
 %type <VarDec> decl_stmt
+%type <StmtList> body
+%type <std::vector<std::string>> super_id_list
 %type <std::vector<std::string>> id_list
 %type <Type> data_type
 %type <Type> array_nont
 %type <StmtList> stmt_list
-%type <Stmt> super_stmt
-%type <Stmt> label_stmt
-%type <Stmt> stmt
-%type <AttrStmt> attr_stmt
-%type <ProcStmt> proc_stmt
-%type <Stmt> stop_stmt
-%type <Stmt> io_stmt
-%type <Stmt> control_stmt
-%type <std::shared_ptr<Expr>> expr
+%type <StmtPtr> super_stmt
+%type <StmtPtr> label_stmt
+%type <StmtPtr> stmt
+%type <StmtPtr> attr_stmt
+%type <StmtPtr> proc_stmt
+%type <StmtPtr> if_stmt
+%type <StmtList> else_stmt
+%type <StmtPtr> stop_stmt
+%type <StmtPtr> io_stmt
+%type <StmtPtr> control_stmt
+%type <ExprPtr> expr
+%type <ProList> proc_decl_list
 %type <Literal> literal
-%type <std::vector<Expr>> array_access
+%type <ExprList> array_access
 %type <ExprList> expr_list
 %type <ExprList> expr_list_tail
+%type <bool> skip_stmt
 %token START
 %token END
 %token DECLARE
@@ -95,11 +101,18 @@
 %right UMINUS
 
 %%
-program: decl_list proc_decl_list body { root.var_dec = $1; std::cout << root << std::endl; }
+program: decl_list proc_decl_list body {
+    root.var_dec = $1;
+    root.pro_dec = $2;
+    root.stmts = $3;
+    std::cout << root << std::endl;
+}
 
-body: START ';' stmt_list END ';'
+body: START ';' stmt_list END ';' {
+    $$ = $3;
+}
 
-decl_list: %empty {} |
+decl_list: %empty { $$ = DecList(); } |
     decl_list decl_stmt ';' {
         DecList a = $1;
         a.push_back($2);
@@ -110,13 +123,13 @@ decl_list: %empty {} |
 ;
 
 decl_stmt: DECLARE '(' id_list ')' data_type {
-    auto vd = VarDec();
+    VarDec vd;
     vd.ids = $3;
     vd.type = $5;
     $$ = vd;
 };
 
-proc_decl_list: %empty {}
+proc_decl_list: %empty
     | proc_decl_list proc_decl ';' 
 ;
 
@@ -152,15 +165,19 @@ array_nont: ARRAY '[' expr ']' OF data_type {
     $$ = type;
 };
 
-super_id_list: %empty {} 
+super_id_list: %empty {$$ = std::vector<std::string>(); } 
     | id_list;
 
-id_list: IDENTIFIER { std::vector<std::string> s;
-                 s.push_back($1);
-                 $$ = s; }
-    | id_list ',' IDENTIFIER {std::vector<std::string> s = $1;
-                 s.push_back($3);
-                         $$ = s; };
+id_list: IDENTIFIER {
+        std::vector<std::string> s;
+        s.push_back($1);
+        $$ = s;
+    }
+    | id_list ',' IDENTIFIER {
+        std::vector<std::string> s = $1;
+        s.push_back($3);
+        $$ = s;
+    };
 
 stmt_list: %empty { $$ = StmtList(); }
 	| stmt_list super_stmt ';' { 
@@ -173,18 +190,20 @@ stmt_list: %empty { $$ = StmtList(); }
 super_stmt: label_stmt | stmt;
 
 label_stmt: IDENTIFIER ':' stmt {
-	Stmt a = $3;
-	a.label = $1;
+	StmtPtr a = $3;
+	a->label = $1;
 	$$ = a;
 };
 
 stmt: attr_stmt | proc_stmt | stop_stmt | io_stmt | control_stmt ;
 
-attr_stmt: array_access ATTR_SIGN expr {
+attr_stmt: IDENTIFIER array_access ATTR_SIGN expr {
     AttrStmt attr;
-    attr.lhs = $1;
-    attr.rhs = *$3;
-    $$ = attr;
+    ExprList arrAcc = $2;
+    attr.id = $1;
+    attr.lhsIndexes = arrAcc;
+    attr.rhs = $4;
+    $$ = std::make_shared<Stmt>(attr);
 };
 
 control_stmt: if_stmt 
@@ -192,10 +211,16 @@ control_stmt: if_stmt
     | loop_stmt 
     | exit_stmt;
 
-if_stmt: IF expr THEN stmt_list else_stmt ENDIF;
+if_stmt: IF expr THEN stmt_list else_stmt ENDIF {
+    IfStmt is;
+    is.expr = $2;
+    is.trueBlock = $4;
+    is.falseBlock = $5;
+    $$ = std::make_shared<Stmt>(is);
+};
 
-else_stmt: ELSE stmt_list 
-         | %empty {};
+else_stmt: ELSE stmt_list { $$ = $2; }
+         | %empty { $$ = StmtList(); };
 
 goto_stmt: GOTO IDENTIFIER;
 
@@ -203,19 +228,19 @@ loop_stmt: LOOP ';' stmt_list ENDLOOP;
 
 exit_stmt: EXITWHEN expr;
 
-stop_stmt: STOP { $$ = Stmt("Stop"); };
+stop_stmt: STOP { $$ = std::make_shared<Stmt>(Stmt("Stop")); };
 
 io_stmt: GET '(' id_list ')'
     | PUT skip_stmt '(' expr_list ')';
 
-skip_stmt: SKIP 
-    | %empty {};
+skip_stmt: SKIP { $$ = true; }
+    | %empty { $$ = false; };
 
 proc_stmt: IDENTIFIER '(' expr_list ')' {
     ProcStmt ps;
     ps.id = $1;
     ps.args = $3;
-    $$ = ps;
+    $$ = std::make_shared<Stmt>(ps);
 };
 
 expr_list: %empty { $$ = ExprList(); }
@@ -336,12 +361,11 @@ expr: expr '+' expr {auto operation = BinOp();
     | literal { $$ = std::make_shared<Literal>($1); }
 ;
 
-array_access: %empty {}
-    | '[' expr ']' array_access { 
-        std::vector<Expr> indexes;
-        indexes = std::vector<Expr>();
-        indexes.push_back(*$2);
-        $$ = indexes;
+array_access: %empty { $$ = ExprList(); }
+    | array_access '[' expr ']' { 
+        ExprList el = $1;
+        el.push_back($3);
+        $$ = el;
     };
 %%
 

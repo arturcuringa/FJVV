@@ -43,13 +43,17 @@ struct Stmt : Node {
 	Stmt() : Node("Stmt") {}
 	Stmt(std::string _n) : Node(_n) {}
 
-	std::string label;	
+	std::string label;
+	friend std::ostream& operator<<(std::ostream& out, const Stmt& vd);
 };
 
 struct ProDec : Node {
+	ProDec() : Node("ProDec") {}
+
 	std::string id;
 	std::vector<std::string> params;
 	std::vector<Stmt> stmts;
+	friend std::ostream& operator<<(std::ostream& out, const ProDec& vd);
 };
 
 struct Program : Node {
@@ -57,7 +61,7 @@ struct Program : Node {
 
 	std::vector<VarDec> var_dec;
 	std::vector<ProDec> pro_dec;
-	std::vector<Stmt> stmts;
+	std::vector<std::shared_ptr<Stmt>> stmts;
 	friend std::ostream& operator<<(std::ostream& out, const Program& p);
 };
 
@@ -72,8 +76,9 @@ struct BinOp : Expr {
 struct AttrStmt : Stmt {
 	AttrStmt() : Stmt("AttrStmt") {}
 
-	std::vector<Expr> lhs;
-	Expr rhs;
+	std::string id;
+	std::vector<std::shared_ptr<Expr>> lhsIndexes;
+	std::shared_ptr<Expr> rhs;
 	friend std::ostream& operator<<(std::ostream& out, const AttrStmt& as);
 };
 
@@ -83,6 +88,15 @@ struct ProcStmt : Stmt {
 	std::string id;
 	std::vector<std::shared_ptr<Expr>> args;
 	friend std::ostream& operator<<(std::ostream& out, const ProcStmt& as);
+};
+
+struct IfStmt : Stmt {
+	IfStmt() : Stmt("IfStmt") {}
+
+	std::shared_ptr<Expr> expr;
+	std::vector<std::shared_ptr<Stmt>> trueBlock;
+	std::vector<std::shared_ptr<Stmt>> falseBlock;
+	friend std::ostream& operator<<(std::ostream& out, const IfStmt& vd);
 };
 
 struct UnOp : Expr {
@@ -97,6 +111,7 @@ struct Access : Expr {
 
 	std::string id;
 	std::vector<Expr> indexes;
+	friend std::ostream& operator<<(std::ostream& out, const VarDec& vd);
 };
 
 struct Literal : Expr {
@@ -110,9 +125,12 @@ struct Literal : Expr {
 	SimpleType type;
 };
 
+using ExprPtr = std::shared_ptr<Expr>;
+using StmtPtr = std::shared_ptr<Stmt>;
+
 using DecList = std::vector<VarDec>;
 using ProList = std::vector<ProDec>;
-using StmtList = std::vector<Stmt>;
-using ExprList = std::vector<std::shared_ptr<Expr>>;
+using StmtList = std::vector<StmtPtr>;
+using ExprList = std::vector<ExprPtr>;
 
 #endif

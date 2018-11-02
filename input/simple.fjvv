@@ -9,7 +9,7 @@ fill: PROCEDURE (a, alen, value);
 END fill;
 
 START;
-	i2 := a[5] + - 2	;  
+	i2 := a[5] + - 2;  
 	fill(1, 10, 0);
 	PUT(5.5, .1, 2.);
 END;
