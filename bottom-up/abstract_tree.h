@@ -44,7 +44,6 @@ struct Stmt : Node {
 	Stmt(std::string _n) : Node(_n) {}
 
 	std::string label;
-	friend std::ostream& operator<<(std::ostream& out, const Stmt& vd);
 };
 
 struct ProDec : Node {
@@ -69,8 +68,8 @@ struct BinOp : Expr {
 	BinOp() : Expr("BinOp") {}
 
 	char op;
-	Expr lhs;
-	Expr rhs;
+	std::shared_ptr<Expr> lhs;
+	std::shared_ptr<Expr> rhs;
 };
 
 struct AttrStmt : Stmt {
@@ -130,15 +129,15 @@ struct PutStmt : Stmt {
 struct UnOp : Expr {
 	UnOp() : Expr("UnOp") {}
 
-	int op;
-	Expr expr;
+	char op;
+	std::shared_ptr<Expr> expr;
 };
 
 struct Access : Expr {
 	Access() : Expr("Access") {}
 
 	std::string id;
-	std::vector<Expr> indexes;
+	std::vector<std::shared_ptr<Expr>> indexes;
 };
 
 struct Literal : Expr {
@@ -153,6 +152,7 @@ struct Literal : Expr {
 };
 
 std::ostream& operator<<(std::ostream& out, const SimpleType& st);
+std::ostream& operator<<(std::ostream& out, const std::shared_ptr<Stmt>& stmt);
 
 using ExprPtr = std::shared_ptr<Expr>;
 using StmtPtr = std::shared_ptr<Stmt>;

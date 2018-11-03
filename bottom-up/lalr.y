@@ -218,7 +218,7 @@ attr_stmt: IDENTIFIER array_access ATTR_SIGN expr {
     attr.id = $1;
     attr.lhsIndexes = $2;
     attr.rhs = $4;
-    $$ = std::make_shared<Stmt>(attr);
+    $$ = std::make_shared<AttrStmt>(attr);
 };
 
 control_stmt: if_stmt {$$ = $1;}
@@ -231,7 +231,7 @@ if_stmt: IF expr THEN stmt_list else_stmt ENDIF {
     is.expr = $2;
     is.trueBlock = $4;
     is.falseBlock = $5;
-    $$ = std::make_shared<Stmt>(is);
+    $$ = std::make_shared<IfStmt>(is);
 };
 
 else_stmt: ELSE stmt_list { $$ = $2; }
@@ -240,19 +240,19 @@ else_stmt: ELSE stmt_list { $$ = $2; }
 goto_stmt: GOTO IDENTIFIER {
     GotoStmt gs;
     gs.id = $2;
-    $$ = std::make_shared<Stmt>(gs);
+    $$ = std::make_shared<GotoStmt>(gs);
 };
 
 loop_stmt: LOOP ';' stmt_list ENDLOOP {
     LoopStmt ls;
     ls.block = $3;
-    $$ = std::make_shared<Stmt>(ls);
+    $$ = std::make_shared<LoopStmt>(ls);
 };
 
 exit_stmt: EXITWHEN expr {
     ExitStmt es;
     es.expr = $2;
-    $$ = std::make_shared<Stmt>(es);
+    $$ = std::make_shared<ExitStmt>(es);
 };
 
 stop_stmt: STOP { $$ = std::make_shared<Stmt>(Stmt("Stop")); };
@@ -260,13 +260,13 @@ stop_stmt: STOP { $$ = std::make_shared<Stmt>(Stmt("Stop")); };
 io_stmt: GET '(' id_list ')' {
         GetStmt gs;
         gs.ids = $3;
-        $$ = std::make_shared<Stmt>(gs);
+        $$ = std::make_shared<GetStmt>(gs);
     }
     | PUT skip_stmt '(' expr_list ')' {
         PutStmt ps;
         ps.skip = $2;
         ps.exprs = $4;
-        $$ = std::make_shared<Stmt>(ps);
+        $$ = std::make_shared<PutStmt>(ps);
     };
 
 skip_stmt: SKIP { $$ = true; }
@@ -276,11 +276,11 @@ proc_stmt: IDENTIFIER '(' expr_list ')' {
     ProcStmt ps;
     ps.id = $1;
     ps.args = $3;
-    $$ = std::make_shared<Stmt>(ps);
+    $$ = std::make_shared<ProcStmt>(ps);
 };
 
 expr_list: %empty { $$ = ExprList(); }
-       | expr_list_tail ;
+       | expr_list_tail { $$ = $1; } ;
 
 expr_list_tail: expr_list_tail ',' expr {
             ExprList el = $1;
@@ -315,83 +315,84 @@ literal: INTEGER {
 
 expr: expr '+' expr {auto operation = BinOp();
                      operation.op = '+';
-             operation.lhs = *$1;
-             operation.rhs = *$3;
+             operation.lhs = $1;
+             operation.rhs = $3;
              $$ = std::make_shared<BinOp>(operation);}
     | expr '-' expr {auto operation = BinOp();
                      operation.op = '-';
-             operation.lhs = *$1;
-             operation.rhs = *$3;
+             operation.lhs = $1;
+             operation.rhs = $3;
              $$ = std::make_shared<BinOp>(operation);}
     | expr '*' expr {auto operation = BinOp();
                      operation.op = '*';
-             operation.lhs = *$1;
-             operation.rhs = *$3;
+             operation.lhs = $1;
+             operation.rhs = $3;
              $$ = std::make_shared<BinOp>(operation);}
     | expr '%' expr {auto operation = BinOp();
                      operation.op = '%';
-             operation.lhs = *$1;
-             operation.rhs = *$3;
+             operation.lhs = $1;
+             operation.rhs = $3;
              $$ = std::make_shared<BinOp>(operation);}
     | expr '/' expr {auto operation = BinOp();
                      operation.op = '/';
-             operation.lhs = *$1;
-             operation.rhs = *$3;
+             operation.lhs = $1;
+             operation.rhs = $3;
              $$ = std::make_shared<BinOp>(operation);}
     | expr '<' expr {auto operation = BinOp();
                      operation.op = '<';
-             operation.lhs = *$1;
-             operation.rhs = *$3;
+             operation.lhs = $1;
+             operation.rhs = $3;
              $$ = std::make_shared<BinOp>(operation);}
     | expr '>' expr {auto operation = BinOp();
                      operation.op = '>';
-             operation.lhs = *$1;
-             operation.rhs = *$3;
+             operation.lhs = $1;
+             operation.rhs = $3;
              $$ = std::make_shared<BinOp>(operation);}
     | expr '=' expr {auto operation = BinOp();
                      operation.op = '=';
-             operation.lhs = *$1;
-             operation.rhs = *$3;
+             operation.lhs = $1;
+             operation.rhs = $3;
              $$ = std::make_shared<BinOp>(operation);}
     | expr DIFF_SIGN expr {auto operation = BinOp();
                      operation.op = '!';
-             operation.lhs = *$1;
-             operation.rhs = *$3;
+             operation.lhs = $1;
+             operation.rhs = $3;
              $$ = std::make_shared<BinOp>(operation);}
     | expr GREATER_EQ_SIGN expr {auto operation = BinOp();
                      operation.op = 'g';
-             operation.lhs = *$1;
-             operation.rhs = *$3;
+             operation.lhs = $1;
+             operation.rhs = $3;
              $$ = std::make_shared<BinOp>(operation);}
     | expr LESS_EQ_SIGN expr  {auto operation = BinOp();
                      operation.op = 'l';
-             operation.lhs = *$1;
-             operation.rhs = *$3;
+             operation.lhs = $1;
+             operation.rhs = $3;
              $$ = std::make_shared<BinOp>(operation);}
     | expr '&' expr  {auto operation = BinOp();
                      operation.op = '&';
-             operation.lhs = *$1;
-             operation.rhs = *$3;
+             operation.lhs = $1;
+             operation.rhs = $3;
              $$ = std::make_shared<BinOp>(operation);}
     | expr '|' expr {auto operation = BinOp();
                      operation.op = '|';
-             operation.lhs = *$1;
-             operation.rhs = *$3;
+             operation.lhs = $1;
+             operation.rhs = $3;
              $$ = std::make_shared<BinOp>(operation);}
     | '(' expr ')' {auto operation = UnOp();
         operation.op = 'p';
-        operation.expr = *$2;
+        operation.expr = $2;
         $$ = std::make_shared<UnOp>(operation);}
     | '!' expr {auto operation = UnOp();
         operation.op = '!';
-        operation.expr = *$2;
+        operation.expr = $2;
         $$ = std::make_shared<UnOp>(operation);}
     | '-' expr %prec UMINUS {auto operation = UnOp();
         operation.op = '-';
-        operation.expr = *$2;
+        operation.expr = $2;
         $$ = std::make_shared<UnOp>(operation);}
     | IDENTIFIER array_access {Access acc;
                 acc.id = $1;
+                acc.indexes = $2;
                 $$ = std::make_shared<Access>(acc);
                 }
     | literal { $$ = std::make_shared<Literal>($1); }
