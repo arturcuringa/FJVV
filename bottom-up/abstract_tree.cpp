@@ -99,13 +99,13 @@ std::ostream& operator<<(std::ostream& out, const std::shared_ptr<Stmt>& stmt) {
     out << "{"
         << "\"name\": \"" << stmt->name << "\"";
         if (stmt->label != "")
-            out << "\"label\": \"" << stmt->label << "\"";
+            out << ", \"label\": \"" << stmt->label << "\"";
 
         if (stmt->name == "AttrStmt") {
             auto as = (AttrStmt*) stmt.get();
             out << ",\"id\":" << "\"" << as->id << "\"";
             if (!as->lhsIndexes.empty()) {
-                out << "\", indexes\": [";
+                out << ", \"indexes\": [";
                 for (auto i = 0; i < as->lhsIndexes.size(); i++) {
                     out << *as->lhsIndexes[i];
                     if (i != as->lhsIndexes.size() - 1)
@@ -127,7 +127,7 @@ std::ostream& operator<<(std::ostream& out, const std::shared_ptr<Stmt>& stmt) {
             out << "]";
         } else if (stmt->name == "IfStmt") {
             auto is = (IfStmt*) stmt.get();
-            out << ",\"expr\": " << is->expr << ",";
+            out << ",\"expr\": " << *is->expr << ",";
             
             out << "\"trueBlock\": [";
             for (auto i = 0; i < is->trueBlock.size(); i++) {
@@ -150,11 +150,26 @@ std::ostream& operator<<(std::ostream& out, const std::shared_ptr<Stmt>& stmt) {
             auto gs = (GotoStmt*) stmt.get();
             out << ",\"id\":" << "\"" << gs->id << "\"";
         } else if (stmt->name == "LoopStmt") {
-            // TODO
+            auto ls = (LoopStmt*) stmt.get();
+            out << ", \"block\": [";
+            for (auto i = 0; i < ls->block.size(); i++) {
+                out << ls->block[i];
+                if (i != ls->block.size() - 1)
+                    out << ", ";
+            }
+            out << "]";
         } else if (stmt->name == "ExitStmt") {
-            // TODO
+            auto es = (ExitStmt*) stmt.get();
+            out << ", \"expr\": " << *es->expr;
         } else if (stmt->name == "GetStmt") {
-            // TODO
+            auto gs = (GetStmt*) stmt.get();
+            out << ", \"ids\": [";
+            for (auto i = 0; i < gs->ids.size(); i++) {
+                out << "\"" << gs->ids[i] << "\"";
+                if (i != gs->ids.size() - 1)
+                    out << ", ";
+            }
+            out << "]";
         } else if (stmt->name == "PutStmt") {
             auto ps = (PutStmt*) stmt.get();
             std::string skip = ps->skip ? "true" : "false";
