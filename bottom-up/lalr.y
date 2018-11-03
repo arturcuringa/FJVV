@@ -66,7 +66,6 @@
 %type <Literal> literal
 %type <ExprList> array_access
 %type <ExprList> expr_list
-%type <ExprList> expr_list_tail
 %type <bool> skip_stmt
 %token START
 %token END
@@ -280,9 +279,7 @@ proc_stmt: IDENTIFIER '(' expr_list ')' {
 };
 
 expr_list: %empty { $$ = ExprList(); }
-       | expr_list_tail { $$ = $1; } ;
-
-expr_list_tail: expr_list_tail ',' expr {
+       | expr_list ',' expr {
             ExprList el = $1;
             el.push_back($3);
             $$ = el;
