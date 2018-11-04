@@ -131,7 +131,7 @@ std::ostream& operator<<(std::ostream& out, const std::shared_ptr<Stmt>& stmt) {
             
             out << "\"trueBlock\": [";
             for (auto i = 0; i < is->trueBlock.size(); i++) {
-                out << *is->trueBlock[i];
+                out << is->trueBlock[i];
                 if (i != is->trueBlock.size() - 1)
                     out << ", ";
             }
@@ -140,7 +140,7 @@ std::ostream& operator<<(std::ostream& out, const std::shared_ptr<Stmt>& stmt) {
             if (!is->falseBlock.empty()) {
                 out << ", \"falseBlock\": [";
                 for (auto i = 0; i < is->falseBlock.size(); i++) {
-                    out << *is->falseBlock[i];
+                    out << is->falseBlock[i];
                     if (i != is->falseBlock.size() - 1)
                         out << ", ";
                 }
@@ -186,7 +186,24 @@ std::ostream& operator<<(std::ostream& out, const std::shared_ptr<Stmt>& stmt) {
 }
 
 std::ostream& operator<<(std::ostream& out, const ProDec& vd) {
-    return out;
+    out << "{"
+        << "\"name\": \"" << vd.name << "\","
+        << "\"id\": \"" << vd.id << "\","
+        << "\"params\": [";
+        for (auto i = 0; i < vd.params.size(); i++) {
+            out << "\"" << vd.params[i] << "\"";
+            if (i != vd.params.size() - 1)
+                out << ", ";
+        }
+        out << "],";
+        out << "\"stmts\": [";
+        for (auto i = 0; i < vd.stmts.size(); i++) {
+            out << vd.stmts[i];
+            if (i != vd.stmts.size() - 1)
+                out << ", ";
+        }
+        out << "]";
+    out << "}";
 }
 
 std::ostream& operator<<(std::ostream& out, const Program& p) {
@@ -214,10 +231,5 @@ std::ostream& operator<<(std::ostream& out, const Program& p) {
         }
         out << "]";
     out << "}";
-    return out;
-}
-
-std::ostream& operator<<(std::ostream& out, const AttrStmt& as) {
-    
     return out;
 }

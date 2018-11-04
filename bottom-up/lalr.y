@@ -135,8 +135,8 @@ decl_stmt: DECLARE '(' id_list ')' data_type {
 proc_decl_list: %empty { $$ = ProList(); }
     | proc_decl_list proc_decl ';' {
         ProList pl = $1;
-        pl.push_back($2);
-        $$ = $1;
+        pl.push_back($2);   
+        $$ = pl;
     }
 ;
 
@@ -146,8 +146,7 @@ proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDEN
     pd.params = $5;
     pd.stmts = $8;
     $$ = pd;
-}
-    | IDENTIFIER error ';' stmt_list END IDENTIFIER {
+    } | IDENTIFIER error ';' stmt_list END IDENTIFIER {
         $$ = ProDec();
     }
     ;
