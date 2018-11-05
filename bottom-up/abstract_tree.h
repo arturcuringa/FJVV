@@ -7,7 +7,7 @@
 #include <iostream>
 #include <memory>
 
-enum struct SimpleType {ST_INT, ST_FLOAT, ST_CHAR};
+enum SimpleType {ST_INT, ST_FLOAT, ST_CHAR};
 
 struct Node {
 	Node() : name("") {}
