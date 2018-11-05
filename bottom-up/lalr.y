@@ -32,6 +32,7 @@
     #include <sstream>
 
     #include "scanner.h"
+    #include "code_generator.h"
 
     #undef yylex
     #define yylex scanner->lex
@@ -109,6 +110,7 @@ program: decl_list proc_decl_list body {
     root.pro_dec = $2;
     root.stmts = $3;
     std::cout << root << std::endl;
+    generateCode(root);
 }
 
 body: START ';' stmt_list END ';' {
