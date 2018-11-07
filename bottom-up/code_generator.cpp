@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include "code_generator.h"
 #include "abstract_tree.h"
 
@@ -25,7 +26,9 @@ void generateCode(const VarDec& vd) {
 
     std::string dimensions;
     for (auto &dim : vd.type.dimensions) {
-        dimensions += "[" + parseExpr(dim) + "]";
+        dimensions += "[";
+        dimensions += parseExpr(dim);
+        dimensions += "]";
     }
 
     std::cout << type << " ";
@@ -47,7 +50,34 @@ void generateCode(const std::vector<T>& list) {
     }
 }
 
-// TODO
 std::string parseExpr(const std::shared_ptr<Expr>& expr) {
-    return "4";
+    std::stringstream ss("");
+    if (expr->name == "BinOp") {
+        auto b = (BinOp*) expr.get();
+        ss << parseExpr(b->lhs) << " " << b->op << " " << parseExpr(b->rhs);
+    } else if (expr->name == "UnOp") {
+        auto u = (UnOp*) expr.get();
+        if (u->op == 'p') {
+            ss << "(" << parseExpr(u->expr) << ")";
+        } else {
+            ss << u->op << parseExpr(u->expr);
+        }
+    } else if (expr->name == "Literal") {
+        auto l = (Literal*) expr.get();
+        if (l->type == SimpleType::ST_INT)
+            ss << std::to_string(l->i);
+        else if (l->type == SimpleType::ST_FLOAT)
+            ss << std::to_string(l->f);
+        else if (l->type == SimpleType::ST_CHAR) {
+            ss << "\'";
+            ss << l->c; 
+            ss << "\'";
+        }
+    } else if (expr->name == "Access") {
+        auto a = (Access*) expr.get();
+        for (auto i : a->indexes) {
+            ss << "[" << parseExpr(i) << "]";
+        }
+    }
+    return ss.str();
 }
