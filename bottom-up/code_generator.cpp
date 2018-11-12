@@ -3,6 +3,8 @@
 #include "code_generator.h"
 #include "abstract_tree.h"
 
+unsigned int if_counter = 0;
+
 void generateCode(const Node& n) {
     std::cout << "// Not implemented\n";
 }
@@ -40,7 +42,29 @@ void generateCode(const VarDec& vd) {
 }
 
 void generateCode(const std::shared_ptr<Stmt>& stmt) {
-    std::cout << "// Not implemented\n";
+	if (stmt->name == "AttrStmt") {
+		auto a = ( AttrStmt* ) stmt.get();
+		std::cout << a->id << " = " << parseExpr(a->rhs);
+	} else if (stmt->name == "IfStmt"){
+		auto i       = ( IfStmt* ) stmt.get();
+		auto counter = if_counter++;		
+		auto expr = parseExpr(i->expr);
+
+		std::cout << "if ( "       << expr << " )"
+			  << " goto  _if"  << std::to_string(counter)  << ";\n";
+		
+		generateCode(i->falseBlock);
+
+		std::cout << "goto _endif" << counter << ";\n";	
+		std::cout << "_if" << counter << ": ";
+		generateCode(i->trueBlock);
+		std::cout << "_endif" << counter << ": ";
+		
+				
+	} else
+		std::cout << "//Not Implemented";
+
+	std::cout << ";\n";
 }
 
 template <class T>
@@ -75,8 +99,9 @@ std::string parseExpr(const std::shared_ptr<Expr>& expr) {
         }
     } else if (expr->name == "Access") {
         auto a = (Access*) expr.get();
+	ss << a->id;
         for (auto i : a->indexes) {
-            ss << "[" << parseExpr(i) << "]";
+            ss <<  "[" << parseExpr(i) << "]";
         }
     }
     return ss.str();

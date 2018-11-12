@@ -10,6 +10,13 @@ END fill;
 
 START;
 	i2 := a[5] + - 2;  
+	
+	IF i2 < 5 THEN
+		i2 := 5;
+	ELSE
+		i2 := 0;
+	ENDIF;	
+
 	fill(1, 10, 0);
 	PUT(5.5, .1, 2.);
 END;
