@@ -3,7 +3,7 @@ DECLARE (i) INTEGER;
 DECLARE (i2) INTEGER;
 DECLARE (c) cHaR;
 
-fill: PROCEDURE (a, alen, value);
+fill: PROCEDURE ((a) ARRAY [10] OF CHAR, (b, c) INTEGER);
 	LOOP;
 	ENDLOOP;
 END fill;

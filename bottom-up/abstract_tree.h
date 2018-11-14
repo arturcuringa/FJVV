@@ -50,7 +50,7 @@ struct ProDec : Node {
 	ProDec() : Node("ProDec") {}
 
 	std::string id;
-	std::vector<std::string> params;
+	std::vector<VarDec> params;
 	std::vector<std::shared_ptr<Stmt>> stmts;
 	friend std::ostream& operator<<(std::ostream& out, const ProDec& vd);
 };

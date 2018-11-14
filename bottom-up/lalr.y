@@ -43,7 +43,9 @@
 %type <DecList> decl_list
 %type <VarDec> decl_stmt
 %type <StmtList> body
-%type <std::vector<std::string>> super_id_list
+%type <VarDec> parameter
+%type <DecList> param_list
+%type <DecList> super_param_list
 %type <std::vector<std::string>> id_list
 %type <Type> data_type
 %type <Type> array_nont
@@ -142,7 +144,7 @@ proc_decl_list: %empty { $$ = ProList(); }
     }
 ;
 
-proc_decl: IDENTIFIER ':' PROCEDURE '(' super_id_list ')' ';' stmt_list END IDENTIFIER {
+proc_decl: IDENTIFIER ':' PROCEDURE '(' super_param_list ')' ';' stmt_list END IDENTIFIER {
     ProDec pd;
     pd.id = $1;
     pd.params = $5;
@@ -181,8 +183,35 @@ array_nont: ARRAY '[' expr ']' OF data_type {
     $$ = type;
 };
 
-super_id_list: %empty {$$ = std::vector<std::string>(); } 
-    | id_list {$$ = $1;};
+super_param_list: %empty {$$ = std::vector<VarDec>(); } 
+    | param_list {$$ = $1;}
+;
+
+param_list: parameter {
+        std::vector<VarDec> pl;
+        pl.push_back($1);
+        $$ = pl;
+    }
+    | param_list ',' parameter {
+        auto pl = $1;
+        pl.push_back($3);
+        $$ = pl;
+    }
+;
+
+parameter: '(' id_list ')' data_type {
+        VarDec vd; 
+        vd.ids = $2;
+        vd.type = $4;
+        $$ = vd;
+    }
+    | IDENTIFIER data_type {
+        VarDec vd;
+        vd.ids.push_back($1);
+        vd.type = $2;
+        $$ = vd;
+    }
+;
 
 id_list: IDENTIFIER {
         std::vector<std::string> s;

@@ -191,7 +191,7 @@ std::ostream& operator<<(std::ostream& out, const ProDec& vd) {
         << "\"id\": \"" << vd.id << "\","
         << "\"params\": [";
         for (auto i = 0; i < vd.params.size(); i++) {
-            out << "\"" << vd.params[i] << "\"";
+            out << vd.params[i];
             if (i != vd.params.size() - 1)
                 out << ", ";
         }
