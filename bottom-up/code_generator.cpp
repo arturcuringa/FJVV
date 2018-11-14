@@ -3,7 +3,8 @@
 #include "code_generator.h"
 #include "abstract_tree.h"
 
-unsigned int if_counter = 0;
+unsigned int if_counter   = 0;
+unsigned int loop_counter = 0; 
 
 void generateCode(const Node& n) {
     std::cout << "// Not implemented\n";
@@ -41,27 +42,41 @@ void generateCode(const VarDec& vd) {
     std::cout << ";\n";
 }
 
-void generateCode(const std::shared_ptr<Stmt>& stmt) {
+void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 	if (stmt->name == "AttrStmt") {
 		auto a = ( AttrStmt* ) stmt.get();
 		std::cout << a->id << " = " << parseExpr(a->rhs);
 	} else if (stmt->name == "IfStmt"){
 		auto i       = ( IfStmt* ) stmt.get();
 		auto counter = if_counter++;		
-		auto expr = parseExpr(i->expr);
+		auto expr    = parseExpr(i->expr);
 
 		std::cout << "if ( "       << expr << " )"
-			  << " goto  _if"  << std::to_string(counter)  << ";\n";
+			  << " goto  _if"  << counter << ";\n";
 		
 		generateCode(i->falseBlock);
 
 		std::cout << "goto _endif" << counter << ";\n";	
 		std::cout << "_if" << counter << ": ";
+
 		generateCode(i->trueBlock);
+
 		std::cout << "_endif" << counter << ": ";
 		
 				
-	} else
+	} else if (stmt->name == "LoopStmt"){
+		auto l         = ( LoopStmt* ) stmt.get();
+		auto counter   = loop_counter++;
+		
+		std::cout << "_loop" << counter << ":";
+		
+		generateCode(l->block);
+
+		std::cout << "goto _loop" << counter << ";\n";
+
+		std::cout << "_endloop" << loop_scope << ":";
+
+	}else
 		std::cout << "//Not Implemented";
 
 	std::cout << ";\n";
@@ -71,6 +86,12 @@ template <class T>
 void generateCode(const std::vector<T>& list) {
     for (auto &e : list) {
         generateCode(e);
+    }
+}
+template <>
+void generateCode(const std::vector<std::shared_ptr<Stmt>>& list) {
+    for (auto &e : list) {
+        generateCode(e, loop_counter);
     }
 }
 
