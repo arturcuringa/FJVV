@@ -2,8 +2,15 @@
 #define __GENERATOR__
 
 #include <memory>
+#include <unordered_map>
 #include "abstract_tree.h"
 
+struct ActivationRegistry {
+    std::unique_ptr<ActivationRegistry> parent;
+    std::unique_ptr<ActivationRegistry> scopeParent;
+    
+    std::unordered_map<std::string, void*> memory;
+};
 
 extern unsigned int if_counter;
 void generateCode(const Node& node);
