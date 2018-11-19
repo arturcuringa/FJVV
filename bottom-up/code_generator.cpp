@@ -16,7 +16,7 @@ void generateCode(const Program& p) {
     generateCode(p.var_dec);
     generateCode(p.pro_dec);
     std::cout << "int main() {\n";
-    generateCode(p.stmts);
+    generateCode(p.stmts, -1);
     std::cout << "}\n";
 }
 
@@ -57,12 +57,12 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 		std::cout << "if ( "       << expr << " )"
 			  << " goto  _if"  << counter << ";\n";
 		
-		generateCode(i->falseBlock);
+		generateCode(i->falseBlock, loop_scope);
 
 		std::cout << "goto _endif" << counter << ";\n";	
 		std::cout << "_if" << counter << ": ";
 
-		generateCode(i->trueBlock);
+		generateCode(i->trueBlock, loop_scope);
 
 		std::cout << "_endif" << counter << ": ";
 		
@@ -73,19 +73,23 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 		
 		std::cout << "_loop" << counter << ":";
 		
-		generateCode(l->block);
+		generateCode(l->block, counter);
 
 		std::cout << "goto _loop" << counter << ";\n";
 
-		std::cout << "_endloop" << loop_scope << ":";
+		std::cout << "_endloop" << counter << ":";
+   } else if (stmt->name == "ExitStmt") {
+        auto e = (ExitStmt*) stmt.get();
+        auto expr = parseExpr(e->expr);
+        std::cout << "if ( "       << expr << " )"
+            << " goto _endloop" << loop_scope;
 
-	} else if (stmt->name == "GotoStmt"){
+	 } else if (stmt->name == "GotoStmt"){
 		auto g = (GotoStmt*) stmt.get();
 		
 		std::cout << "goto " << g->id ;
 	
-	}
-	else
+	 } else
 		std::cout << "//Not Implemented";
 
 	std::cout << ";\n";
@@ -97,10 +101,10 @@ void generateCode(const std::vector<T>& list) {
         generateCode(e);
     }
 }
-template <>
-void generateCode(const std::vector<std::shared_ptr<Stmt>>& list) {
+
+void generateCode(const std::vector<std::shared_ptr<Stmt>>& list, int loop_scope) {
     for (auto &e : list) {
-        generateCode(e, loop_counter);
+        generateCode(e, loop_scope);
     }
 }
 

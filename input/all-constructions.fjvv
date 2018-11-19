@@ -3,7 +3,7 @@ DECLARE (matrix) ARRAY [100] OF ARRAY [100] OF INTEGER;
 DECLARE (foo, bar, fee) INTEGER;
 DECLARE (letter) CHAR;
 
-example: PROCEDURE (first, last);
+example: PROCEDURE (first INTEGER, last INTEGER);
     IF first < last THEN
         PUT (first);
     ELSE
@@ -20,6 +20,10 @@ START;
     LOOP;
         foo := foo + 1;
         EXITWHEN foo > 5;
+        LOOP;
+            foo := foo - 1;
+            EXITWHEN foo < 1;
+        ENDLOOP;
     ENDLOOP;
     GET (bar, a);
 
