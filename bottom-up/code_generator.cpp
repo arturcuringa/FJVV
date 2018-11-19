@@ -43,6 +43,9 @@ void generateCode(const VarDec& vd) {
 }
 
 void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
+	if (!stmt->label.empty()){
+		std::cout << stmt->label << ": ";
+	}
 	if (stmt->name == "AttrStmt") {
 		auto a = ( AttrStmt* ) stmt.get();
 		std::cout << a->id << " = " << parseExpr(a->rhs);
@@ -75,13 +78,18 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 		std::cout << "goto _loop" << counter << ";\n";
 
 		std::cout << "_endloop" << counter << ":";
-    } else if (stmt->name == "ExitStmt") {
+   } else if (stmt->name == "ExitStmt") {
         auto e = (ExitStmt*) stmt.get();
         auto expr = parseExpr(e->expr);
-
         std::cout << "if ( "       << expr << " )"
             << " goto _endloop" << loop_scope;
-	} else
+
+	 } else if (stmt->name == "GotoStmt"){
+		auto g = (GotoStmt*) stmt.get();
+		
+		std::cout << "goto " << g->id ;
+	
+	 } else
 		std::cout << "//Not Implemented";
 
 	std::cout << ";\n";
