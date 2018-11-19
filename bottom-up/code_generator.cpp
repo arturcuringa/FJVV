@@ -76,7 +76,11 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 
 		std::cout << "_endloop" << loop_scope << ":";
 
-	}else
+	} else if (stmt->name == "GotoStmt"){
+		auto g = (GotoStmt*) stmt.get();
+	
+	}
+	else
 		std::cout << "//Not Implemented";
 
 	std::cout << ";\n";
