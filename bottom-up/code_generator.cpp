@@ -43,6 +43,9 @@ void generateCode(const VarDec& vd) {
 }
 
 void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
+	if (!stmt->label.empty()){
+		std::cout << stmt->label << ": ";
+	}
 	if (stmt->name == "AttrStmt") {
 		auto a = ( AttrStmt* ) stmt.get();
 		std::cout << a->id << " = " << parseExpr(a->rhs);
@@ -78,6 +81,8 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 
 	} else if (stmt->name == "GotoStmt"){
 		auto g = (GotoStmt*) stmt.get();
+		
+		std::cout << "goto " << g->id ;
 	
 	}
 	else
