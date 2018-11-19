@@ -89,7 +89,11 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 		
 		std::cout << "goto " << g->id ;
 	
-	 } else
+	 } else if (stmt->name == "PutStmt"){
+		auto p = (PutStmt*) stmt.get();
+		std::cout << " skip ( " << expr << " ) ";		
+
+       	} else
 		std::cout << "//Not Implemented";
 
 	std::cout << ";\n";
