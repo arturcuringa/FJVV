@@ -6,8 +6,8 @@
 #include "abstract_tree.h"
 
 struct ActivationRegistry {
-    std::unique_ptr<ActivationRegistry> parent;
-    std::unique_ptr<ActivationRegistry> scopeParent;
+    std::shared_ptr<ActivationRegistry> parent;
+    std::shared_ptr<ActivationRegistry> scopeParent;
     
     std::unordered_map<std::string, void*> memory;
 };
@@ -18,6 +18,7 @@ extern unsigned int loop_counter;
 void generateCode(const Node& node);
 void generateCode(const Program& p);
 void generateCode(const std::shared_ptr<Stmt>& stmt, int  loop_counter);
+void generateCode(const ProDec& p);
 
 template <class T>
 void generateCode(const std::vector<T>& list);

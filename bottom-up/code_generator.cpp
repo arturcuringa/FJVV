@@ -6,6 +6,8 @@
 unsigned int if_counter   = 0;
 unsigned int loop_counter = 0; 
 
+std::shared_ptr<ActivationRegistry> currentActivationRegistry;
+
 void generateCode(const Node& n) {
     std::cout << "// Not implemented\n";
 }
@@ -18,6 +20,15 @@ void generateCode(const Program& p) {
     std::cout << "int main() {\n";
     generateCode(p.stmts);
     std::cout << "}\n";
+}
+
+void generateCode(const ProDec& p) {
+    // std::shared_ptr<ActivationRegistry> ar(new ActivationRegistry());
+    // ar->parent = currentActivationRegistry;
+    // ar->scopeParent = currentActivationRegistry; //tofix
+
+    // // mem
+    // currentActivationRegistry = ar;
 }
 
 void generateCode(const VarDec& vd) {
