@@ -15,9 +15,11 @@ struct ActivationRegistry {
 extern unsigned int if_counter;
 extern unsigned int loop_counter;
 
+void instantiate(const std::string &name, void* ptr);
+
 void generateCode(const Node& node);
 void generateCode(const Program& p);
-void generateCode(const std::shared_ptr<Stmt>& stmt, int  loop_counter);
+void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_counter);
 void generateCode(const ProDec& p);
 
 template <class T>

@@ -8,6 +8,26 @@ unsigned int loop_counter = 0;
 
 std::shared_ptr<ActivationRegistry> currentActivationRegistry;
 
+void* __allocate(const std::deque<std::shared_ptr<Expr>> &dimensions, int typeSize) {
+    if (dimensions.empty()) {
+        return ::operator new (typeSize); 
+    }
+
+    int dimension = ((Literal*) dimensions.front().get())->i;
+    void* arr = new void*[dimension];
+
+    auto nextDimensions = dimensions;
+    nextDimensions.pop_front();
+    for (int i = 0; i < dimension; i++)
+        arr = __allocate(nextDimensions, typeSize);
+
+    return arr;
+}
+
+void __instantiate(const std::string &name, void* ptr) {
+    currentActivationRegistry->memory.insert({name, ptr});
+}
+
 void generateCode(const Node& n) {
     std::cout << "// Not implemented\n";
 }
