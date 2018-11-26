@@ -3,24 +3,39 @@
 #include "code_generator.h"
 #include "abstract_tree.h"
 
-unsigned int if_counter   = 0;
-unsigned int loop_counter = 0; 
+SymbolTable sym_table;
 
 void generateCode(const Node& n) {
     std::cout << "// Not implemented\n";
 }
 
+void generateCode(const ProDec& pd) {
+    std::cout << "// ProDec\n";
+
+    for (auto vd : pd.params) {
+        for (auto id : vd.ids) {
+            sym_table.add_symbol(id, vd.type);
+        }
+    }
+}
+
 void generateCode(const Program& p) {
     std::cout << "\n";
 
+    sym_table.start_scope();
     generateCode(p.var_dec);
     generateCode(p.pro_dec);
     std::cout << "int main() {\n";
     generateCode(p.stmts, -1);
     std::cout << "}\n";
+    sym_table.end_scope();
 }
 
 void generateCode(const VarDec& vd) {
+    for (auto id : vd.ids) {
+        sym_table.add_symbol(id, vd.type);
+    }
+
     std::string type;
 
     if (vd.type.type == ST_INT) type = "int";
@@ -51,7 +66,7 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 		std::cout << a->id << " = " << parseExpr(a->rhs);
 	} else if (stmt->name == "IfStmt"){
 		auto i       = ( IfStmt* ) stmt.get();
-		auto counter = if_counter++;		
+		auto counter = sym_table.if_counter++;		
 		auto expr    = parseExpr(i->expr);
 
 		std::cout << "if ( "       << expr << " )"
@@ -64,12 +79,10 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 
 		generateCode(i->trueBlock, loop_scope);
 
-		std::cout << "_endif" << counter << ": ";
-		
-				
+		std::cout << "_endif" << counter << ": ";	
 	} else if (stmt->name == "LoopStmt"){
 		auto l         = ( LoopStmt* ) stmt.get();
-		auto counter   = loop_counter++;
+		auto counter   = sym_table.loop_counter++;
 		
 		std::cout << "_loop" << counter << ":";
 		
@@ -99,6 +112,15 @@ template <class T>
 void generateCode(const std::vector<T>& list) {
     for (auto &e : list) {
         generateCode(e);
+    }
+}
+
+template <>
+void generateCode(const std::vector<ProDec>& list) {
+    for (auto &e : list) {
+        sym_table.start_scope();
+        generateCode(e);
+        sym_table.end_scope();
     }
 }
 
