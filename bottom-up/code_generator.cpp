@@ -6,21 +6,28 @@
 SymbolTable sym_table;
 
 std::shared_ptr<ActivationRecord> currentActivationRegistry;
+std::shared_ptr<ActivationRecord> mainActivationRegistry;
 
-void* __allocate(const std::deque<std::shared_ptr<Expr>> &dimensions, int typeSize) {
-    if (dimensions.empty()) {
-        return ::operator new (typeSize); 
+int __getTypeSize(const std::deque<std::shared_ptr<Expr>> &dimensions, SimpleType type) {
+    int size = 1;
+    for (auto e : dimensions) {
+        size *= ((Literal *) e.get())->i;
     }
 
-    int dimension = ((Literal*) dimensions.front().get())->i;
-    void* arr = new void*[dimension];
+    switch (type) {
+        case ST_CHAR: return size * sizeof(char);
+        case ST_FLOAT: return size * sizeof(float);
+        case ST_INT: return size * sizeof(int);
+    }
+}
 
-    auto nextDimensions = dimensions;
-    nextDimensions.pop_front();
-    for (int i = 0; i < dimension; i++)
-        arr = __allocate(nextDimensions, typeSize);
+void __startActivationRecord() {
+    __createNewActivationRecord();
+    mainActivationRegistry = currentActivationRegistry;
+}
 
-    return arr;
+void* __allocate(int typeSize) {
+    return new void*[typeSize];
 }
 
 void __instantiate(const std::string &name, void* ptr) {
@@ -30,8 +37,12 @@ void __instantiate(const std::string &name, void* ptr) {
 void __createNewActivationRecord() {
     std::shared_ptr<ActivationRecord> ar = std::shared_ptr<ActivationRecord>(new ActivationRecord());
     ar->parent = currentActivationRegistry;
-    ar->scopeParent = currentActivationRegistry;
+    ar->scopeParent = mainActivationRegistry;
     currentActivationRegistry = ar;
+}
+
+void __destroyActivationRecord() {
+    currentActivationRegistry = currentActivationRegistry->parent;
 }
 
 void* __access(const std::string &name) {
@@ -67,27 +78,8 @@ void generateCode(const Program& p) {
 void generateCode(const VarDec& vd) {
     for (auto id : vd.ids) {
         sym_table.add_symbol(id, vd.type);
+        std::cout << "__instantiate(" << id << ", __allocate(" << __getTypeSize(vd.type.dimensions, vd.type.type) << "));\n";
     }
-
-    std::string type;
-
-    if (vd.type.type == ST_INT) type = "int";
-    if (vd.type.type == ST_FLOAT) type = "float";
-    if (vd.type.type == ST_CHAR) type = "char";
-
-    std::string dimensions;
-    for (auto &dim : vd.type.dimensions) {
-        dimensions += "[";
-        dimensions += parseExpr(dim);
-        dimensions += "]";
-    }
-
-    std::cout << type << " ";
-    for (int i = 0; i < vd.ids.size(); i++) {
-        if (i != 0) std::cout << ", ";
-        std::cout << vd.ids[i] << dimensions;
-    }
-    std::cout << ";\n";
 }
 
 void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
