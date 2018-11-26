@@ -4,6 +4,7 @@
 #include <memory>
 #include <unordered_map>
 #include "abstract_tree.h"
+#include "symbol_table.h"
 
 struct ActivationRecord {
     std::shared_ptr<ActivationRecord> parent;
@@ -12,8 +13,7 @@ struct ActivationRecord {
     std::unordered_map<std::string, void*> memory;
 };
 
-extern unsigned int if_counter;
-extern unsigned int loop_counter;
+extern SymbolTable sym_table;
 
 void instantiate(const std::string &name, void* ptr);
 void* __allocate(const std::deque<std::shared_ptr<Expr>> &dimensions, int typeSize);
@@ -22,14 +22,17 @@ void* __access(const std::string &name);
 
 void generateCode(const Node& node);
 void generateCode(const Program& p);
+
+void generateCode(const ProDec& pd);
 void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_counter);
-void generateCode(const ProDec& p);
 
 template <class T>
 void generateCode(const std::vector<T>& list);
 
 template <>
-void generateCode(const std::vector<std::shared_ptr<Stmt>>& list);
+void generateCode(const std::vector<ProDec>& list);
+
+void generateCode(const std::vector<std::shared_ptr<Stmt>>& list, int loop_scope);
 
 std::string parseExpr(const std::shared_ptr<Expr>& expr);
 

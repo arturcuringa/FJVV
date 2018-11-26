@@ -1,0 +1,14 @@
+DECLARE (s,n) CHAR;
+
+START;
+s := 's';
+n := 'n';
+
+aqui: IF 5 < 6 THEN
+	PUT (s);
+      ELSE 
+	PUT (n);
+      ENDIF;
+goto aqui;
+	
+END; 

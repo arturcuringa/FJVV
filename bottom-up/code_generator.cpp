@@ -3,8 +3,7 @@
 #include "code_generator.h"
 #include "abstract_tree.h"
 
-unsigned int if_counter   = 0;
-unsigned int loop_counter = 0; 
+SymbolTable sym_table;
 
 std::shared_ptr<ActivationRecord> currentActivationRegistry;
 
@@ -43,14 +42,26 @@ void generateCode(const Node& n) {
     std::cout << "// Not implemented\n";
 }
 
+void generateCode(const ProDec& pd) {
+    std::cout << "// ProDec\n";
+
+    for (auto vd : pd.params) {
+        for (auto id : vd.ids) {
+            sym_table.add_symbol(id, vd.type);
+        }
+    }
+}
+
 void generateCode(const Program& p) {
     std::cout << "\n";
 
+    sym_table.start_scope();
     generateCode(p.var_dec);
     generateCode(p.pro_dec);
     std::cout << "int main() {\n";
-    generateCode(p.stmts);
+    generateCode(p.stmts, -1);
     std::cout << "}\n";
+    sym_table.end_scope();
 }
 
 void generateCode(const ProDec& p) {
@@ -63,6 +74,10 @@ void generateCode(const ProDec& p) {
 }
 
 void generateCode(const VarDec& vd) {
+    for (auto id : vd.ids) {
+        sym_table.add_symbol(id, vd.type);
+    }
+
     std::string type;
 
     if (vd.type.type == ST_INT) type = "int";
@@ -85,40 +100,51 @@ void generateCode(const VarDec& vd) {
 }
 
 void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
+	if (!stmt->label.empty()){
+		std::cout << stmt->label << ": ";
+	}
 	if (stmt->name == "AttrStmt") {
 		auto a = ( AttrStmt* ) stmt.get();
 		std::cout << a->id << " = " << parseExpr(a->rhs);
 	} else if (stmt->name == "IfStmt"){
 		auto i       = ( IfStmt* ) stmt.get();
-		auto counter = if_counter++;		
+		auto counter = sym_table.if_counter++;		
 		auto expr    = parseExpr(i->expr);
 
 		std::cout << "if ( "       << expr << " )"
 			  << " goto  _if"  << counter << ";\n";
 		
-		generateCode(i->falseBlock);
+		generateCode(i->falseBlock, loop_scope);
 
 		std::cout << "goto _endif" << counter << ";\n";	
 		std::cout << "_if" << counter << ": ";
 
-		generateCode(i->trueBlock);
+		generateCode(i->trueBlock, loop_scope);
 
-		std::cout << "_endif" << counter << ": ";
-		
-				
+		std::cout << "_endif" << counter << ": ";	
 	} else if (stmt->name == "LoopStmt"){
 		auto l         = ( LoopStmt* ) stmt.get();
-		auto counter   = loop_counter++;
+		auto counter   = sym_table.loop_counter++;
 		
 		std::cout << "_loop" << counter << ":";
 		
-		generateCode(l->block);
+		generateCode(l->block, counter);
 
 		std::cout << "goto _loop" << counter << ";\n";
 
-		std::cout << "_endloop" << loop_scope << ":";
+		std::cout << "_endloop" << counter << ":";
+   } else if (stmt->name == "ExitStmt") {
+        auto e = (ExitStmt*) stmt.get();
+        auto expr = parseExpr(e->expr);
+        std::cout << "if ( "       << expr << " )"
+            << " goto _endloop" << loop_scope;
 
-	}else
+	 } else if (stmt->name == "GotoStmt"){
+		auto g = (GotoStmt*) stmt.get();
+		
+		std::cout << "goto " << g->id ;
+	
+	 } else
 		std::cout << "//Not Implemented";
 
 	std::cout << ";\n";
@@ -130,10 +156,19 @@ void generateCode(const std::vector<T>& list) {
         generateCode(e);
     }
 }
+
 template <>
-void generateCode(const std::vector<std::shared_ptr<Stmt>>& list) {
+void generateCode(const std::vector<ProDec>& list) {
     for (auto &e : list) {
-        generateCode(e, loop_counter);
+        sym_table.start_scope();
+        generateCode(e);
+        sym_table.end_scope();
+    }
+}
+
+void generateCode(const std::vector<std::shared_ptr<Stmt>>& list, int loop_scope) {
+    for (auto &e : list) {
+        generateCode(e, loop_scope);
     }
 }
 
