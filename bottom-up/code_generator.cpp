@@ -53,8 +53,10 @@ void generateCode(const ProDec& pd) {
 }
 
 void generateCode(const Program& p) {
-    for (auto &pd : p.pro_dec)
+    for (auto &pd : p.pro_dec) {
         sym_table.proc_counters[pd.id] = 0;
+        sym_table.proc_calls[pd.id] = 0;
+    }
 
     std::cout << "\n";
 
