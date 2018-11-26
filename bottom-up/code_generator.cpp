@@ -5,6 +5,39 @@
 
 SymbolTable sym_table;
 
+std::shared_ptr<ActivationRecord> currentActivationRegistry;
+
+void* __allocate(const std::deque<std::shared_ptr<Expr>> &dimensions, int typeSize) {
+    if (dimensions.empty()) {
+        return ::operator new (typeSize); 
+    }
+
+    int dimension = ((Literal*) dimensions.front().get())->i;
+    void* arr = new void*[dimension];
+
+    auto nextDimensions = dimensions;
+    nextDimensions.pop_front();
+    for (int i = 0; i < dimension; i++)
+        arr = __allocate(nextDimensions, typeSize);
+
+    return arr;
+}
+
+void __instantiate(const std::string &name, void* ptr) {
+    currentActivationRegistry->memory.insert({name, ptr});
+}
+
+void __createNewActivationRecord() {
+    std::shared_ptr<ActivationRecord> ar = std::shared_ptr<ActivationRecord>(new ActivationRecord());
+    ar->parent = currentActivationRegistry;
+    ar->scopeParent = currentActivationRegistry;
+    currentActivationRegistry = ar;
+}
+
+void* __access(const std::string &name) {
+    return currentActivationRegistry->memory.find(name)->second;
+}
+
 void generateCode(const Node& n) {
     std::cout << "// Not implemented\n";
 }
