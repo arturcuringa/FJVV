@@ -6,7 +6,7 @@
 unsigned int if_counter   = 0;
 unsigned int loop_counter = 0; 
 
-std::shared_ptr<ActivationRegistry> currentActivationRegistry;
+std::shared_ptr<ActivationRecord> currentActivationRegistry;
 
 void* __allocate(const std::deque<std::shared_ptr<Expr>> &dimensions, int typeSize) {
     if (dimensions.empty()) {
@@ -26,6 +26,17 @@ void* __allocate(const std::deque<std::shared_ptr<Expr>> &dimensions, int typeSi
 
 void __instantiate(const std::string &name, void* ptr) {
     currentActivationRegistry->memory.insert({name, ptr});
+}
+
+void __createNewActivationRecord() {
+    std::shared_ptr<ActivationRecord> ar = std::make_shared<ActivationRecord>(new ActivationRecord());
+    ar->parent = currentActivationRegistry;
+    ar->scopeParent = currentActivationRegistry;
+    currentActivationRegistry = ar;
+}
+
+void* __access(const std::string &name) {
+    return currentActivationRegistry->memory.find(name)->second;
 }
 
 void generateCode(const Node& n) {

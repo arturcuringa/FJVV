@@ -5,9 +5,9 @@
 #include <unordered_map>
 #include "abstract_tree.h"
 
-struct ActivationRegistry {
-    std::shared_ptr<ActivationRegistry> parent;
-    std::shared_ptr<ActivationRegistry> scopeParent;
+struct ActivationRecord {
+    std::shared_ptr<ActivationRecord> parent;
+    std::shared_ptr<ActivationRecord> scopeParent;
     
     std::unordered_map<std::string, void*> memory;
 };
@@ -16,6 +16,9 @@ extern unsigned int if_counter;
 extern unsigned int loop_counter;
 
 void instantiate(const std::string &name, void* ptr);
+void* __allocate(const std::deque<std::shared_ptr<Expr>> &dimensions, int typeSize);
+void __createNewActivationRecord();
+void* __access(const std::string &name);
 
 void generateCode(const Node& node);
 void generateCode(const Program& p);
