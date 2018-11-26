@@ -150,9 +150,12 @@ void generateCode(const std::vector<T>& list) {
 
 template <>
 void generateCode(const std::vector<ProDec>& list) {
-    for (auto &e : list) {
+    for (auto &pd : list)
+        sym_table.proc_counters[pd.id] = 0;
+
+    for (auto &pd : list) {
         sym_table.start_scope();
-        generateCode(e);
+        generateCode(pd);
         sym_table.end_scope();
     }
 }
