@@ -28,7 +28,7 @@ void __instantiate(const std::string &name, void* ptr) {
 }
 
 void __createNewActivationRecord() {
-    std::shared_ptr<ActivationRecord> ar = std::make_shared<ActivationRecord>(new ActivationRecord());
+    std::shared_ptr<ActivationRecord> ar = std::shared_ptr<ActivationRecord>(new ActivationRecord());
     ar->parent = currentActivationRegistry;
     ar->scopeParent = currentActivationRegistry;
     currentActivationRegistry = ar;
@@ -62,15 +62,6 @@ void generateCode(const Program& p) {
     generateCode(p.stmts, -1);
     std::cout << "}\n";
     sym_table.end_scope();
-}
-
-void generateCode(const ProDec& p) {
-    // std::shared_ptr<ActivationRegistry> ar(new ActivationRegistry());
-    // ar->parent = currentActivationRegistry;
-    // ar->scopeParent = currentActivationRegistry; //tofix
-
-    // // mem
-    // currentActivationRegistry = ar;
 }
 
 void generateCode(const VarDec& vd) {
