@@ -2,7 +2,7 @@
 
 const std::string SymbolTable::scope_symbol = "_";
 
-SymbolTable::SymbolTable() : if_counter(0), loop_counter(0), proc_counter(0) {}
+SymbolTable::SymbolTable() : if_counter(0), loop_counter(0) {}
 
 void SymbolTable::start_scope() {
     this->scope_stack.push(SymbolTable::scope_symbol);
