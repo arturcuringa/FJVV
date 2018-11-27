@@ -11,6 +11,7 @@ struct ActivationRecord {
     std::shared_ptr<ActivationRecord> scopeParent;
     
     std::unordered_map<std::string, void*> memory;
+    int _return;
 };
 
 extern SymbolTable sym_table;

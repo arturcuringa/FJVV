@@ -146,7 +146,7 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 			sym_table.proc_counters[p->id] = 1;
 		else
 			sym_table.proc_counters[p->id] += 1;
-                std::cout << "currentActivationRecord->__return = " << sym_table.proc_counters[p->id] -1 << ";\n";
+                std::cout << "currentActivationRecord->_return = " << sym_table.proc_counters[p->id] -1 << ";\n";
 		std::cout << "goto proc_" << p->id << ";\n";
 		std::cout << "return_" << p->id << sym_table.proc_counters[p->id] << ":";
 
