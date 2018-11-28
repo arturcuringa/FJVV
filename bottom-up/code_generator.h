@@ -16,10 +16,11 @@ struct ActivationRecord {
 
 extern SymbolTable sym_table;
 
-void instantiate(const std::string &name, void* ptr);
+void __instantiate(const std::string &name, void* ptr);
 void* __allocate(const std::deque<std::shared_ptr<Expr>> &dimensions, int typeSize);
 void __createNewActivationRecord();
 void* __access(const std::string &name);
+std::string generateAccessCode(const std::string &name);
 
 void generateCode(const Node& node);
 void generateCode(const Program& p);

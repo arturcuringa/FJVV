@@ -12,6 +12,7 @@ public:
 	SymbolTable();
 	void start_scope();
 	void add_symbol(std::string id, Type type);
+	Type get_symbol(std::string id);
 	void end_scope();
 
 	unsigned if_counter;
