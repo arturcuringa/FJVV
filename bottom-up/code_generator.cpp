@@ -127,7 +127,10 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 	}
 	if (stmt->name == "AttrStmt") {
 		auto a = ( AttrStmt* ) stmt.get();
-		std::cout << a->id << " = " << parseExpr(a->rhs);
+        std::vector<std::string> indexes;
+        for (auto i : a->lhsIndexes) indexes.push_back(parseExpr(i));
+
+		std::cout << generateAccessCode(a->id, indexes) << " = " << parseExpr(a->rhs);
 	} else if (stmt->name == "IfStmt"){
 		auto i       = ( IfStmt* ) stmt.get();
 		auto counter = sym_table.if_counter++;		
