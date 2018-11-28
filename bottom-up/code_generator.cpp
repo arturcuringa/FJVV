@@ -6,6 +6,29 @@
 unsigned int if_counter   = 0;
 unsigned int loop_counter = 0; 
 
+std::string getIOType(std::string s) {
+	if (s == "int") {
+		return "%i";
+	} else if (s == "float") {
+		return "%f";
+	} else if (s == "bool") {
+		return "%d";
+	} else if (s == "char") {
+		return "%c";
+	}
+	return "";
+}
+
+std::string getType(ST& st, std::string id) {
+	std::string type = st.st[id];
+	if(type == "")
+		return type;
+	if(type == "int" || type == "float" || type == "bool" || type == "char") {
+		return type;
+	}
+	return getType(st, type);
+}
+
 void generateCode(const Node& n) {
     std::cout << "// Not implemented\n";
 }
@@ -93,10 +116,10 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 		auto p = (PutStmt*) stmt.get();
 		std::cout << " skip ( " << expr << " ) ";		
 
-       	} else if (stmt->name == "GetStmt"){
+	 } else if (stmt->name == "GetStmt") {
 		auto g = (GetStmt*) stmt.get();
-		std::cout << g->id << ";\n";
-
+		std::string type = getType(g, id);
+		std::cout << " scanf(\"" + getType(st, type) + "\", g->id); " ;
 	} else
 		std::cout << "//Not Implemented";
 
