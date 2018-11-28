@@ -158,25 +158,41 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 		std::cout << "goto _loop" << counter << ";\n";
 
 		std::cout << "_endloop" << counter << ":";
-        } else if (stmt->name == "ExitStmt") {
-                auto e = (ExitStmt*) stmt.get();
-                auto expr = parseExpr(e->expr);
-                std::cout << "if ( "       << expr << " )"
-                          << " goto _endloop" << loop_scope;
-
-        } else if (stmt->name == "GotoStmt"){
-		auto g = (GotoStmt*) stmt.get();
-		
+    } else if (stmt->name == "ExitStmt") {
+        auto e = (ExitStmt*) stmt.get();
+        auto expr = parseExpr(e->expr);
+        std::cout << "if ( "       << expr << " )"
+                    << " goto _endloop" << loop_scope;
+    
+    } else if (stmt->name == "GotoStmt"){
+		auto g = (GotoStmt*) stmt.get();	
 		std::cout << "goto " << g->id ;
 	
 	} else if(stmt->name == "ProcStmt"){
-                
 		auto p = (ProcStmt*) stmt.get();
-		if(!sym_table.proc_counters[p->id])
-			sym_table.proc_counters[p->id] = 1;
-		else
-			sym_table.proc_counters[p->id] += 1;
-                std::cout << "currentActivationRecord.__return = " << sym_table.proc_counters[p->id] -1 << ";\n";
+
+        auto it_proc_count = sym_table.proc_counters.find(p->id);
+        if (it_proc_count == sym_table.proc_counters.end())
+            sym_table.proc_counters.insert({p->id, 1});
+        else
+            it_proc_count->second++;
+
+        std::cout << "__createNewActivationRecord()";
+        
+        ProDec procedure = sym_table.procedures[p->id];
+        // unwrap params
+        std::vector<std::string> params;
+        for (auto &param : procedure.params)
+            for (auto &id: param.ids)
+                params.push_back(id);
+
+
+        for (int i = 0; i < p->args.size(); i++) {
+            void *temp = (void*) &parseExpr(p->args[i]); // copy this // metacode this
+            __instantiate(params[i], temp); // metacode this
+        }
+
+        std::cout << "currentActivationRecord._return = " << sym_table.proc_counters[p->id] -1 << ";\n";
 		std::cout << "goto proc_" << p->id << ";\n";
 		std::cout << "return_" << p->id << sym_table.proc_counters[p->id] << ":";
 
