@@ -43,7 +43,14 @@ void generateCode(const Node& n) {
 }
 
 void generateCode(const ProDec& pd) {
-    std::cout << "// ProDec\n";
+    sym_table.proc_calls[pd.id] = sym_table.proc_counters[pd.id];
+    std::cout << "proc_" << pd.id << ":\n";
+    generateCode(pd.stmts, -1);
+    std::cout << "switch ( __access(\"" << pd.id << "\"){\n";
+    for(auto i = 0; i < sym_table.proc_calls[pd.id]; i++){
+    	std::cout << "case " << i << ": goto return_" << pd.id << i << ";"; 
+    }
+    std::cout << "\n}\n";
 
     for (auto vd : pd.params) {
         for (auto id : vd.ids) {
@@ -62,9 +69,9 @@ void generateCode(const Program& p) {
 
     sym_table.start_scope();
     generateCode(p.var_dec);
-    generateCode(p.pro_dec);
     std::cout << "int main() {\n";
     generateCode(p.stmts, -1);
+    generateCode(p.pro_dec);
     std::cout << "}\n";
     sym_table.end_scope();
 }
@@ -129,18 +136,29 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 		std::cout << "goto _loop" << counter << ";\n";
 
 		std::cout << "_endloop" << counter << ":";
-   } else if (stmt->name == "ExitStmt") {
-        auto e = (ExitStmt*) stmt.get();
-        auto expr = parseExpr(e->expr);
-        std::cout << "if ( "       << expr << " )"
-            << " goto _endloop" << loop_scope;
+        } else if (stmt->name == "ExitStmt") {
+                auto e = (ExitStmt*) stmt.get();
+                auto expr = parseExpr(e->expr);
+                std::cout << "if ( "       << expr << " )"
+                          << " goto _endloop" << loop_scope;
 
-	 } else if (stmt->name == "GotoStmt"){
+        } else if (stmt->name == "GotoStmt"){
 		auto g = (GotoStmt*) stmt.get();
 		
 		std::cout << "goto " << g->id ;
 	
-	 } else
+	} else if(stmt->name == "ProcStmt"){
+                
+		auto p = (ProcStmt*) stmt.get();
+		if(!sym_table.proc_counters[p->id])
+			sym_table.proc_counters[p->id] = 1;
+		else
+			sym_table.proc_counters[p->id] += 1;
+                std::cout << "currentActivationRecord.__return = " << sym_table.proc_counters[p->id] -1 << ";\n";
+		std::cout << "goto proc_" << p->id << ";\n";
+		std::cout << "return_" << p->id << sym_table.proc_counters[p->id] << ":";
+
+	} else
 		std::cout << "//Not Implemented";
 
 	std::cout << ";\n";
