@@ -16,17 +16,12 @@ std::string getIOType(std::string s) {
 	} else if (s == "char") {
 		return "%c";
 	}
-	return "";
 }
 
-std::string getType(ST& st, std::string id) {
-	std::string type = st.st[id];
-	if(type == "")
-		return type;
+std::string getType(std::string id) {
 	if(type == "int" || type == "float" || type == "bool" || type == "char") {
 		return type;
 	}
-	return getType(st, type);
 }
 
 void generateCode(const Node& n) {
@@ -118,8 +113,7 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 
 	 } else if (stmt->name == "GetStmt") {
 		auto g = (GetStmt*) stmt.get();
-		std::string type = getType(g, id);
-		std::cout << " scanf(\"" + getType(st, type) + "\", g->id); " ;
+		std::cout << " scanf(\"" + getType(g) + "\", g->id); " ;
 	} else
 		std::cout << "//Not Implemented";
 
