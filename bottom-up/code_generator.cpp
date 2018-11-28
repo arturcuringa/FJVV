@@ -6,6 +6,18 @@
 unsigned int if_counter   = 0;
 unsigned int loop_counter = 0; 
 
+std::string getIOType(std::string s) {
+	if (s == "int") {
+		return "%i";
+	} else if (s == "float") {
+		return "%f";
+	} else if (s == "bool") {
+		return "%d";
+	} else if (s == "char") {
+		return "%c";
+	}
+}
+
 void generateCode(const Node& n) {
     std::cout << "// Not implemented\n";
 }
