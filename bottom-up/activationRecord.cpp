@@ -14,6 +14,7 @@ void* __allocate(int typeSize) {
 }
 
 void __instantiate(const std::string &name, void* ptr) {
+    printf("AQUI OH DEU CERTO!\n");
     currentActivationRegistry->memory.insert({name, ptr});
 }
 

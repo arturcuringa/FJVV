@@ -48,7 +48,8 @@ void generateCode(const Program& p) {
     std::cout << "\n";
     std::cout << "#include \"activationRecord.h\"\n";
     //std::cout << "#incldue <memory>\n";
-    std::cout << "extern std::shared_ptr<ActivationRecord>  currentActivationRecord; \n";
+    std::cout << "std::shared_ptr<ActivationRecord>  currentActivationRecord; \n";
+    std::cout << "std::shared_ptr<ActivationRecord>  mainActivationRecord; \n";
     sym_table.start_scope();
     std::cout << "int main() {\n";
     generateCode(p.var_dec);
