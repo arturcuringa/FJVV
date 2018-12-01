@@ -53,7 +53,7 @@ void generateCode(const ProDec& pd) {
     sym_table.proc_calls[pd.id] = sym_table.proc_counters[pd.id];
     std::cout << "proc_" << pd.id << ":\n";
     generateCode(pd.stmts, -1);
-    std::cout << "switch ( currentActivationRecord->_return ){\n";
+    std::cout << "switch ( *(currentActivationRecord->_return) ){\n";
     for(auto i = 0; i < sym_table.proc_calls[pd.id]; i++){
     	std::cout << "case " << i << ": goto return_" << pd.id << i << ";"; 
     }
@@ -74,12 +74,13 @@ void generateCode(const Program& p) {
 
     std::cout << "\n";
     std::cout << "#include \"activationRecord.h\"\n";
-    //std::cout << "#incldue <memory>\n";
-    std::cout << "std::shared_ptr<ActivationRecord>  currentActivationRecord; \n";
-    std::cout << "std::shared_ptr<ActivationRecord>  mainActivationRecord; \n";
+    std::cout << "#include <memory>\n";
+    std::cout << "extern std::shared_ptr<ActivationRecord>  currentActivationRecord; \n";
+    std::cout << "extern std::shared_ptr<ActivationRecord>  mainActivationRecord; \n";
     sym_table.start_scope();
-    generateCode(p.var_dec);
     std::cout << "int main() {\n";
+    std::cout << "__startActivationRecord();";
+    generateCode(p.var_dec);
     generateCode(p.stmts, -1);
     generateCode(p.pro_dec);
     std::cout << "}\n";
@@ -148,7 +149,7 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 			sym_table.proc_counters[p->id] = 1;
 		else
 			sym_table.proc_counters[p->id] += 1;
-                std::cout << "currentActivationRecord.__return = " << sym_table.proc_counters[p->id] -1 << ";\n";
+                std::cout << "currentActivationRecord->_return = " << sym_table.proc_counters[p->id] -1 << ";\n";
 		std::cout << "goto proc_" << p->id << ";\n";
 		std::cout << "return_" << p->id << sym_table.proc_counters[p->id] -1 << ":";
 
