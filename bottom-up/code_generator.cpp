@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <cstring>
 #include "code_generator.h"
 #include "abstract_tree.h"
 
@@ -65,8 +66,10 @@ void generateCode(const Node& n) {
 void generateCode(const ProDec& pd) {
     sym_table.proc_calls[pd.id] = sym_table.proc_counters[pd.id];
     std::cout << "proc_" << pd.id << ":\n";
-    generateCode(pd.stmts, -1);
-    std::cout << "switch ( currentActivationRecord->_return ){\n";
+
+    generateCode(pd.stmts, sym_table.loop_counter);
+    std::cout << "switch ( *(currentActivationRecord->_return) ){\n";
+
     for(auto i = 0; i < sym_table.proc_calls[pd.id]; i++){
     	std::cout << "case " << i << ": goto return_" << pd.id << i << ";"; 
     }
@@ -87,12 +90,13 @@ void generateCode(const Program& p) {
 
     std::cout << "\n";
     std::cout << "#include \"activationRecord.h\"\n";
-    //std::cout << "#incldue <memory>\n";
-    std::cout << "std::shared_ptr<ActivationRecord>  currentActivationRecord; \n";
-    std::cout << "std::shared_ptr<ActivationRecord>  mainActivationRecord; \n";
+    std::cout << "#include <memory>\n";
+    std::cout << "extern std::shared_ptr<ActivationRecord>  currentActivationRecord; \n";
+    std::cout << "extern std::shared_ptr<ActivationRecord>  mainActivationRecord; \n";
     sym_table.start_scope();
-    generateCode(p.var_dec);
     std::cout << "int main() {\n";
+    std::cout << "__startActivationRecord();";
+    generateCode(p.var_dec);
     generateCode(p.stmts, -1);
     generateCode(p.pro_dec);
     std::cout << "}\n";
@@ -143,17 +147,7 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 		std::cout << "goto _loop" << counter << ";\n";
 
 		std::cout << "_endloop" << counter << ":";
-        } else if (stmt->name == "ExitStmt") {
-                auto e = (ExitStmt*) stmt.get();
-                auto expr = parseExpr(e->expr).second;
-                std::cout << "if ( "       << expr << " )"
-                          << " goto _endloop" << loop_scope;
-
-        } else if (stmt->name == "GotoStmt"){
-		auto g = (GotoStmt*) stmt.get();
-		
-		std::cout << "goto " << g->id ;
-	
+    
 	 } else if (stmt->name == "GetStmt") {
 		auto g = (GetStmt*) stmt.get();
         for (auto& id : g->ids) {
@@ -182,14 +176,42 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
             if (&expr != &(p->exprs).back())
                 std::cout << ";\n";
         }
-    } else if(stmt->name == "ProcStmt"){
-                
+  } else if (stmt->name == "ExitStmt") {
+      auto e = (ExitStmt*) stmt.get();
+      auto expr = parseExpr(e->expr);
+      std::cout << "if ( "       << expr << " )"
+                  << " goto _endloop" << loop_scope;
+
+  } else if (stmt->name == "GotoStmt"){
+    auto g = (GotoStmt*) stmt.get();	
+    std::cout << "goto " << g->id ;
+
+	} else if(stmt->name == "ProcStmt"){
 		auto p = (ProcStmt*) stmt.get();
-		if(!sym_table.proc_counters[p->id])
-			sym_table.proc_counters[p->id] = 1;
-		else
-			sym_table.proc_counters[p->id] += 1;
-                std::cout << "currentActivationRecord.__return = " << sym_table.proc_counters[p->id] -1 << ";\n";
+    
+    auto it_proc_count = sym_table.proc_counters.find(p->id);
+    if (it_proc_count == sym_table.proc_counters.end())
+        sym_table.proc_counters.insert({p->id, 1});
+    else
+        it_proc_count->second++;
+
+    std::cout << "__createNewActivationRecord()";
+
+    ProDec procedure = sym_table.procedures[p->id];
+    // unwrap params
+    std::vector<std::string> params;
+    for (auto &param : procedure.params)
+        for (auto &id: param.ids)
+            params.push_back(id);
+
+
+    for (int i = 0; i < p->args.size(); i++) {
+        std::cout << "__instantiate(" << params[i] << ", __allocate(" << getTypeSize(procedure.params[i].type.dimensions, procedure.params[i].type.type) << ");"; // metacode this
+        std::cout << "memcpy(__access(" << params[i] << "), (void*) &(" << parseExpr(p->args[i]) << "), " << getTypeSize(procedure.params[i].type.dimensions, procedure.params[i].type.type) << ");";
+    }
+
+    std::cout << "currentActivationRecord._return = " << sym_table.proc_counters[p->id] -1 << ";\n";
+
 		std::cout << "goto proc_" << p->id << ";\n";
 		std::cout << "return_" << p->id << sym_table.proc_counters[p->id] -1 << ":";
 
@@ -210,6 +232,10 @@ template <>
 void generateCode(const std::vector<ProDec>& list) {
     for (auto &pd : list) {
         sym_table.start_scope();
+        for (auto &par: pd.params)
+            for (auto &id: par.ids)
+                sym_table.add_symbol(id, par.type);
+        
         generateCode(pd);
         sym_table.end_scope();
     }
