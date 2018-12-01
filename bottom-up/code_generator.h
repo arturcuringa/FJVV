@@ -5,21 +5,12 @@
 #include <unordered_map>
 #include "abstract_tree.h"
 #include "symbol_table.h"
+#include "activationRecord.h"
 
-struct ActivationRecord {
-    std::shared_ptr<ActivationRecord> parent;
-    std::shared_ptr<ActivationRecord> scopeParent;
-    
-    std::unordered_map<std::string, void*> memory;
-    int _return;
-};
 
 extern SymbolTable sym_table;
 
-void __instantiate(const std::string &name, void* ptr);
-void* __allocate(const std::deque<std::shared_ptr<Expr>> &dimensions, int typeSize);
-void __createNewActivationRecord();
-void* __access(const std::string &name);
+int getTypeSize(const std::deque<std::shared_ptr<Expr>> &dimensions, SimpleType type);
 std::string generateAccessCode(const std::string &name);
 
 void generateCode(const Node& node);
