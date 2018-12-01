@@ -18,7 +18,7 @@ int getTypeSize(const std::deque<std::shared_ptr<Expr>> &dimensions, SimpleType 
     }
 }
 
-std::string generateAccessCode(const std::string &id, const std::vector<std::string>& indexes) {
+std::string generateAccessCode(const std::string &id, const std::vector<std::string>& indexes = {}) {
     std::stringstream indexStr;
 
     auto symbol = sym_table.get_symbol(id);
@@ -45,10 +45,17 @@ std::string generateAccessCode(const std::string &id, const std::vector<std::str
     return ss.str();
 }
 
-std::string getType(std::string type) {
-	if(type == "int" || type == "float" || type == "bool" || type == "char") {
-		return type;
-	}
+std::string getTypeFormat(SimpleType type) {
+	switch (type) {
+        case ST_INT:
+            return "%d";
+        case ST_FLOAT:
+            return "%f";
+        case ST_CHAR:
+            return "%c";
+        default:
+            return "%s";
+    }
 }
 
 void generateCode(const Node& n) {
@@ -149,8 +156,17 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 	
 	 } else if (stmt->name == "GetStmt") {
 		auto g = (GetStmt*) stmt.get();
-		std::string type;
-		std::cout << " scanf(\"" + getType(type) + "\", g->id); " ;
+        for (auto id : g.ids) {
+            auto type = sym_table.symbol_table[id].top();
+            auto format_spec = getTypeFormat(type.type);
+
+            auto access = generateAccessCode(id);
+            if (access.front() == "*") access.erase(0);
+            else access = "&" + access;
+
+            std::cout << "scanf(\"" << format_spec;
+            std::cout <<  "\", " << access << ");";
+        }
 	} else if(stmt->name == "ProcStmt"){
                 
 		auto p = (ProcStmt*) stmt.get();
