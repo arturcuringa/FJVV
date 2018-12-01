@@ -165,10 +165,17 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
             else access = "&" + access;
 
             std::cout << "scanf(\"" << format_spec;
-            std::cout <<  "\", " << access << ");";
+            std::cout <<  "\", " << access << ")";
         }
 	} else if (stmt->name == "PutStmt") {
         auto p = (PutStmt*) stmt.get();
+        for (auto expr : p->exprs) {
+            auto parsed = parseExpr(expr);
+            auto format_spec = getTypeFormat(parsed.first);
+            std::cout << "printf(\"" << format_spec;
+            if (p->skip) std::cout << "\\n";
+            std::cout << "\", " << parsed.second << ")";
+        }
     } else if(stmt->name == "ProcStmt"){
                 
 		auto p = (ProcStmt*) stmt.get();
