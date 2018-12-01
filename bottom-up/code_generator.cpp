@@ -53,7 +53,7 @@ void generateCode(const Node& n) {
 void generateCode(const ProDec& pd) {
     sym_table.proc_calls[pd.id] = sym_table.proc_counters[pd.id];
     std::cout << "proc_" << pd.id << ":\n";
-    generateCode(pd.stmts, -1);
+    generateCode(pd.stmts, sym_table.loop_counter);
     std::cout << "switch ( currentActivationRecord->_return ){\n";
     for(auto i = 0; i < sym_table.proc_calls[pd.id]; i++){
     	std::cout << "case " << i << ": goto return_" << pd.id << i << ";"; 
@@ -161,7 +161,6 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 
 
         for (int i = 0; i < p->args.size(); i++) {
-            sym_table.add_symbol(params[i], procedure.params[i].type);
             std::cout << "__instantiate(" << params[i] << ", __allocate(" << getTypeSize(procedure.params[i].type.dimensions, procedure.params[i].type.type) << ");"; // metacode this
             std::cout << "memcpy(__access(" << params[i] << "), (void*) &(" << parseExpr(p->args[i]) << "), " << getTypeSize(procedure.params[i].type.dimensions, procedure.params[i].type.type) << ");";
         }
@@ -187,6 +186,10 @@ template <>
 void generateCode(const std::vector<ProDec>& list) {
     for (auto &pd : list) {
         sym_table.start_scope();
+        for (auto &par: pd.params)
+            for (auto &id: par.ids)
+                sym_table.add_symbol(id, par.type);
+        
         generateCode(pd);
         sym_table.end_scope();
     }
