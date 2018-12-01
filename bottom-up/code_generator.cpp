@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <cstring>
 #include "code_generator.h"
 #include "abstract_tree.h"
 
@@ -188,8 +189,8 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 
 
         for (int i = 0; i < p->args.size(); i++) {
-            void *temp = (void*) &parseExpr(p->args[i]); // copy this // metacode this
-            __instantiate(params[i], temp); // metacode this
+            std::cout << "__instantiate(" << params[i] << ", __allocate(" << getTypeSize(procedure.params[i].type.dimensions, procedure.params[i].type.type) << ");"; // metacode this
+            std::cout << "memcpy(__access(" << params[i] << "), (void*) &(" << parseExpr(p->args[i]) << "), " << getTypeSize(procedure.params[i].type.dimensions, procedure.params[i].type.type) << ");";
         }
 
         std::cout << "currentActivationRecord._return = " << sym_table.proc_counters[p->id] -1 << ";\n";
