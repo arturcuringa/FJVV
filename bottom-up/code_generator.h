@@ -10,8 +10,8 @@
 
 extern SymbolTable sym_table;
 
-int getTypeSize(const std::deque<std::shared_ptr<Expr>> &dimensions, SimpleType type);
 std::string generateAccessCode(const std::string &name);
+int getTypeSize(const std::deque<std::shared_ptr<Expr>> &dimensions, SimpleType type);
 
 void generateCode(const Node& node);
 void generateCode(const Program& p);
