@@ -1,7 +1,7 @@
 DECLARE (arr, aux) ARRAY [1000] OF INTEGER;
 DECLARE (mergeIt, leftIt, rightIt) INTEGER;
 
-mergesort: PROCEDURE (first, last);
+mergesort: PROCEDURE (first INTEGER, last INTEGER);
     IF first + 1 < last THEN
         mergesort(first, (first + last)/2);
         mergesort((first + last)/2 + 1, last);
@@ -9,7 +9,7 @@ mergesort: PROCEDURE (first, last);
     ENDIF;
 END mergesort;
 
-merge: PROCEDURE (leftFirst, leftLast, rightFirst, rightLast);
+merge: PROCEDURE (leftFirst INTEGER, leftLast INTEGER, rightFirst INTEGER, rightLast INTEGER);
     leftIt := leftFirs;
     rightIt := rightLast;
     mergeIt := 0;
