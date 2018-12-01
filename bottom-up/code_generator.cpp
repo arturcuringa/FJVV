@@ -5,7 +5,7 @@
 
 SymbolTable sym_table;
 
-int __getTypeSize(const std::deque<std::shared_ptr<Expr>> &dimensions, SimpleType type) {
+int getTypeSize(const std::deque<std::shared_ptr<Expr>> &dimensions, SimpleType type) {
     int size = 1;
     for (auto e : dimensions) {
         size *= ((Literal *) e.get())->i;
@@ -16,6 +16,33 @@ int __getTypeSize(const std::deque<std::shared_ptr<Expr>> &dimensions, SimpleTyp
         case ST_FLOAT: return size * sizeof(float);
         case ST_INT: return size * sizeof(int);
     }
+}
+
+std::string generateAccessCode(const std::string &id, const std::vector<std::string>& indexes) {
+    std::stringstream indexStr;
+
+    auto symbol = sym_table.get_symbol(id);
+
+    for (int i = 0; i < symbol.dimensions.size(); i++) {
+        indexStr << "+" << indexes[i];
+        for (int j = i+1; j < symbol.dimensions.size(); j++) indexStr << "*" << symbol.dimensions[j];
+    }
+
+    std::stringstream ss;
+    switch (symbol.type) {
+        case ST_INT: 
+            ss << "*(((int*) __access(\"" << id << "\"))";
+            break;
+        case ST_FLOAT:
+            ss << "*(((float*) __access(\"" << id << "\"))";
+            break;
+        case ST_CHAR:
+            ss << "*(((char*) __access(\"" << id << "\"))";
+            break;
+    }
+
+    ss << indexStr.str() << ")";
+    return ss.str();
 }
 
 void generateCode(const Node& n) {
@@ -51,8 +78,8 @@ void generateCode(const Program& p) {
     std::cout << "std::shared_ptr<ActivationRecord>  currentActivationRecord; \n";
     std::cout << "std::shared_ptr<ActivationRecord>  mainActivationRecord; \n";
     sym_table.start_scope();
-    std::cout << "int main() {\n";
     generateCode(p.var_dec);
+    std::cout << "int main() {\n";
     generateCode(p.stmts, -1);
     generateCode(p.pro_dec);
     std::cout << "}\n";
@@ -62,7 +89,7 @@ void generateCode(const Program& p) {
 void generateCode(const VarDec& vd) {
     for (auto id : vd.ids) {
         sym_table.add_symbol(id, vd.type);
-        std::cout << "__instantiate( \"" << id << "\", __allocate(" << __getTypeSize(vd.type.dimensions, vd.type.type) << "));\n";
+        std::cout << "__instantiate(\"" << id << "\", __allocate(" << getTypeSize(vd.type.dimensions, vd.type.type) << "));\n";
     }
 }
 
@@ -72,7 +99,10 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 	}
 	if (stmt->name == "AttrStmt") {
 		auto a = ( AttrStmt* ) stmt.get();
-		std::cout << a->id << " = " << parseExpr(a->rhs);
+        std::vector<std::string> indexes;
+        for (auto i : a->lhsIndexes) indexes.push_back(parseExpr(i));
+
+		std::cout << generateAccessCode(a->id, indexes) << " = " << parseExpr(a->rhs);
 	} else if (stmt->name == "IfStmt"){
 		auto i       = ( IfStmt* ) stmt.get();
 		auto counter = sym_table.if_counter++;		
@@ -118,7 +148,7 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 			sym_table.proc_counters[p->id] = 1;
 		else
 			sym_table.proc_counters[p->id] += 1;
-                std::cout << "currentActivationRecord->_return = " << sym_table.proc_counters[p->id] -1 << ";\n";
+                std::cout << "currentActivationRecord.__return = " << sym_table.proc_counters[p->id] -1 << ";\n";
 		std::cout << "goto proc_" << p->id << ";\n";
 		std::cout << "return_" << p->id << sym_table.proc_counters[p->id] -1 << ":";
 
@@ -175,10 +205,10 @@ std::string parseExpr(const std::shared_ptr<Expr>& expr) {
         }
     } else if (expr->name == "Access") {
         auto a = (Access*) expr.get();
-	ss << a->id;
-        for (auto i : a->indexes) {
-            ss <<  "[" << parseExpr(i) << "]";
-        }
+        std::vector<std::string> indexes;
+        for (auto i : a->indexes) indexes.push_back(parseExpr(i));
+
+        ss << generateAccessCode(a->id, indexes);
     }
     return ss.str();
 }
