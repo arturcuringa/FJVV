@@ -46,6 +46,19 @@ std::string generateAccessCode(const std::string &id, const std::vector<std::str
     return ss.str();
 }
 
+std::string getTypeFormat(SimpleType type) {
+	switch (type) {
+        case ST_INT:
+            return "%d";
+        case ST_FLOAT:
+            return "%f";
+        case ST_CHAR:
+            return "%c";
+        default:
+            return "%s";
+    }
+}
+
 void generateCode(const Node& n) {
     std::cout << "// Not implemented\n";
 }
@@ -104,13 +117,13 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 	if (stmt->name == "AttrStmt") {
 		auto a = ( AttrStmt* ) stmt.get();
         std::vector<std::string> indexes;
-        for (auto i : a->lhsIndexes) indexes.push_back(parseExpr(i));
+        for (auto i : a->lhsIndexes) indexes.push_back(parseExpr(i).second);
 
-		std::cout << generateAccessCode(a->id, indexes) << " = " << parseExpr(a->rhs);
+		std::cout << generateAccessCode(a->id, indexes) << " = " << parseExpr(a->rhs).second;
 	} else if (stmt->name == "IfStmt"){
 		auto i       = ( IfStmt* ) stmt.get();
 		auto counter = sym_table.if_counter++;		
-		auto expr    = parseExpr(i->expr);
+		auto expr    = parseExpr(i->expr).second;
 
 		std::cout << "if ( "       << expr << " )"
 			  << " goto  _if"  << counter << ";\n";
@@ -134,42 +147,70 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 		std::cout << "goto _loop" << counter << ";\n";
 
 		std::cout << "_endloop" << counter << ":";
-    } else if (stmt->name == "ExitStmt") {
-        auto e = (ExitStmt*) stmt.get();
-        auto expr = parseExpr(e->expr);
-        std::cout << "if ( "       << expr << " )"
-                    << " goto _endloop" << loop_scope;
     
-    } else if (stmt->name == "GotoStmt"){
-		auto g = (GotoStmt*) stmt.get();	
-		std::cout << "goto " << g->id ;
-	
+	 } else if (stmt->name == "GetStmt") {
+		auto g = (GetStmt*) stmt.get();
+        for (auto& id : g->ids) {
+            auto type = sym_table.symbol_table[id].top();
+            auto format_spec = getTypeFormat(type.type);
+
+            auto access = generateAccessCode(id, {});
+            if (access.front() == '*') access.erase(0);
+            else access = "&" + access;
+
+            std::cout << "scanf(\"" << format_spec;
+            std::cout <<  "\", " << access << ")";
+
+            if (&id != &(g->ids).back())
+                std::cout << ";\n";
+        }
+	} else if (stmt->name == "PutStmt") {
+        auto p = (PutStmt*) stmt.get();
+        for (auto& expr : p->exprs) {
+            auto parsed = parseExpr(expr);
+            auto format_spec = getTypeFormat(parsed.first);
+            std::cout << "printf(\"" << format_spec;
+            if (p->skip) std::cout << "\\n";
+            std::cout << "\", " << parsed.second << ")";
+
+            if (&expr != &(p->exprs).back())
+                std::cout << ";\n";
+        }
+  } else if (stmt->name == "ExitStmt") {
+      auto e = (ExitStmt*) stmt.get();
+      auto expr = parseExpr(e->expr);
+      std::cout << "if ( "       << expr << " )"
+                  << " goto _endloop" << loop_scope;
+
+  } else if (stmt->name == "GotoStmt"){
+    auto g = (GotoStmt*) stmt.get();	
+    std::cout << "goto " << g->id ;
+
 	} else if(stmt->name == "ProcStmt"){
 		auto p = (ProcStmt*) stmt.get();
+    
+    auto it_proc_count = sym_table.proc_counters.find(p->id);
+    if (it_proc_count == sym_table.proc_counters.end())
+        sym_table.proc_counters.insert({p->id, 1});
+    else
+        it_proc_count->second++;
+
+    std::cout << "__createNewActivationRecord()";
+
+    ProDec procedure = sym_table.procedures[p->id];
+    // unwrap params
+    std::vector<std::string> params;
+    for (auto &param : procedure.params)
+        for (auto &id: param.ids)
+            params.push_back(id);
 
 
-        auto it_proc_count = sym_table.proc_counters.find(p->id);
-        if (it_proc_count == sym_table.proc_counters.end())
-            sym_table.proc_counters.insert({p->id, 1});
-        else
-            it_proc_count->second++;
+    for (int i = 0; i < p->args.size(); i++) {
+        std::cout << "__instantiate(" << params[i] << ", __allocate(" << getTypeSize(procedure.params[i].type.dimensions, procedure.params[i].type.type) << ");"; // metacode this
+        std::cout << "memcpy(__access(" << params[i] << "), (void*) &(" << parseExpr(p->args[i]) << "), " << getTypeSize(procedure.params[i].type.dimensions, procedure.params[i].type.type) << ");";
+    }
 
-        std::cout << "__createNewActivationRecord()";
-        
-        ProDec procedure = sym_table.procedures[p->id];
-        // unwrap params
-        std::vector<std::string> params;
-        for (auto &param : procedure.params)
-            for (auto &id: param.ids)
-                params.push_back(id);
-
-
-        for (int i = 0; i < p->args.size(); i++) {
-            std::cout << "__instantiate(" << params[i] << ", __allocate(" << getTypeSize(procedure.params[i].type.dimensions, procedure.params[i].type.type) << ");"; // metacode this
-            std::cout << "memcpy(__access(" << params[i] << "), (void*) &(" << parseExpr(p->args[i]) << "), " << getTypeSize(procedure.params[i].type.dimensions, procedure.params[i].type.type) << ");";
-        }
-
-        std::cout << "currentActivationRecord._return = " << sym_table.proc_counters[p->id] -1 << ";\n";
+    std::cout << "currentActivationRecord._return = " << sym_table.proc_counters[p->id] -1 << ";\n";
 
 		std::cout << "goto proc_" << p->id << ";\n";
 		std::cout << "return_" << p->id << sym_table.proc_counters[p->id] -1 << ":";
@@ -206,35 +247,58 @@ void generateCode(const std::vector<std::shared_ptr<Stmt>>& list, int loop_scope
     }
 }
 
-std::string parseExpr(const std::shared_ptr<Expr>& expr) {
+SimpleType operateTypes(char op, SimpleType lhs, SimpleType rhs) {
+    if (op == '+' or op == '-' or op == '*' or op == '/') {
+        if (lhs == ST_FLOAT or rhs == ST_FLOAT)
+            return ST_FLOAT;
+        else
+            return lhs;
+    } else if (op == '%') {
+        return ST_INT;
+    } else { // logic op
+        return ST_INT;
+    }
+}
+
+ParsedExpr parseExpr(const std::shared_ptr<Expr>& expr) {
     std::stringstream ss("");
     if (expr->name == "BinOp") {
         auto b = (BinOp*) expr.get();
-        ss << parseExpr(b->lhs) << " " << b->op << " " << parseExpr(b->rhs);
+        auto lhs_parsed = parseExpr(b->lhs);
+        auto rhs_parsed = parseExpr(b->rhs);
+        auto type = operateTypes(b->op, lhs_parsed.first, rhs_parsed.first);
+
+        ss << lhs_parsed.second << " " << b->op << " " << rhs_parsed.second;
+        return std::make_pair(type, ss.str());
     } else if (expr->name == "UnOp") {
         auto u = (UnOp*) expr.get();
+        auto parsed = parseExpr(u->expr);
         if (u->op == 'p') {
-            ss << "(" << parseExpr(u->expr) << ")";
+            ss << "(" << parsed.second << ")";
         } else {
-            ss << u->op << parseExpr(u->expr);
+            ss << u->op << parsed.second;
         }
+        return std::make_pair(parsed.first, ss.str());
     } else if (expr->name == "Literal") {
         auto l = (Literal*) expr.get();
-        if (l->type == SimpleType::ST_INT)
+        if (l->type == SimpleType::ST_INT) {
             ss << std::to_string(l->i);
-        else if (l->type == SimpleType::ST_FLOAT)
+        } else if (l->type == SimpleType::ST_FLOAT) {
             ss << std::to_string(l->f);
-        else if (l->type == SimpleType::ST_CHAR) {
+        } else if (l->type == SimpleType::ST_CHAR) {
             ss << "\'";
-            ss << l->c; 
+            ss << l->c;
             ss << "\'";
         }
+        return std::make_pair(l->type, ss.str());
     } else if (expr->name == "Access") {
         auto a = (Access*) expr.get();
+        auto type = sym_table.symbol_table[a->id].top();
+
         std::vector<std::string> indexes;
-        for (auto i : a->indexes) indexes.push_back(parseExpr(i));
+        for (auto i : a->indexes) indexes.push_back(parseExpr(i).second);
 
         ss << generateAccessCode(a->id, indexes);
+        return std::make_pair(type.type, ss.str());
     }
-    return ss.str();
 }
