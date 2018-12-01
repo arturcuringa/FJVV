@@ -156,7 +156,7 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 	
 	 } else if (stmt->name == "GetStmt") {
 		auto g = (GetStmt*) stmt.get();
-        for (auto id : g->ids) {
+        for (auto& id : g->ids) {
             auto type = sym_table.symbol_table[id].top();
             auto format_spec = getTypeFormat(type.type);
 
@@ -166,15 +166,21 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 
             std::cout << "scanf(\"" << format_spec;
             std::cout <<  "\", " << access << ")";
+
+            if (&id != &(g->ids).back())
+                std::cout << ";\n";
         }
 	} else if (stmt->name == "PutStmt") {
         auto p = (PutStmt*) stmt.get();
-        for (auto expr : p->exprs) {
+        for (auto& expr : p->exprs) {
             auto parsed = parseExpr(expr);
             auto format_spec = getTypeFormat(parsed.first);
             std::cout << "printf(\"" << format_spec;
             if (p->skip) std::cout << "\\n";
             std::cout << "\", " << parsed.second << ")";
+
+            if (&expr != &(p->exprs).back())
+                std::cout << ";\n";
         }
     } else if(stmt->name == "ProcStmt"){
                 
