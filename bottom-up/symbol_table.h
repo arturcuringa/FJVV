@@ -19,6 +19,7 @@ public:
 	unsigned loop_counter;
 	std::unordered_map<std::string, unsigned> proc_counters;
 	std::unordered_map<std::string, unsigned> proc_calls;
+	std::unordered_map<std::string, ProDec> procedures;
 
 	std::unordered_map<std::string, std::stack<Type>> symbol_table;
 	std::stack<std::string> scope_stack;
