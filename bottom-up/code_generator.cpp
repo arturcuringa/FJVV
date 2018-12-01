@@ -5,9 +5,6 @@
 
 SymbolTable sym_table;
 
-std::shared_ptr<ActivationRecord> currentActivationRegistry;
-std::shared_ptr<ActivationRecord> mainActivationRegistry;
-
 int __getTypeSize(const std::deque<std::shared_ptr<Expr>> &dimensions, SimpleType type) {
     int size = 1;
     for (auto e : dimensions) {
@@ -21,34 +18,6 @@ int __getTypeSize(const std::deque<std::shared_ptr<Expr>> &dimensions, SimpleTyp
     }
 }
 
-void __startActivationRecord() {
-    __createNewActivationRecord();
-    mainActivationRegistry = currentActivationRegistry;
-}
-
-void* __allocate(int typeSize) {
-    return new void*[typeSize];
-}
-
-void __instantiate(const std::string &name, void* ptr) {
-    currentActivationRegistry->memory.insert({name, ptr});
-}
-
-void __createNewActivationRecord() {
-    std::shared_ptr<ActivationRecord> ar = std::shared_ptr<ActivationRecord>(new ActivationRecord());
-    ar->parent = currentActivationRegistry;
-    ar->scopeParent = mainActivationRegistry;
-    currentActivationRegistry = ar;
-}
-
-void __destroyActivationRecord() {
-    currentActivationRegistry = currentActivationRegistry->parent;
-}
-
-void* __access(const std::string &name) {
-    return currentActivationRegistry->memory.find(name)->second;
-}
-
 void generateCode(const Node& n) {
     std::cout << "// Not implemented\n";
 }
@@ -57,7 +26,7 @@ void generateCode(const ProDec& pd) {
     sym_table.proc_calls[pd.id] = sym_table.proc_counters[pd.id];
     std::cout << "proc_" << pd.id << ":\n";
     generateCode(pd.stmts, -1);
-    std::cout << "switch ( __access(\"" << pd.id << "\"){\n";
+    std::cout << "switch ( currentActivationRecord->_return ){\n";
     for(auto i = 0; i < sym_table.proc_calls[pd.id]; i++){
     	std::cout << "case " << i << ": goto return_" << pd.id << i << ";"; 
     }
@@ -77,7 +46,10 @@ void generateCode(const Program& p) {
     }
 
     std::cout << "\n";
-
+    std::cout << "#include \"activationRecord.h\"\n";
+    //std::cout << "#incldue <memory>\n";
+    std::cout << "std::shared_ptr<ActivationRecord>  currentActivationRecord; \n";
+    std::cout << "std::shared_ptr<ActivationRecord>  mainActivationRecord; \n";
     sym_table.start_scope();
     std::cout << "int main() {\n";
     generateCode(p.var_dec);
@@ -90,7 +62,7 @@ void generateCode(const Program& p) {
 void generateCode(const VarDec& vd) {
     for (auto id : vd.ids) {
         sym_table.add_symbol(id, vd.type);
-        std::cout << "__instantiate(" << id << ", __allocate(" << __getTypeSize(vd.type.dimensions, vd.type.type) << "));\n";
+        std::cout << "__instantiate( \"" << id << "\", __allocate(" << __getTypeSize(vd.type.dimensions, vd.type.type) << "));\n";
     }
 }
 
@@ -148,7 +120,7 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 			sym_table.proc_counters[p->id] += 1;
                 std::cout << "currentActivationRecord->_return = " << sym_table.proc_counters[p->id] -1 << ";\n";
 		std::cout << "goto proc_" << p->id << ";\n";
-		std::cout << "return_" << p->id << sym_table.proc_counters[p->id] << ":";
+		std::cout << "return_" << p->id << sym_table.proc_counters[p->id] -1 << ":";
 
 	} else
 		std::cout << "//Not Implemented";
