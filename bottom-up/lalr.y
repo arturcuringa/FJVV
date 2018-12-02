@@ -111,7 +111,7 @@ program: decl_list proc_decl_list body {
     root.var_dec = $1;
     root.pro_dec = $2;
     root.stmts = $3;
-    //std::cout << root << std::endl;
+    // std::cout << root << std::endl;
     generateCode(root);
 }
 

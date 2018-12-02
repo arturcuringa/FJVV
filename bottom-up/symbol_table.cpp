@@ -31,3 +31,9 @@ void SymbolTable::end_scope() {
 
     this->scope_stack.pop();
 }
+
+void SymbolTable::incProcCounter(const std::string &id) {
+    auto it = proc_counters.find(id);
+    if (proc_counters.find(id) != proc_counters.end()) it->second++;
+    else proc_counters.insert({id, 1});
+}

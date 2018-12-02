@@ -15,8 +15,10 @@ public:
 	Type get_symbol(std::string id);
 	void end_scope();
 
-	unsigned if_counter;
-	unsigned loop_counter;
+	void incProcCounter(const std::string &id);
+
+	unsigned if_counter = 0;
+	unsigned loop_counter = 0;
 	std::unordered_map<std::string, unsigned> proc_counters;
 	std::unordered_map<std::string, unsigned> proc_calls;
 	std::unordered_map<std::string, ProDec> procedures;

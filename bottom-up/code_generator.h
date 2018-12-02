@@ -14,6 +14,8 @@ using ParsedExpr = std::pair<SimpleType, std::string>;
 std::string generateAccessCode(const std::string &name);
 int getTypeSize(const std::deque<std::shared_ptr<Expr>> &dimensions, SimpleType type);
 
+void prePopulateSymbolTable(const Program& program);
+
 void generateCode(const Node& node);
 void generateCode(const Program& p);
 

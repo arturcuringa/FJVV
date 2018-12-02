@@ -30,5 +30,14 @@ void __destroyActivationRecord() {
 }
 
 void* __access(const std::string &name) {
-    return currentActivationRecord->memory.find(name)->second;
+    auto it = currentActivationRecord->memory.find(name);
+    if (it != currentActivationRecord->memory.end()) return it->second;
+    else return __accessOnRecord(currentActivationRecord->scopeParent, name);
 }
+
+void* __accessOnRecord(const std::shared_ptr<ActivationRecord> &ar, const std::string &name) {
+    auto it = ar->memory.find(name);
+    if (it != ar->memory.end()) return it->second;
+    else return __accessOnRecord(ar->scopeParent, name);
+}
+

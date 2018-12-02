@@ -1,10 +1,36 @@
 #include <iostream>
 #include <sstream>
-#include <cstring>
 #include "code_generator.h"
 #include "abstract_tree.h"
 
 SymbolTable sym_table;
+
+void prePopulateSymbolTable(const Program& program) {
+    // populate procedure list 
+    for (auto &proDec: program.pro_dec)
+        sym_table.procedures.insert({proDec.id, proDec});
+
+    // count number of procedure calls
+    for (auto &proc: program.pro_dec) {
+        for (auto &stmt: proc.stmts) {
+            if (stmt->name == "ProcStmt") {
+                auto ps = (ProcStmt *) stmt.get();
+                sym_table.incProcCounter(ps->id);
+            }
+        }
+    }
+
+    for (auto &stmt: program.stmts) {
+        if (stmt->name == "ProcStmt") {
+            auto ps = (ProcStmt *) stmt.get();
+            sym_table.incProcCounter(ps->id);
+        }
+    }
+
+    // initialize calls on 0
+    for (auto &counter: sym_table.proc_counters)
+        sym_table.proc_calls.insert({counter.first, 0});
+}
 
 int getTypeSize(const std::deque<std::shared_ptr<Expr>> &dimensions, SimpleType type) {
     int size = 1;
@@ -24,7 +50,7 @@ std::string generateAccessCode(const std::string &id, const std::vector<std::str
 
     auto symbol = sym_table.get_symbol(id);
 
-    for (int i = 0; i < symbol.dimensions.size(); i++) {
+    for (int i = 0; i < indexes.size(); i++) {
         indexStr << "+" << indexes[i];
         for (int j = i+1; j < symbol.dimensions.size(); j++) indexStr << "*" << symbol.dimensions[j];
     }
@@ -46,6 +72,23 @@ std::string generateAccessCode(const std::string &id, const std::vector<std::str
     return ss.str();
 }
 
+std::string generateParameterAccessCode(const std::string &id, SimpleType type) {
+    std::stringstream ss;
+    switch (type) {
+        case ST_INT: 
+            ss << "*((int*) __access(\"" << id << "\"))";
+            break;
+        case ST_FLOAT:
+            ss << "*((float*) __access(\"" << id << "\"))";
+            break;
+        case ST_CHAR:
+            ss << "*((char*) __access(\"" << id << "\"))";
+            break;
+    }
+
+    return ss.str();
+}
+
 std::string getTypeFormat(SimpleType type) {
 	switch (type) {
         case ST_INT:
@@ -64,40 +107,32 @@ void generateCode(const Node& n) {
 }
 
 void generateCode(const ProDec& pd) {
-    sym_table.proc_calls[pd.id] = sym_table.proc_counters[pd.id];
     std::cout << "proc_" << pd.id << ":\n";
 
     generateCode(pd.stmts, sym_table.loop_counter);
-    std::cout << "switch ( *(currentActivationRecord->_return) ){\n";
+    std::cout << "switch ( currentActivationRecord->_return ){\n";
 
-    for(auto i = 0; i < sym_table.proc_calls[pd.id]; i++){
-    	std::cout << "case " << i << ": goto return_" << pd.id << i << ";"; 
+    for(auto i = 0; i < sym_table.proc_counters[pd.id]; i++){
+    	std::cout << "case " << i << ": goto return_" << pd.id << i << ";\n"; 
     }
     std::cout << "\n}\n";
-
-    for (auto vd : pd.params) {
-        for (auto id : vd.ids) {
-            sym_table.add_symbol(id, vd.type);
-        }
-    }
 }
 
 void generateCode(const Program& p) {
-    for (auto &pd : p.pro_dec) {
-        sym_table.proc_counters[pd.id] = 0;
-        sym_table.proc_calls[pd.id] = 0;
-    }
+    prePopulateSymbolTable(p);
 
     std::cout << "\n";
     std::cout << "#include \"activationRecord.h\"\n";
     std::cout << "#include <memory>\n";
+    std::cout << "#include <cstdio>\n";
     std::cout << "extern std::shared_ptr<ActivationRecord>  currentActivationRecord; \n";
     std::cout << "extern std::shared_ptr<ActivationRecord>  mainActivationRecord; \n";
     sym_table.start_scope();
     std::cout << "int main() {\n";
-    std::cout << "__startActivationRecord();";
+    std::cout << "__startActivationRecord();\n";
     generateCode(p.var_dec);
-    generateCode(p.stmts, -1);
+    generateCode(p.stmts, sym_table.loop_counter);
+    std::cout << "return 0;\n";
     generateCode(p.pro_dec);
     std::cout << "}\n";
     sym_table.end_scope();
@@ -111,12 +146,13 @@ void generateCode(const VarDec& vd) {
 }
 
 void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
-	if (!stmt->label.empty()){
+    if (!stmt->label.empty()){
 		std::cout << stmt->label << ": ";
 	}
 	if (stmt->name == "AttrStmt") {
 		auto a = ( AttrStmt* ) stmt.get();
         std::vector<std::string> indexes;
+
         for (auto i : a->lhsIndexes) indexes.push_back(parseExpr(i).second);
 
 		std::cout << generateAccessCode(a->id, indexes) << " = " << parseExpr(a->rhs).second;
@@ -148,10 +184,10 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 
 		std::cout << "_endloop" << counter << ":";
     
-	 } else if (stmt->name == "GetStmt") {
+    } else if (stmt->name == "GetStmt") {
 		auto g = (GetStmt*) stmt.get();
         for (auto& id : g->ids) {
-            auto type = sym_table.symbol_table[id].top();
+            auto type = sym_table.get_symbol(id);
             auto format_spec = getTypeFormat(type.type);
 
             auto access = generateAccessCode(id, {});
@@ -176,47 +212,45 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
             if (&expr != &(p->exprs).back())
                 std::cout << ";\n";
         }
-  } else if (stmt->name == "ExitStmt") {
-      auto e = (ExitStmt*) stmt.get();
-      auto expr = parseExpr(e->expr);
-      std::cout << "if ( "       << expr << " )"
-                  << " goto _endloop" << loop_scope;
+    } else if (stmt->name == "ExitStmt") {
+        auto e = (ExitStmt*) stmt.get();
+        auto expr = parseExpr(e->expr);
+        std::cout << "if ( "       << expr.second << " )"
+                    << " goto _endloop" << loop_scope;
 
-  } else if (stmt->name == "GotoStmt"){
-    auto g = (GotoStmt*) stmt.get();	
-    std::cout << "goto " << g->id ;
+    } else if (stmt->name == "GotoStmt"){
+        auto g = (GotoStmt*) stmt.get();	
+        std::cout << "goto " << g->id ;
 
 	} else if(stmt->name == "ProcStmt"){
 		auto p = (ProcStmt*) stmt.get();
-    
-    auto it_proc_count = sym_table.proc_counters.find(p->id);
-    if (it_proc_count == sym_table.proc_counters.end())
-        sym_table.proc_counters.insert({p->id, 1});
-    else
-        it_proc_count->second++;
+        std::cout << "__createNewActivationRecord();\n";
 
-    std::cout << "__createNewActivationRecord()";
+        ProDec procedure = sym_table.procedures[p->id];
+        // unwrap params
+        std::vector<VarDec> params;
+        for (auto &param : procedure.params)
+            for (auto &id: param.ids) {
+                VarDec vd;
+                vd.ids.push_back(id);
+                vd.type = param.type;
+                params.push_back(vd);
+            }
 
-    ProDec procedure = sym_table.procedures[p->id];
-    // unwrap params
-    std::vector<std::string> params;
-    for (auto &param : procedure.params)
-        for (auto &id: param.ids)
-            params.push_back(id);
+        for (int i = 0; i < p->args.size(); i++) {
+            std::cout << "__instantiate(\"" << params[i].ids[0] << "\", __allocate(" << getTypeSize(params[i].type.dimensions, params[i].type.type) << "));\n";
+            std::cout << generateParameterAccessCode(params[i].ids[0], params[i].type.type) << " = " << parseExpr(p->args[i]).second << ";\n";
+        }
 
+        std::cout << "currentActivationRecord->_return = " << sym_table.proc_calls[p->id] << ";\n";
 
-    for (int i = 0; i < p->args.size(); i++) {
-        std::cout << "__instantiate(" << params[i] << ", __allocate(" << getTypeSize(procedure.params[i].type.dimensions, procedure.params[i].type.type) << ");"; // metacode this
-        std::cout << "memcpy(__access(" << params[i] << "), (void*) &(" << parseExpr(p->args[i]) << "), " << getTypeSize(procedure.params[i].type.dimensions, procedure.params[i].type.type) << ");";
-    }
+        std::cout << "goto proc_" << p->id << ";\n";
+        std::cout << "return_" << p->id << sym_table.proc_calls[p->id] << ": __destroyActivationRecord()";
+        sym_table.proc_calls[p->id]++;
 
-    std::cout << "currentActivationRecord._return = " << sym_table.proc_counters[p->id] -1 << ";\n";
-
-		std::cout << "goto proc_" << p->id << ";\n";
-		std::cout << "return_" << p->id << sym_table.proc_counters[p->id] -1 << ":";
-
-	} else
+	} else {
 		std::cout << "//Not Implemented";
+    }
 
 	std::cout << ";\n";
 }
@@ -231,6 +265,7 @@ void generateCode(const std::vector<T>& list) {
 template <>
 void generateCode(const std::vector<ProDec>& list) {
     for (auto &pd : list) {
+        sym_table.procedures.insert({pd.id, pd});
         sym_table.start_scope();
         for (auto &par: pd.params)
             for (auto &id: par.ids)
@@ -293,7 +328,7 @@ ParsedExpr parseExpr(const std::shared_ptr<Expr>& expr) {
         return std::make_pair(l->type, ss.str());
     } else if (expr->name == "Access") {
         auto a = (Access*) expr.get();
-        auto type = sym_table.symbol_table[a->id].top();
+        auto type = sym_table.get_symbol(a->id);
 
         std::vector<std::string> indexes;
         for (auto i : a->indexes) indexes.push_back(parseExpr(i).second);
