@@ -16,19 +16,18 @@ int getTypeSize(const std::deque<std::shared_ptr<Expr>> &dimensions, SimpleType 
 
 void prePopulateSymbolTable(const Program& program);
 
-void generateCode(const Node& node);
-void generateCode(const Program& p);
+std::string generateCode(const Node& node);
+std::string generateCode(const Program& p);
 
-void generateCode(const ProDec& pd);
-void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_counter);
+std::string generateCode(const ProDec& pd);
+std::string generateCode(const std::shared_ptr<Stmt>& stmt, int loop_counter);
 
 template <class T>
-void generateCode(const std::vector<T>& list);
+std::string generateCode(const std::vector<T>& list);
 
 template <>
-void generateCode(const std::vector<ProDec>& list);
-
-void generateCode(const std::vector<std::shared_ptr<Stmt>>& list, int loop_scope);
+std::string  generateCode(const std::vector<ProDec>& list);
+std::string  generateCode(const std::vector<std::shared_ptr<Stmt>>& list, int loop_scope);
 
 SimpleType operateTypes(char op, SimpleType lhs, SimpleType rhs);
 
