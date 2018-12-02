@@ -247,7 +247,7 @@ std::string generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
             auto format_spec = getTypeFormat(type.type);
 
             auto access = generateAccessCode(id, {}, false);
-            if (access.front() == '*') access.erase(0);
+            if (access.front() == '*') access.erase(access.begin());
             else access = "&" + access;
 
             ss << "scanf(\"" << format_spec;
@@ -262,7 +262,7 @@ std::string generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
             auto parsed = parseExpr(expr);
             auto format_spec = getTypeFormat(parsed.first);
             ss << "printf(\"" << format_spec;
-            if (p->skip) std::cout << "\\n";
+            if (p->skip) ss << "\\n";
             ss << "\", " << parsed.second << ")";
 
             if (&expr != &(p->exprs).back())
