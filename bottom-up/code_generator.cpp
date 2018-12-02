@@ -67,7 +67,7 @@ int getTypeSize(const std::deque<std::shared_ptr<Expr>> &dimensions, SimpleType 
     }
 }
 
-std::string generateAccessCode(const std::string &id, const std::vector<std::string>& indexes) {
+std::string generateAccessCode(const std::string &id, const std::vector<std::string>& indexes, bool onParent) {
     std::stringstream indexStr;
 
     auto symbol = sym_table.get_symbol(id);
@@ -80,13 +80,16 @@ std::string generateAccessCode(const std::string &id, const std::vector<std::str
     std::stringstream ss;
     switch (symbol.type) {
         case ST_INT: 
-            ss << "*(((int*) __access(\"" << id << "\"))";
+            if (onParent) ss << "*(((int*) __accessOnRecord(currentActivationRecord->parent, \"" << id << "\"))";
+            else ss << "*(((int*) __access(\"" << id << "\"))";
             break;
         case ST_FLOAT:
-            ss << "*(((float*) __access(\"" << id << "\"))";
+            if (onParent) ss << "*(((float*) __accessOnRecord(currentActivationRecord->parent,\"" << id << "\"))";
+            else ss << "*(((float*) __access(\"" << id << "\"))";
             break;
         case ST_CHAR:
-            ss << "*(((char*) __access(\"" << id << "\"))";
+            if (onParent) ss << "*(((char*) __accessOnRecord(currentActivationRecord->parent,\"" << id << "\"))";
+            else ss << "*(((char*) __access(\"" << id << "\"))";
             break;
     }
 
@@ -193,7 +196,7 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 
         for (auto i : a->lhsIndexes) indexes.push_back(parseExpr(i).second);
 
-		std::cout << generateAccessCode(a->id, indexes) << " = " << parseExpr(a->rhs).second;
+		std::cout << generateAccessCode(a->id, indexes, false) << " = " << parseExpr(a->rhs).second;
 	} else if (stmt->name == "IfStmt"){
 		auto i       = ( IfStmt* ) stmt.get();
 		auto counter = sym_table.if_counter++;		
@@ -228,7 +231,7 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
             auto type = sym_table.get_symbol(id);
             auto format_spec = getTypeFormat(type.type);
 
-            auto access = generateAccessCode(id, {});
+            auto access = generateAccessCode(id, {}, false);
             if (access.front() == '*') access.erase(0);
             else access = "&" + access;
 
@@ -277,8 +280,7 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 
         for (int i = 0; i < p->args.size(); i++) {
             std::cout << "__instantiate(\"" << params[i].ids[0] << "\", __allocate(" << getTypeSize(params[i].type.dimensions, params[i].type.type) << "));\n";
-	    std::cout<< "if(__accessOnRecord(currentActivationRecord->parent, \"" << params[i].ids[0] << "\") != nullptr ) " <<  generateParameterAccessCode(params[i].ids[0], params[i].type.type) << " = " << generateParameterAccessCodeFromParent(params[i].ids[0], params[i].type.type) << ";\n";
-            std::cout << generateParameterAccessCode(params[i].ids[0], params[i].type.type) << " = " << parseExpr(p->args[i]).second << ";\n";
+            std::cout << generateParameterAccessCode(params[i].ids[0], params[i].type.type) << " = " << parseExpr(p->args[i], true).second << ";\n";
         }
 
         std::cout << "currentActivationRecord->_return = " << sym_table.proc_calls[p->id] << ";\n";
@@ -352,20 +354,23 @@ std::string parseBinOp(const char op){
     return ss.str();
 }
 
-
 ParsedExpr parseExpr(const std::shared_ptr<Expr>& expr) {
+    return parseExpr(expr, false);
+}
+
+ParsedExpr parseExpr(const std::shared_ptr<Expr>& expr, bool onParent) {
     std::stringstream ss("");
     if (expr->name == "BinOp") {
         auto b = (BinOp*) expr.get();
-        auto lhs_parsed = parseExpr(b->lhs);
-        auto rhs_parsed = parseExpr(b->rhs);
+        auto lhs_parsed = parseExpr(b->lhs, onParent);
+        auto rhs_parsed = parseExpr(b->rhs, onParent);
         auto type = operateTypes(b->op, lhs_parsed.first, rhs_parsed.first);
 
         ss << lhs_parsed.second << " " << parseBinOp(b->op) << " " << rhs_parsed.second;
         return std::make_pair(type, ss.str());
     } else if (expr->name == "UnOp") {
         auto u = (UnOp*) expr.get();
-        auto parsed = parseExpr(u->expr);
+        auto parsed = parseExpr(u->expr, onParent);
         if (u->op == 'p') {
             ss << "(" << parsed.second << ")";
         } else {
@@ -389,9 +394,9 @@ ParsedExpr parseExpr(const std::shared_ptr<Expr>& expr) {
         auto type = sym_table.get_symbol(a->id);
 
         std::vector<std::string> indexes;
-        for (auto i : a->indexes) indexes.push_back(parseExpr(i).second);
+        for (auto i : a->indexes) indexes.push_back(parseExpr(i, onParent).second);
 
-        ss << generateAccessCode(a->id, indexes);
+        ss << generateAccessCode(a->id, indexes, onParent);
         return std::make_pair(type.type, ss.str());
     }
 }

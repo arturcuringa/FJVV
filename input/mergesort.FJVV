@@ -10,7 +10,7 @@ mergesort: PROCEDURE (first INTEGER, last INTEGER);
 END mergesort;
 
 merge: PROCEDURE (leftFirst INTEGER, leftLast INTEGER, rightFirst INTEGER, rightLast INTEGER);
-    leftIt := leftFirs;
+    leftIt := leftFirst;
     rightIt := rightLast;
     mergeIt := 0;
     LOOP;
@@ -57,4 +57,9 @@ START;
     arr[3] := 2;
 
     mergesort(0, 3);
+
+    PUT SKIP(arr[0]);
+    PUT SKIP(arr[1]);
+    PUT SKIP(arr[2]);
+    PUT SKIP(arr[3]);
 END;
