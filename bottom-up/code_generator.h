@@ -11,7 +11,7 @@
 extern SymbolTable sym_table;
 using ParsedExpr = std::pair<SimpleType, std::string>;
 
-std::string generateAccessCode(const std::string &name);
+std::string generateAccessCode(const std::string &id, const std::vector<std::string>& indexes, bool onParent);
 int getTypeSize(const std::deque<std::shared_ptr<Expr>> &dimensions, SimpleType type);
 
 void prePopulateSymbolTable(const Program& program);
@@ -33,5 +33,6 @@ void generateCode(const std::vector<std::shared_ptr<Stmt>>& list, int loop_scope
 SimpleType operateTypes(char op, SimpleType lhs, SimpleType rhs);
 
 ParsedExpr parseExpr(const std::shared_ptr<Expr>& expr);
+ParsedExpr parseExpr(const std::shared_ptr<Expr>& expr, bool onParent);
 
 #endif

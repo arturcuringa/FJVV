@@ -58,4 +58,9 @@ START;
     arr[3] := 2;
 
     mergesort(0, 3);
+
+    PUT SKIP(arr[0]);
+    PUT SKIP(arr[1]);
+    PUT SKIP(arr[2]);
+    PUT SKIP(arr[3]);
 END;

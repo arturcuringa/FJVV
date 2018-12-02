@@ -1,0 +1,18 @@
+DECLARE (i) INTEGER;
+
+proc : PROCEDURE (j INTEGER);
+	lopp(j);
+	PUT SKIP (j);
+END proc;
+
+lopp : PROCEDURE (x INTEGER);
+	IF x > 0 THEN
+		i := i -1;
+                lopp(i);
+	ENDIF;
+END lopp;
+
+START;
+	i := 5;
+	proc(5);
+END;
