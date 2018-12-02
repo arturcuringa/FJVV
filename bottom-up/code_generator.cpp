@@ -334,6 +334,25 @@ SimpleType operateTypes(char op, SimpleType lhs, SimpleType rhs) {
     }
 }
 
+std::string parseBinOp(const char op){
+    std::stringstream ss("");
+    switch(op){
+        case '=':
+            ss << "==";
+            break;
+        case '|':
+            ss << "||";
+            break;
+        case '&':
+            ss << "&&";
+            break;
+	default:
+	    ss << op;
+    }
+    return ss.str();
+}
+
+
 ParsedExpr parseExpr(const std::shared_ptr<Expr>& expr) {
     std::stringstream ss("");
     if (expr->name == "BinOp") {
@@ -342,7 +361,7 @@ ParsedExpr parseExpr(const std::shared_ptr<Expr>& expr) {
         auto rhs_parsed = parseExpr(b->rhs);
         auto type = operateTypes(b->op, lhs_parsed.first, rhs_parsed.first);
 
-        ss << lhs_parsed.second << " " << b->op << " " << rhs_parsed.second;
+        ss << lhs_parsed.second << " " << parseBinOp(b->op) << " " << rhs_parsed.second;
         return std::make_pair(type, ss.str());
     } else if (expr->name == "UnOp") {
         auto u = (UnOp*) expr.get();
