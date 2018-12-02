@@ -1,15 +1,25 @@
 DECLARE (a) ARRAY [9] OF INTEGER;
 DECLARE (i) INTEGER;
 DECLARE (i2) INTEGER;
-DECLARE (c) cHaR;
 
-fill: PROCEDURE ((a) ARRAY [10] OF CHAR, (b, c) INTEGER);
-	LOOP;
-	ENDLOOP;
-END fill;
+sum: PROCEDURE ((b, c) INTEGER);
+	i := b + c;
+END sum;
 
 START;
-	
-	fill(1, 10, 0);
-	PUT(5.5, .1, 2.);
+	i := 0;
+	LOOP;
+		i := i + 1;
+		EXITWHEN i > 4;
+		PUT(i);	
+	ENDLOOP;
+
+	IF i < 10 THEN
+		PUT (i + 4);
+	ELSE
+		PUT (i - 4);
+	ENDIF;
+
+	sum(10, 2);
+	PUT(i);
 END;
