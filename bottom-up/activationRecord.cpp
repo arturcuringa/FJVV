@@ -1,6 +1,5 @@
 #include "activationRecord.h"
-
-
+#include <stdexcept>
 std::shared_ptr<ActivationRecord>  currentActivationRecord; 
 std::shared_ptr<ActivationRecord>  mainActivationRecord; 
 
@@ -36,6 +35,8 @@ void* __access(const std::string &name) {
 }
 
 void* __accessOnRecord(const std::shared_ptr<ActivationRecord> &ar, const std::string &name) {
+    
+    if(ar == mainActivationRecord && ar->memory.find(name) == ar->memory.end() ) return nullptr;
     auto it = ar->memory.find(name);
     if (it != ar->memory.end()) return it->second;
     else return __accessOnRecord(ar->scopeParent, name);

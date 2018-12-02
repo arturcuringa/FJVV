@@ -1,7 +1,7 @@
 DECLARE (arr) ARRAY [1000] OF INTEGER;
 DECLARE (pivot, temp) INTEGER;
 
-quicksort: PROCEDURE (first, last);
+quicksort: PROCEDURE (first INTEGER, last INTEGER);
     IF first + 1 < last THEN
         pivot := first;
         LOOP;
@@ -24,4 +24,8 @@ START;
     arr[3] := 2;
 
     quicksort(0, 3);
+    PUT SKIP (arr[0]);
+    PUT SKIP (arr[1]);
+    PUT SKIP (arr[2]);
+    PUT SKIP (arr[3]);
 END;

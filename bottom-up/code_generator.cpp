@@ -5,26 +5,48 @@
 
 SymbolTable sym_table;
 
+void iterateOverBlocks(const std::shared_ptr<Stmt>& stmt){
+    if(stmt->name == "IfStmt"){
+    	auto _if = (IfStmt *) stmt.get();
+	if(!_if->trueBlock.empty() ){
+	    for(auto &s : _if->trueBlock){
+	    	iterateOverBlocks(s);
+	    }
+	}
+	if(!_if->falseBlock.empty()){
+	    for(auto &s : _if->falseBlock){
+	        iterateOverBlocks(s);
+	    }
+	}
+    }
+    if(stmt->name == "LoopStmt"){
+    	auto loop = (LoopStmt *) stmt.get();
+	for(auto &s : loop->block){
+	    iterateOverBlocks(s);
+	}
+    }
+    if (stmt->name == "ProcStmt") {
+        auto ps = (ProcStmt *) stmt.get();
+        sym_table.incProcCounter(ps->id);
+    }
+
+}
+
 void prePopulateSymbolTable(const Program& program) {
     // populate procedure list 
-    for (auto &proDec: program.pro_dec)
-        sym_table.procedures.insert({proDec.id, proDec});
 
+    for (auto &proDec: program.pro_dec){
+        sym_table.procedures.insert({proDec.id, proDec});
+    }
     // count number of procedure calls
     for (auto &proc: program.pro_dec) {
         for (auto &stmt: proc.stmts) {
-            if (stmt->name == "ProcStmt") {
-                auto ps = (ProcStmt *) stmt.get();
-                sym_table.incProcCounter(ps->id);
-            }
+           iterateOverBlocks(stmt); 
         }
     }
 
     for (auto &stmt: program.stmts) {
-        if (stmt->name == "ProcStmt") {
-            auto ps = (ProcStmt *) stmt.get();
-            sym_table.incProcCounter(ps->id);
-        }
+       iterateOverBlocks(stmt); 
     }
 
     // initialize calls on 0
@@ -89,6 +111,23 @@ std::string generateParameterAccessCode(const std::string &id, SimpleType type) 
     return ss.str();
 }
 
+std::string generateParameterAccessCodeFromParent(const std::string &id, SimpleType type) {
+    std::stringstream ss;
+    switch (type) {
+        case ST_INT:  
+            ss << "*((int*) __accessOnRecord(currentActivationRecord->parent,\"" << id << "\"))";
+            break;
+        case ST_FLOAT:
+            ss << "*((float*) __accessOnRecord(currentActivationRecord->parent,\"" << id << "\"))";
+	    break;
+        case ST_CHAR:
+            ss << "*((char*) __accessOnRecord(currentActivationRecord->parent,\"" << id << "\"))";
+            break;
+    }
+
+    return ss.str();
+}
+
 std::string getTypeFormat(SimpleType type) {
 	switch (type) {
         case ST_INT:
@@ -120,7 +159,6 @@ void generateCode(const ProDec& pd) {
 
 void generateCode(const Program& p) {
     prePopulateSymbolTable(p);
-
     std::cout << "\n";
     std::cout << "#include \"activationRecord.h\"\n";
     std::cout << "#include <memory>\n";
@@ -223,7 +261,7 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
         std::cout << "goto " << g->id ;
 
 	} else if(stmt->name == "ProcStmt"){
-		auto p = (ProcStmt*) stmt.get();
+	auto p = (ProcStmt*) stmt.get();
         std::cout << "__createNewActivationRecord();\n";
 
         ProDec procedure = sym_table.procedures[p->id];
@@ -239,6 +277,7 @@ void generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
 
         for (int i = 0; i < p->args.size(); i++) {
             std::cout << "__instantiate(\"" << params[i].ids[0] << "\", __allocate(" << getTypeSize(params[i].type.dimensions, params[i].type.type) << "));\n";
+	    std::cout<< "if(__accessOnRecord(currentActivationRecord->parent, \"" << params[i].ids[0] << "\") != nullptr ) " <<  generateParameterAccessCode(params[i].ids[0], params[i].type.type) << " = " << generateParameterAccessCodeFromParent(params[i].ids[0], params[i].type.type) << ";\n";
             std::cout << generateParameterAccessCode(params[i].ids[0], params[i].type.type) << " = " << parseExpr(p->args[i]).second << ";\n";
         }
 
@@ -295,6 +334,25 @@ SimpleType operateTypes(char op, SimpleType lhs, SimpleType rhs) {
     }
 }
 
+std::string parseBinOp(const char op){
+    std::stringstream ss("");
+    switch(op){
+        case '=':
+            ss << "==";
+            break;
+        case '|':
+            ss << "||";
+            break;
+        case '&':
+            ss << "&&";
+            break;
+	default:
+	    ss << op;
+    }
+    return ss.str();
+}
+
+
 ParsedExpr parseExpr(const std::shared_ptr<Expr>& expr) {
     std::stringstream ss("");
     if (expr->name == "BinOp") {
@@ -303,7 +361,7 @@ ParsedExpr parseExpr(const std::shared_ptr<Expr>& expr) {
         auto rhs_parsed = parseExpr(b->rhs);
         auto type = operateTypes(b->op, lhs_parsed.first, rhs_parsed.first);
 
-        ss << lhs_parsed.second << " " << b->op << " " << rhs_parsed.second;
+        ss << lhs_parsed.second << " " << parseBinOp(b->op) << " " << rhs_parsed.second;
         return std::make_pair(type, ss.str());
     } else if (expr->name == "UnOp") {
         auto u = (UnOp*) expr.get();

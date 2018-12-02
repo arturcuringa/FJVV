@@ -1,0 +1,13 @@
+DECLARE (i) INTEGER;
+
+loopOver : PROCEDURE (z INTEGER);
+	IF z > 0 THEN
+		PUT SKIP (z);
+		loopOver(z -1);
+	ENDIF;
+END loopOver;
+
+
+START;
+loopOver(5);
+END;
