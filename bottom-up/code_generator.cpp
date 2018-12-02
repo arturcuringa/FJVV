@@ -304,7 +304,9 @@ std::string generateCode(const std::shared_ptr<Stmt>& stmt, int loop_scope) {
         ss << "return_" << p->id << sym_table.proc_calls[p->id] << ": __destroyActivationRecord()";
         sym_table.proc_calls[p->id]++;
 
-	} else {
+	} else if (stmt->name == "StopStmt"){
+        ss << "return 0";
+    } else {
 		ss << "//Not Implemented";
     }
 

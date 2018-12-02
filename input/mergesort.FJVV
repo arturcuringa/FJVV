@@ -5,13 +5,14 @@ mergesort: PROCEDURE (first INTEGER, last INTEGER);
     IF first + 1 < last THEN
         mergesort(first, (first + last)/2);
         mergesort((first + last)/2 + 1, last);
-        merge(first, (first + last)/2, (first + last)/2 + 1, last);
     ENDIF;
+
+    merge(first, (first + last)/2, (first + last)/2 + 1, last);
 END mergesort;
 
 merge: PROCEDURE (leftFirst INTEGER, leftLast INTEGER, rightFirst INTEGER, rightLast INTEGER);
     leftIt := leftFirst;
-    rightIt := rightLast;
+    rightIt := rightFirst;
     mergeIt := 0;
     LOOP;
         EXITWHEN leftIt > leftLast | rightIt > rightLast;
